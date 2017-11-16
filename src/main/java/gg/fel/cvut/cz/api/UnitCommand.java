@@ -1,20 +1,20 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.api.enums.UnitCommandType;
+import gg.fel.cvut.cz.enums.UnitCommandType;
 
 public abstract class UnitCommand {
 
-    private Unit unit;
+    private IUnit unit;
 
     private UnitCommandType unitCommandType;
 
-    private Unit target;
+    private IUnit target;
 
     private int x, y;
 
     private int extra;
 
-    private UnitCommand(Unit unit, UnitCommandType unitCommandType, Unit target, int x, int y, int extra) {
+    private UnitCommand(IUnit unit, UnitCommandType unitCommandType, IUnit target, int x, int y, int extra) {
         this.unit = unit;
         this.unitCommandType = unitCommandType;
         this.target = target;
@@ -23,7 +23,7 @@ public abstract class UnitCommand {
         this.extra = extra;
     }
 
-    public Unit getUnit() {
+    public IUnit getUnit() {
         return unit;
     }
 
@@ -31,7 +31,7 @@ public abstract class UnitCommand {
         return unitCommandType;
     }
 
-    public Unit getTarget() {
+    public IUnit getTarget() {
         return target;
     }
 
@@ -43,9 +43,9 @@ public abstract class UnitCommand {
         return -1;
     }
 
-    public abstract Position getTargetPosition();
+    public abstract IPosition getTargetPosition();
 
-    public abstract TilePosition getTargetTilePosition();
+    public abstract ITilePosition getTargetTilePosition();
 
     public boolean isQueued() {
         if (unitCommandType == UnitCommandType.Attack_Move ||

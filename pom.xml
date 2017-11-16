@@ -12,6 +12,9 @@
         <lombok-maven-plugin.version>1.16.18.1</lombok-maven-plugin.version>
         <lombok.version>1.16.18</lombok.version>
         <annotations.version>15.0</annotations.version>
+        <bwmirror.version>2.5</bwmirror.version>
+        <guava.version>23.4-jre</guava.version>
+        <junit.version>4.12</junit.version>
     </properties>
 
     <build>
@@ -55,27 +58,60 @@
 
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>${annotations.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!--
+                BWMirror
+                In order to make this dependency work, run this command before building project:
+                mvn install:install-file -Dfile=<PATH TO BWMIRROR JAR> -DgroupId=bwmirror -DartifactId=bwmirror -Dversion=2.5 -Dpackaging=jar
+            -->
+            <dependency>
+                <groupId>bwmirror</groupId>
+                <artifactId>bwmirror</artifactId>
+                <version>${bwmirror.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
         </dependencies>
-
     </dependencyManagement>
 
     <dependencies>
         <dependency>
+            <groupId>bwmirror</groupId>
+            <artifactId>bwmirror</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
 
