@@ -1,68 +1,73 @@
 package gg.fel.cvut.cz.api;
 
 import gg.fel.cvut.cz.enums.RaceType;
+import gg.fel.cvut.cz.enums.UpgradeType;
+
+import java.util.Optional;
 
 /**
  * The upgrade type represents a passive upgrade that can be obtained with UnitInterface::upgrade. See also UpgradeTypes
  */
 public interface IUpgradeType {
 
+    UpgradeType getUpgradeType();
+
     /**
      * Retrieves the race the upgrade is for. For example, UpgradeTypes::Terran_Infantry_Armor.getRace() will return Races::Terran. Returns IRace that this upgrade belongs to.
      */
-    RaceType getRace();
+    Optional<RaceType> getRace();
 
     /**
      * Returns the mineral price for the upgrade. Parameters level (optional) The next upgrade level. Note Upgrades start at level 0. Returns The mineral cost of the upgrade for the given level.
      */
-    int mineralPrice();
+    Optional<Integer> mineralPrice();
 
-    int mineralPrice(int level);
+    Optional<Integer> mineralPrice(int level);
 
     /**
      * The amount that the mineral price increases for each additional upgrade. Returns The mineral cost added to the upgrade after each level.
      */
-    int mineralPriceFactor();
+    Optional<Integer> mineralPriceFactor();
 
     /**
      * Returns the vespene gas price for the first upgrade. Parameters level (optional) The next upgrade level. Note Upgrades start at level 0. Returns The gas cost of the upgrade for the given level.
      */
-    int gasPrice();
+    Optional<Integer> gasPrice();
 
-    int gasPrice(int level);
+    Optional<Integer> gasPrice(int level);
 
     /**
      * Returns the amount that the vespene gas price increases for each additional upgrade. Returns The gas cost added to the upgrade after each level.
      */
-    int gasPriceFactor();
+    Optional<Integer> gasPriceFactor();
 
     /**
      * Returns the number of frames needed to research the first upgrade. Parameters level (optional) The next upgrade level. Note Upgrades start at level 0. Returns The time cost of the upgrade for the given level.
      */
-    int upgradeTime();
+    Optional<Integer> upgradeTime();
 
-    int upgradeTime(int level);
+    Optional<Integer> upgradeTime(int level);
 
     /**
      * Returns the number of frames that the upgrade time increases for each additional upgrade. Returns The time cost added to the upgrade after each level.
      */
-    int upgradeTimeFactor();
+    Optional<Integer> upgradeTimeFactor();
 
     /**
      * Returns the maximum number of times the upgrade can be researched. Returns Maximum number of times this upgrade can be upgraded.
      */
-    int maxRepeats();
+    Optional<Integer> maxRepeats();
 
     /**
      * Returns the type of unit that researches the upgrade. Returns The IUnitType that is used to upgrade this type.
      */
-    IUnitType whatUpgrades();
+    Optional<IUnitType> whatUpgrades();
 
     /**
      * Returns the type of unit that is required for the upgrade. The player must have at least one of these units completed in order to start upgrading this upgrade. Parameters level (optional) The next upgrade level. Note Upgrades start at level 0. Returns IUnitType required to obtain this upgrade.
      */
-    IUnitType whatsRequired();
+    Optional<IUnitType> whatsRequired();
 
-    IUnitType whatsRequired(int level);
+    Optional<IUnitType> whatsRequired(int level);
 
 }

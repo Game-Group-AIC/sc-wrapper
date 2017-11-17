@@ -2,77 +2,78 @@ package gg.fel.cvut.cz.api;
 
 import gg.fel.cvut.cz.enums.GameType;
 
-import java.util.List;
+import java.util.Set;
+import java.util.Optional;
 
 /**
  * The abstract IGame class is implemented by BWAPI and is the primary means of obtaining all game state information from Starcraft Broodwar. IGame state information includes all units, resources, players, forces, bullets, terrain, fog of war, regions, etc.
  */
 public interface IGame {
 
-    List<IRegion> getRegions();
+    Optional<Set<IRegion>> getRegions();
 
-    List<IChokePoint> getChokePoints();
+    Optional<Set<IChokePoint>> getChokePoints();
 
-    List<IBaseLocation> getBaseLocations();
+    Optional<Set<IBaseLocation>> getBaseLocations();
 
-    List<IBaseLocation> getStartLocations();
+    Optional<Set<IBaseLocation>> getStartLocations();
 
-    IBaseLocation getStartLocation(IPlayer player);
+    Optional<IBaseLocation> getStartLocation(IPlayer player);
 
     /**
      * Retrieves the set of all players in the match. This includes the neutral player, which owns all the resources and critters by default. Returns Playerset containing all players in the game.
      */
-    List<IPlayer> getPlayers();
+    Optional<Set<IPlayer>> getPlayers();
 
     /**
      * Retrieves the set of all accessible units. If Flag::CompleteMapInformation is enabled, then the set also includes units that are not visible to the player. Note Units that are inside refineries are not included in this set. Returns Unitset containing all known units in the game.
      */
-    List<IUnit> getAllUnits();
+    Optional<Set<IUnit>> getAllUnits();
 
     /**
      * Retrieves the set of all accessible bullets. Returns Bulletset containing all accessible IBullet objects.
      */
-    List<IBullet> getBullets();
+    Optional<Set<IBullet>> getBullets();
 
     /**
      * Retrieves the set of all accessible Nuke dots. Note Nuke dots are the red dots painted by a Ghost when using the nuclear strike ability. Returns Set of Positions giving the coordinates of nuke locations.
      */
-    List<IPosition> getNukeDots();
+    Optional<Set<IPosition>> getNukeDots();
 
     /**
      * Retrieves the GameType of the current game. Returns GameType indicating the rules of the match. See also GameType
      */
-    GameType getGameType();
+    Optional<GameType> getGameType();
 
     /**
      * Retrieves the number of logical frames since the beginning of the match. If the game is paused, then getFrameCount will not increase. Returns Number of logical frames that have elapsed since the game started as an integer.
      */
-    int getFrameCount();
+    Optional<Integer> getFrameCount();
 
     /**
      * Retrieves the logical frame rate of the game in frames per second (FPS). Example: BWAPI::Broodwar->setLocalSpeed(0); // Log and display the best logical FPS seen in the game static int bestFPS = 0; bestFPS = std::max(bestFPS, BWAPI::Broodwar->getFPS()); BWAPI::Broodwar->drawTextScreen(BWAPI::Positions::Origin, "%cBest: %d GFPS\nCurrent: %d GFPS", BWAPI::Text::White, bestFPS, BWAPI::Broodwar->getFPS()); Returns Logical frames per second that the game is currently running at as an integer. See also getAverageFPS
      */
-    int getFPS();
+    Optional<Integer> getFPS();
 
     /**
      * Retrieves the average logical frame rate of the game in frames per second (FPS). Returns Average logical frames per second that the game is currently running at as a double. See also getFPS
      */
-    double getAverageFPS();
+    Optional<Double> getAverageFPS();
 
     /**
      * Retrieves the width of the map in build tile units. Returns Width of the map in tiles. See also mapHeight
      */
-    int mapWidth();
+    Optional<Integer> mapWidth();
 
     /**
      * Retrieves the height of the map in build tile units. Returns Height of the map in tiles. See also mapHeight
      */
-    int mapHeight();
+    Optional<Integer> mapHeight();
 
     /**
      * Retrieves the title of the currently loaded map. Returns Map title as std::string object. See also mapFileName, mapPathName
      */
-    String mapName();
+    Optional<String> mapName();
 
     //TODO heuristic to achieve reasonable performance
 //    /**
@@ -105,13 +106,13 @@ public interface IGame {
     /**
      * Retrieves the Actions Per Minute (APM) that the bot is producing. Parameters includeSelects (optional) If true, the return value will include selections as individual commands, otherwise it will exclude selections. This value is false by default. Returns The number of actions that the bot has executed per minute, on average.
      */
-    int getAPM();
+    Optional<Integer> getAPM();
 
-    int getAPM(boolean includeSelects);
+    Optional<Integer> getAPM(boolean includeSelects);
 
     /**
      * Retrieves current amount of time in seconds that the game has elapsed. Returns Time, in seconds, that the game has elapsed as an integer.
      */
-    int elapsedTime();
+    Optional<Integer> elapsedTime();
 
 }

@@ -1,44 +1,44 @@
 package gg.fel.cvut.cz.api;
 
+import java.util.Comparator;
+import java.util.Optional;
+
 /**
  * Common ancestor for location based objects to simplify distance computation.
  */
 public interface IAbstractPoint {
 
-    int getX();
+    Optional<Integer> getX();
 
-    int getY();
+    Optional<Integer> getY();
 
-    default double getDistance(IAbstractPoint other) {
-        double dx = other.getX() - getX();
-        double dy = other.getY() - getY();
-        return Math.sqrt(dx * dx + dy * dy);
+    default Optional<Double> getApproxDistance(IAbstractPoint other) {
+        if (!getX().isPresent() || !getY().isPresent() || !other.getX().isPresent() || !other.getY().isPresent()) {
+            return Optional.empty();
+        }
+        double dx = other.getX().get() - getX().get();
+        double dy = other.getY().get() - getY().get();
+        return Optional.of(Math.sqrt(dx * dx + dy * dy));
     }
 
-    boolean isValid();
-
-    int getApproxDistance(IAbstractPoint position);
-
-    double getLength();
-
-    IChokePoint getNearestChokePoint();
-
-    IBaseLocation getNearestBaseLocation();
-
-    IRegion getRegion();
-
-    /**
-     * Returns X coordinate in tiles
-     */
-    default int getTileX() {
-        return getX() / ITilePosition.SIZE_IN_PIXELS;
+    default Optional<IRegion> getRegion() {
+        return getPosition().flatMap(IAbstractPoint::getRegion);
     }
 
-    /**
-     * Returns Y coordinate in tiles
-     */
-    default int getTileY() {
-        return getY() / ITilePosition.SIZE_IN_PIXELS;
+    Optional<IPosition> getPosition();
+
+    default Optional<ITilePosition> getTilePosition() {
+        return getPosition().flatMap(IPosition::getTilePosition);
+    }
+
+    default Optional<IChokePoint> getNearestChokePoint() {
+        return getRegion().flatMap(iRegion -> iRegion.getChokePoints().flatMap(iChokePoints -> iChokePoints.stream()
+                .min(Comparator.comparingDouble(o -> o.getApproxDistance(this).orElse(Double.MAX_VALUE)))));
+    }
+
+    default Optional<IBaseLocation> getNearestBaseLocation() {
+        return getRegion().flatMap(iRegion -> iRegion.getBaseLocations().flatMap(iBaseLocations -> iBaseLocations.stream()
+                .min(Comparator.comparingDouble(o -> o.getApproxDistance(this).orElse(Double.MAX_VALUE)))));
     }
 
 }

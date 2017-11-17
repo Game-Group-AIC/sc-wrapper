@@ -1,6 +1,7 @@
 package gg.fel.cvut.cz.api;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Build Tiles - each build tile is a 4x4 square of walk tiles, or a 32x32 square of pixels.
@@ -10,11 +11,13 @@ import java.util.List;
 public interface ITilePosition extends IAbstractPoint {
     int SIZE_IN_PIXELS = 32;
 
-    ITilePosition makeValid();
+    Optional<Integer> getGroundHeight();
 
-    IPosition toPosition();
+    Optional<Set<IUnit>> getUnitsOnTile();
 
-    int getGroundHeight();
+    Optional<IPosition> getPosition();
 
-    List<IUnit> getUnitsOnTile();
+    default Optional<ITilePosition> getTilePosition() {
+        return Optional.of(this);
+    }
 }

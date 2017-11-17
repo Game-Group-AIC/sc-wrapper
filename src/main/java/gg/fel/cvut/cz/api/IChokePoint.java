@@ -2,14 +2,20 @@ package gg.fel.cvut.cz.api;
 
 import bwapi.Pair;
 
+import java.util.Optional;
+
 public interface IChokePoint extends IAbstractPoint {
 
-    Pair<IRegion, IRegion> getRegions();
+    Optional<Pair<IRegion, IRegion>> getRegions();
 
-    Pair<IPosition, IPosition> getSides();
+    Optional<Pair<IPosition, IPosition>> getSides();
 
-    IPosition getCenter();
+    Optional<IPosition> getCenter();
 
-    double getWidth();
+    Optional<Double> getWidth();
+
+    default Optional<IChokePoint> getNearestChokePoint() {
+        return Optional.of(this);
+    }
 
 }

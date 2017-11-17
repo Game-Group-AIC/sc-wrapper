@@ -1,33 +1,31 @@
 package gg.fel.cvut.cz.api;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public interface IBaseLocation extends IAbstractPoint {
 
-    IPosition getPosition();
+    Optional<Integer> minerals();
 
-    ITilePosition getTilePosition();
+    Optional<Integer> gas();
 
-    IRegion getRegion();
+    Optional<Set<IUnit>> getMinerals();
 
-    int minerals();
+    Optional<Set<IUnit>> getStaticMinerals();
 
-    int gas();
+    Optional<Set<IUnit>> getGeysers();
 
-    List<IUnit> getMinerals();
+    Optional<Double> getGroundDistance(IBaseLocation other);
 
-    List<IUnit> getStaticMinerals();
+    Optional<Double> getAirDistance(IBaseLocation other);
 
-    List<IUnit> getGeysers();
+    Optional<Boolean> isIsland();
 
-    double getGroundDistance(IBaseLocation other);
+    Optional<Boolean> isMineralOnly();
 
-    double getAirDistance(IBaseLocation other);
+    Optional<Boolean> isStartLocation();
 
-    boolean isIsland();
-
-    boolean isMineralOnly();
-
-    boolean isStartLocation();
-
+    default Optional<IBaseLocation> getNearestBaseLocation() {
+        return Optional.of(this);
+    }
 }

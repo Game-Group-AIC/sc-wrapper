@@ -1,51 +1,51 @@
 package gg.fel.cvut.cz.api;
 
 import gg.fel.cvut.cz.enums.UnitCommandType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 
-public abstract class UnitCommand {
+import java.io.Serializable;
+import java.util.Optional;
 
-    private IUnit unit;
+@Builder
+@AllArgsConstructor
+@EqualsAndHashCode(of = {"unit", "unitCommandType", "target", "x", "y", "extra", "targetPosition", "targetTilePosition"})
+public class UnitCommand implements Serializable {
+    private final IUnit unit;
+    private final UnitCommandType unitCommandType;
+    private final IUnit target;
+    private final int x, y;
+    private final Integer extra;
+    private final IPosition targetPosition;
+    private final ITilePosition targetTilePosition;
 
-    private UnitCommandType unitCommandType;
-
-    private IUnit target;
-
-    private int x, y;
-
-    private int extra;
-
-    private UnitCommand(IUnit unit, UnitCommandType unitCommandType, IUnit target, int x, int y, int extra) {
-        this.unit = unit;
-        this.unitCommandType = unitCommandType;
-        this.target = target;
-        this.x = x;
-        this.y = y;
-        this.extra = extra;
-    }
-
-    public IUnit getUnit() {
-        return unit;
+    public Optional<IUnit> getUnit() {
+        return Optional.ofNullable(unit);
     }
 
     public UnitCommandType getUnitCommandType() {
         return unitCommandType;
     }
 
-    public IUnit getTarget() {
-        return target;
+    public Optional<IUnit> getTarget() {
+        return Optional.ofNullable(target);
     }
 
-
-    public int getSlot() {
+    public Optional<Integer> getSlot() {
         if (unitCommandType == UnitCommandType.None) {
-            return extra;
+            return Optional.ofNullable(extra);
         }
-        return -1;
+        return Optional.empty();
     }
 
-    public abstract IPosition getTargetPosition();
+    public Optional<IPosition> getTargetPosition() {
+        return Optional.ofNullable(targetPosition);
+    }
 
-    public abstract ITilePosition getTargetTilePosition();
+    public Optional<ITilePosition> getTargetTilePosition() {
+        return Optional.ofNullable(targetTilePosition);
+    }
 
     public boolean isQueued() {
         if (unitCommandType == UnitCommandType.Attack_Move ||
@@ -68,32 +68,4 @@ public abstract class UnitCommand {
         return false;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UnitCommand)) return false;
-
-        UnitCommand that = (UnitCommand) o;
-
-        if (extra != that.extra) return false;
-        if (x != that.x) return false;
-        if (y != that.y) return false;
-        if (target != null ? !target.equals(that.target) : that.target != null) return false;
-        if (unit != null ? !unit.equals(that.unit) : that.unit != null) return false;
-        if (unitCommandType != null ? !unitCommandType.equals(that.unitCommandType) : that.unitCommandType != null)
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = unit != null ? unit.hashCode() : 0;
-        result = 31 * result + (unitCommandType != null ? unitCommandType.hashCode() : 0);
-        result = 31 * result + (target != null ? target.hashCode() : 0);
-        result = 31 * result + x;
-        result = 31 * result + y;
-        result = 31 * result + extra;
-        return result;
-    }
 }
