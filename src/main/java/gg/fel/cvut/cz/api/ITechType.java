@@ -1,22 +1,22 @@
 package gg.fel.cvut.cz.api;
 
 import gg.fel.cvut.cz.enums.Order;
-import gg.fel.cvut.cz.enums.RaceType;
 import gg.fel.cvut.cz.enums.TechType;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 /**
  * The ITechType (or Technology Type, also referred to as an Ability) represents a IUnit's ability which can be researched with UnitInterface::research or used with UnitInterface::useTech. In order for a IUnit to use its own specialized ability, it must first be available and researched. See also TechTypes
  */
-public interface ITechType {
+public interface ITechType extends InGameInterface, Serializable {
 
     TechType getTechType();
 
     /**
      * Retrieves the race that is required to research or use the ITechType. Note There is an exception where Infested Kerrigan can use Psionic Storm. This does not apply to the behavior of this function. Returns IRace object indicating which race is designed to use this technology type.
      */
-    Optional<RaceType> getRace();
+    IRace getRace();
 
     /**
      * Retrieves the mineral cost of researching this technology. Returns Amount of minerals needed in order to research this technology.

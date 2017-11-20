@@ -1,21 +1,21 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.RaceType;
 import gg.fel.cvut.cz.enums.UpgradeType;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 /**
  * The upgrade type represents a passive upgrade that can be obtained with UnitInterface::upgrade. See also UpgradeTypes
  */
-public interface IUpgradeType {
+public interface IUpgradeType extends InGameInterface, Serializable {
 
     UpgradeType getUpgradeType();
 
     /**
      * Retrieves the race the upgrade is for. For example, UpgradeTypes::Terran_Infantry_Armor.getRace() will return Races::Terran. Returns IRace that this upgrade belongs to.
      */
-    Optional<RaceType> getRace();
+    IRace getRace();
 
     /**
      * Returns the mineral price for the upgrade. Parameters level (optional) The next upgrade level. Note Upgrades start at level 0. Returns The mineral cost of the upgrade for the given level.
@@ -47,11 +47,6 @@ public interface IUpgradeType {
     Optional<Integer> upgradeTime();
 
     Optional<Integer> upgradeTime(int level);
-
-    /**
-     * Returns the number of frames that the upgrade time increases for each additional upgrade. Returns The time cost added to the upgrade after each level.
-     */
-    Optional<Integer> upgradeTimeFactor();
 
     /**
      * Returns the maximum number of times the upgrade can be researched. Returns Maximum number of times this upgrade can be upgraded.

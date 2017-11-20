@@ -4,12 +4,13 @@ import gg.fel.cvut.cz.enums.DamageType;
 import gg.fel.cvut.cz.enums.ExplosionType;
 import gg.fel.cvut.cz.enums.WeaponType;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 /**
  * This object identifies a weapon type used by a unit to attack and deal damage. Some weapon types can be upgraded while others are used for special abilities. See also WeaponTypes
  */
-public interface IWeaponType {
+public interface IWeaponType extends InGameInterface, Serializable {
 
     WeaponType getWeaponType();
 

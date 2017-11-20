@@ -2,12 +2,13 @@ package gg.fel.cvut.cz.api;
 
 import gg.fel.cvut.cz.enums.BulletType;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 /**
  * An interface object representing a bullet or missile spawned from an attack. The IBullet interface allows you to detect bullets, missiles, and other types of non-melee attacks or special abilities that would normally be visible through human eyes (A lurker spike or a Queen's flying parasite), allowing quicker reaction to unavoidable consequences. For example, ordering medics to restore units that are about to receive a lockdown to compensate for latency and minimize its effects. You can't know entirely which unit will be receiving a lockdown unless you can detect the lockdown missile using the IBullet class. IBullet objects are re-used after they are destroyed, however their ID is updated when it represents a new IBullet. If Flag::CompleteMapInformation is disabled, then a IBullet is accessible if and only if it is visible. Otherwise if Flag::CompleteMapInformation is enabled, then all Bullets in the game are accessible. See also IGame::getBullets, BulletInterface::exists
  */
-public interface IBullet {
+public interface IBullet extends InGameInterface, Serializable {
 
     /**
      * Retrieves a unique identifier for the current IBullet. Returns An integer value containing the identifier.
@@ -68,11 +69,6 @@ public interface IBullet {
      * Retrieves the timer that indicates the IBullet's life span. Bullets are not permanent objects, so they will often have a limited life span. This life span is measured in frames. Normally a IBullet will reach its target before being removed. Return values 0 If the IBullet is inaccessible. Returns An integer representing the remaining number of frames until the IBullet self-destructs.
      */
     Optional<Integer> getRemoveTimer();
-
-    /**
-     * Retrieves the visibility state of the IBullet. Parameters player (optional) If this parameter is specified, then the IBullet's visibility to the given player is checked. If this parameter is omitted, then a default value of nullptr is used, which will check if the BWAPI player has vision of the IBullet. Note If player is nullptr and Broodwar->self() is also nullptr, then the visibility of the IBullet is determined by checking if at least one other player has vision of the IBullet. Return values true If the IBullet is visible to the specified player. false If the IBullet is not visible to the specified player.
-     */
-    Optional<Boolean> isVisible();
 
     Optional<Boolean> isVisible(IPlayer player);
 

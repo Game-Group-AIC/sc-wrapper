@@ -1,16 +1,25 @@
 package gg.fel.cvut.cz.api;
 
-import bwapi.Pair;
-
+import java.io.Serializable;
 import java.util.Optional;
 
-public interface IChokePoint extends IAbstractPoint {
+public interface IChokePoint extends IAbstractPoint, InGameInterface, Serializable {
 
     Optional<Pair<IRegion, IRegion>> getRegions();
 
     Optional<Pair<IPosition, IPosition>> getSides();
 
-    Optional<IPosition> getCenter();
+    default Optional<IPosition> getCenter() {
+        return getPosition();
+    }
+
+    default Optional<Integer> getX() {
+        return getPosition().flatMap(IAbstractPoint::getX);
+    }
+
+    default Optional<Integer> getY() {
+        return getPosition().flatMap(IAbstractPoint::getY);
+    }
 
     Optional<Double> getWidth();
 

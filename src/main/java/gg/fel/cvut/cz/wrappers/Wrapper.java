@@ -5,11 +5,11 @@ import lombok.Getter;
 
 /**
  * Wrapper template for SC classes
+ *
  * @param <T>
  */
 @AllArgsConstructor
-abstract class Wrapper<T> {
-
+public abstract class Wrapper<T> {
     @Getter
     final T scInstance;
 

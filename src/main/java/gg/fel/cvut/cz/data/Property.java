@@ -13,9 +13,10 @@ import java.io.Serializable;
  */
 @EqualsAndHashCode(of = "value")
 @AllArgsConstructor
-public class Property<T extends Serializable> implements Serializable {
+class Property<T extends Serializable> implements Serializable {
     @Getter
     private final T value;
+
     boolean hasSameValue(T otherValue) {
         return value.equals(otherValue);
     }

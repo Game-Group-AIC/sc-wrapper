@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Manages property by tracking its value trough the time
+ * Manages dynamic property by tracking its value trough the time
  *
  * @param <T>
  */
-public class PropertyRegister<T extends Serializable> implements Serializable {
+public class DynamicPropertyRegister<T extends Serializable> implements IPropertyRegister<T>, Serializable {
     private final List<Property<T>> propertyTimeline = new ArrayList<>();
     private final List<Integer> timelineWithReferenceToProperty = new ArrayList<>();
 
@@ -40,14 +40,16 @@ public class PropertyRegister<T extends Serializable> implements Serializable {
         }
     }
 
-    public Optional<Property<T>> getLatestValue() {
+    //TODO collect values in interval
+
+    public Optional<T> getLatestValue() {
         if (propertyTimeline.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.ofNullable(Iterables.getLast(propertyTimeline));
+        return Optional.ofNullable(Iterables.getLast(propertyTimeline)).map(Property::getValue);
     }
 
-    public Optional<Property<T>> getValueInFrame(int frame) {
+    public Optional<T> getValueInFrame(int frame) {
         if (timelineWithReferenceToProperty.size() <= frame) {
             return getLatestValue();
         }
@@ -55,7 +57,22 @@ public class PropertyRegister<T extends Serializable> implements Serializable {
         if (index < 0) {
             return Optional.empty();
         }
-        return Optional.of(propertyTimeline.get(index));
+        return Optional.of(propertyTimeline.get(index)).map(Property::getValue);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DynamicPropertyRegister<?> that = (DynamicPropertyRegister<?>) o;
+        return propertyTimeline.equals(that.propertyTimeline) && timelineWithReferenceToProperty.equals(that.timelineWithReferenceToProperty);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = propertyTimeline.hashCode();
+        result = 31 * result + timelineWithReferenceToProperty.hashCode();
+        return result;
+    }
 }

@@ -1,16 +1,21 @@
 package gg.fel.cvut.cz.api;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Optional;
 
 /**
  * Common ancestor for location based objects to simplify distance computation.
  */
-public interface IAbstractPoint {
+public interface IAbstractPoint extends InGameInterface, Serializable {
 
-    Optional<Integer> getX();
+    default Optional<Integer> getX() {
+        return getPosition().flatMap(IAbstractPoint::getX);
+    }
 
-    Optional<Integer> getY();
+    default Optional<Integer> getY() {
+        return getPosition().flatMap(IAbstractPoint::getY);
+    }
 
     default Optional<Double> getApproxDistance(IAbstractPoint other) {
         if (!getX().isPresent() || !getY().isPresent() || !other.getX().isPresent() || !other.getY().isPresent()) {

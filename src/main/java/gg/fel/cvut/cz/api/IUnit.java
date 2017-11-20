@@ -1,15 +1,15 @@
 package gg.fel.cvut.cz.api;
 
 import gg.fel.cvut.cz.enums.Order;
-import gg.fel.cvut.cz.enums.WeaponType;
 
-import java.util.Set;
+import java.io.Serializable;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * The IUnit class is used to get information about individual units as well as issue orders to units. Each unit in the game has a unique IUnit object, and IUnit objects are not deleted until the end of the match (so you don't need to worry about unit pointers becoming invalid). Every IUnit in the game is either accessible or inaccessible. To determine if an AI can access a particular unit, BWAPI checks to see if Flag::CompleteMapInformation is enabled. So there are two cases to consider - either the flag is enabled, or it is disabled: If Flag::CompleteMapInformation is disabled, then a unit is accessible if and only if it is visible. Note Some properties of visible enemy units will not be made available to the AI (such as the contents of visible enemy dropships). If a unit is not visible, UnitInterface::exists will return false, regardless of whether or not the unit exists. This is because absolutely no state information on invisible enemy units is made available to the AI. To determine if an enemy unit has been destroyed, the AI must watch for AIModule::onUnitDestroy messages from BWAPI, which is only called for visible units which get destroyed. If Flag::CompleteMapInformation is enabled, then all units that exist in the game are accessible, and UnitInterface::exists is accurate for all units. Similarly AIModule::onUnitDestroy messages are generated for all units that get destroyed, not just visible ones. If a IUnit is not accessible, then only the getInitial__ functions will be available to the AI. However for units that were owned by the player, getPlayer and getType will continue to work for units that have been destroyed.
  */
-public interface IUnit {
+public interface IUnit extends InGameInterface, Serializable {
 
     /**
      * Retrieves a unique identifier for this unit. Returns An integer containing the unit's identifier. See also getReplayID
@@ -606,12 +606,9 @@ public interface IUnit {
      */
     Optional<Boolean> isUpgrading();
 
-    /**
-     * Checks if this unit is visible. Parameters player (optional) The player to check visibility for. If this parameter is omitted, then the BWAPI player obtained from IGame::self will be used. Returns true if this unit is visible to the specified player, and false if it is not. Note If the Flag::CompleteMapInformation flag is enabled, existing units hidden by the fog of war will be accessible, but isVisible will still return false. See also exists
-     */
-    Optional<Boolean> isVisible();
-
-    Optional<Boolean> isVisible(IPlayer player);
+    default Optional<Boolean> isVisible(IPlayer player) {
+        return player.getAllUnits().map(iUnits -> iUnits.contains(this));
+    }
 
     /**
      * Performs some cheap checks to attempt to quickly detect whether the unit is unable to be targetted as the target unit of an unspecified command. Return values true if BWAPI was unable to determine whether the unit can be a target. false if an error occurred and the unit can not be a target. See also IGame::getLastError, UnitInterface::canTargetUnit
@@ -738,42 +735,35 @@ public interface IUnit {
      */
     Optional<Boolean> canBurrow();
 
-
     /**
      * Checks whether the unit is able to execute an unburrow command. See also IGame::getLastError, UnitInterface::canIssueCommand, UnitInterface::unburrow
      */
     Optional<Boolean> canUnburrow();
-
 
     /**
      * Checks whether the unit is able to execute a cloak command. See also IGame::getLastError, UnitInterface::canIssueCommand, UnitInterface::cloak
      */
     Optional<Boolean> canCloak();
 
-
     /**
      * Checks whether the unit is able to execute a decloak command. See also IGame::getLastError, UnitInterface::canIssueCommand, UnitInterface::decloak
      */
     Optional<Boolean> canDecloak();
-
 
     /**
      * Checks whether the unit is able to execute a siege command. See also IGame::getLastError, UnitInterface::canIssueCommand, UnitInterface::siege
      */
     Optional<Boolean> canSiege();
 
-
     /**
      * Checks whether the unit is able to execute an unsiege command. See also IGame::getLastError, UnitInterface::canIssueCommand, UnitInterface::unsiege
      */
     Optional<Boolean> canUnsiege();
 
-
     /**
      * Checks whether the unit is able to execute a lift command. See also IGame::getLastError, UnitInterface::canIssueCommand, UnitInterface::lift
      */
     Optional<Boolean> canLift();
-
 
     /**
      * Cheap checks for whether the unit is able to execute a land command. See also IGame::getLastError, UnitInterface::canIssueCommand, UnitInterface::land
@@ -866,28 +856,38 @@ public interface IUnit {
     }
 
     default Optional<Boolean> isFullyHealthy() {
-        return getHitPoints() >= getType().getMaxHitPoints();
+        if (!getHitPoints().isPresent() || getType().map(unitType -> !unitType.maxHitPoints().isPresent()).orElse(false)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(getHitPoints().get() >= getType().get().maxHitPoints().get());
     }
 
     default Optional<Double> getHPPercent() {
-        return ((double) getHitPoints()) / ((double) getType().getMaxHitPoints());
+        if (!getHitPoints().isPresent() || getType().map(unitType -> !unitType.maxHitPoints().isPresent()).orElse(false)) {
+            return Optional.empty();
+        }
+        return Optional.of(((double) getHitPoints().get()) / ((double) getType().get().maxHitPoints().get()));
     }
 
     default Optional<Boolean> isWounded() {
-        return getHitPoints() < getType().getMaxHitPoints();
+        return isFullyHealthy().map(aBoolean -> !aBoolean);
     }
 
     /**
-     * Returns true if this unit is capable of attacking <b>otherUnit</b>. For example Zerglings can't attack
+     * Returns true if this unit is capable of attacking <b>otherUnitType</b>. For example Zerglings can't attack
      * flying targets and Corsairs can't attack ground targets.
      */
-    default Optional<Boolean> canAttackThisKindOfUnit(IUnit otherUnit) {
-        // Enemy is GROUND unit
-        if (!otherUnit.getType().isFlyer()) {
-            return getType().canAttackGroundUnits();
-        } // Enemy is AIR unit
-        else {
-            return getType().canAttackAirUnits();
+    default Optional<Boolean> canAttackThisKindOfUnit(IUnitType otherUnitType) {
+        if (!getType().isPresent()) {
+            return Optional.empty();
+        }
+        // Enemy is AIR unit
+        if (otherUnitType.isFlyer().isPresent() && otherUnitType.isFlyer().get()) {
+            return getType().flatMap(IUnitType::canAttackAirUnits);
+        } else // Enemy is GROUND unit
+        {
+            return getType().flatMap(IUnitType::canAttackGroundUnits);
         }
     }
 
@@ -895,11 +895,14 @@ public interface IUnit {
      * Returns weapon that would be used to attack given target.
      * If no such weapon, then WeaponTypes.None will be returned.
      */
-    default Optional<WeaponType> getWeaponAgainst(IUnit target) {
-        if (!target.getType().isFlyer()) {
-            return getType().getGroundWeapon();
+    default Optional<IWeaponType> getWeaponAgainst(IUnitType target) {
+        if (!target.isFlyer().isPresent()) {
+            return Optional.empty();
         } else {
-            return getType().getAirWeapon();
+            if (target.isFlyer().get()) {
+                return getType().flatMap(IUnitType::airWeapon);
+            }
+            return getType().flatMap(IUnitType::groundWeapon);
         }
     }
 

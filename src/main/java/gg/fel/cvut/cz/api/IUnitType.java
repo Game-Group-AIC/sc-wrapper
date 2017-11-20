@@ -1,11 +1,10 @@
 package gg.fel.cvut.cz.api;
 
-import bwapi.Pair;
-import gg.fel.cvut.cz.enums.RaceType;
 import gg.fel.cvut.cz.enums.UnitSizeType;
 import gg.fel.cvut.cz.enums.UnitType;
 import gg.fel.cvut.cz.enums.WeaponType;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -16,12 +15,12 @@ import static gg.fel.cvut.cz.api.ITilePosition.SIZE_IN_PIXELS;
 /**
  * The IUnitType is used to get information about a particular type of unit, such as its cost, build time, weapon, hit points, abilities, etc. See also UnitInterface::getType, UnitTypes
  */
-public interface IUnitType {
+public interface IUnitType extends InGameInterface, Serializable {
 
     /**
      * Retrieves the IRace that the unit type belongs to. Returns IRace indicating the race that owns this unit type. Return values IRace::None indicating that the unit type does not belong to any particular race (a critter for example).
      */
-    Optional<RaceType> getRace();
+    IRace getRace();
 
     UnitType getUnitType();
 
@@ -139,31 +138,6 @@ public interface IUnitType {
      * Retrieves the height of this unit type, in tiles. Used for determining the tile size of structures. Returns Height of this unit type, in tiles.
      */
     Optional<Integer> tileHeight();
-
-    /**
-     * Retrieves the tile size of this unit type. Used for determining the tile size of structures. Returns ITilePosition containing the width (x) and height (y) of the unit type, in tiles.
-     */
-    Optional<ITilePosition> tileSize();
-
-    /**
-     * Retrieves the distance from the center of the unit type to its left edge. Returns Distance to this unit type's left edge from its center, in pixels.
-     */
-    Optional<Integer> dimensionLeft();
-
-    /**
-     * Retrieves the distance from the center of the unit type to its top edge. Returns Distance to this unit type's top edge from its center, in pixels.
-     */
-    Optional<Integer> dimensionUp();
-
-    /**
-     * Retrieves the distance from the center of the unit type to its right edge. Returns Distance to this unit type's right edge from its center, in pixels.
-     */
-    Optional<Integer> dimensionRight();
-
-    /**
-     * Retrieves the distance from the center of the unit type to its bottom edge. Returns Distance to this unit type's bottom edge from its center, in pixels.
-     */
-    Optional<Integer> dimensionDown();
 
     /**
      * A macro for retrieving the width of the unit type, which is calculated using dimensionLeft + dimensionRight + 1. Returns Width of the unit, in pixels.
@@ -419,20 +393,20 @@ public interface IUnitType {
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
     default Optional<Double> getShootRangeGround() {
-        if (!groundWeapon().isPresent()) {
+        if (!groundWeapon().isPresent() || !groundWeapon().get().maxRange().isPresent()) {
             return Optional.empty();
         }
-        return Optional.of(((double) groundWeapon().get().maxRange()) / SIZE_IN_PIXELS);
+        return Optional.of(((double) groundWeapon().get().maxRange().get()) / SIZE_IN_PIXELS);
     }
 
     /**
      * Returns max shoot range (in build tiles) of this unit against air targets.
      */
     default Optional<Double> getShootRangeAir() {
-        if (!airWeapon().isPresent()) {
+        if (!airWeapon().isPresent() || !airWeapon().get().maxRange().isPresent()) {
             return Optional.empty();
         }
-        return Optional.of(((double) airWeapon().get().maxRange()) / SIZE_IN_PIXELS);
+        return Optional.of(((double) airWeapon().get().maxRange().get()) / SIZE_IN_PIXELS);
     }
 
     /**
@@ -512,8 +486,8 @@ public interface IUnitType {
         return Optional.of((isRepairableMechanically().isPresent() && isRepairableMechanically().get()) || (isHealable().isPresent() && isHealable().get()));
     }
 
-    default boolean hasType(UnitType... unitType) {
-        return Stream.of(unitType).anyMatch(ut -> ut.equals(getUnitType()));
+    default boolean hasType(UnitType... unitTypes) {
+        return Stream.of(unitTypes).anyMatch(unitType -> unitType.equals(getUnitType()));
     }
 
     default boolean isBase() {

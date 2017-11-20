@@ -13,12 +13,12 @@ public enum RaceType {
     private static final java.util.Random RANDOM = new Random();
 
     /**
-     * Get random Race - from Z, T, P
+     * Get random Race - from Z, T, P, R
      *
      * @return
      */
     public static RaceType getRandomRace() {
-        return values()[RANDOM.nextInt(3)];
+        return values()[RANDOM.nextInt(4)];
     }
 
 }

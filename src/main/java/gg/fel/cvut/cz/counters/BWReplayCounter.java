@@ -1,9 +1,11 @@
 package gg.fel.cvut.cz.counters;
 
+import java.io.Serializable;
+
 /**
  * Tracks time in replays for SC:BW
  */
-public class BWReplayCounter extends BWCounter implements IBWReplayCounter {
+public class BWReplayCounter extends BWCounter implements IBWReplayCounter, Serializable {
     private final int gameLength;
 
     public BWReplayCounter(int gameLength) {

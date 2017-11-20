@@ -1,9 +1,10 @@
 package gg.fel.cvut.cz.api;
 
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
 
-public interface IBaseLocation extends IAbstractPoint {
+public interface IBaseLocation extends IAbstractPoint, InGameInterface, Serializable {
 
     Optional<Integer> minerals();
 
@@ -21,7 +22,9 @@ public interface IBaseLocation extends IAbstractPoint {
 
     Optional<Boolean> isIsland();
 
-    Optional<Boolean> isMineralOnly();
+    default Optional<Boolean> isMineralOnly() {
+        return getGeysers().map(Set::isEmpty);
+    }
 
     Optional<Boolean> isStartLocation();
 

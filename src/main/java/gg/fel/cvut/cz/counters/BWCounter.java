@@ -2,11 +2,13 @@ package gg.fel.cvut.cz.counters;
 
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * Tracks time in SC:BW
  */
 @NoArgsConstructor
-public class BWCounter implements IBWCounter {
+public class BWCounter implements IBWCounter, Serializable {
     private int currentFrame = 0;
 
     public synchronized void increaseClocks() {

@@ -1,12 +1,13 @@
 package gg.fel.cvut.cz.api;
 
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
 
 /**
  * IRegion objects are created by Starcraft: Broodwar to contain several tiles with the same properties, and create a node in pathfinding and other algorithms. Regions may not contain detailed information, but have a sufficient amount of data to identify general chokepoints, accessibility to neighboring terrain, be used in general pathing algorithms, and used as nodes to rally units to. Most parameters that are available are explicitly assigned by Broodwar itself. See also IGame::getAllRegions, IGame::getRegionAt, UnitInterface::getRegion
  */
-public interface IRegion extends IAbstractPoint {
+public interface IRegion extends IAbstractPoint, InGameInterface, Serializable {
 
     /**
      * Retrieves the center of the region. This position is used as the node of the region. Returns A IPosition indicating the center location of the IRegion, in pixels.
