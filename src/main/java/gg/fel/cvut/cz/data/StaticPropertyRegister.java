@@ -1,5 +1,10 @@
 package gg.fel.cvut.cz.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -8,18 +13,20 @@ import java.util.Optional;
  *
  * @param <T>
  */
+@Slf4j
 public class StaticPropertyRegister<T extends Serializable> implements IPropertyRegister<T>, Serializable {
     private Property<T> property = null;
     private Integer timeOfCreation = null;
 
-    public synchronized void addProperty(T propertyValue, int inFrame) throws IllegalAccessException {
+    public void addProperty(T propertyValue, int inFrame) {
 
         //changing property
         if (property != null) {
-            throw new IllegalAccessException("Changing property which is suppose to be constant.");
+            log.error("Changing property which is suppose to be constant.");
+        } else {
+            this.timeOfCreation = inFrame;
+            this.property = new Property<>(propertyValue);
         }
-        this.timeOfCreation = inFrame;
-        this.property = new Property<>(propertyValue);
     }
 
     public Optional<T> getLatestValue() {
@@ -39,13 +46,15 @@ public class StaticPropertyRegister<T extends Serializable> implements IProperty
         if (o == null || getClass() != o.getClass()) return false;
 
         StaticPropertyRegister<?> that = (StaticPropertyRegister<?>) o;
-        return property.equals(that.property) && timeOfCreation.equals(that.timeOfCreation);
+
+        return (property != null ? property.equals(that.property) : that.property == null)
+                && (timeOfCreation != null ? timeOfCreation.equals(that.timeOfCreation) : that.timeOfCreation == null);
     }
 
     @Override
     public int hashCode() {
-        int result = property.hashCode();
-        result = 31 * result + timeOfCreation.hashCode();
+        int result = property != null ? property.hashCode() : 0;
+        result = 31 * result + (timeOfCreation != null ? timeOfCreation.hashCode() : 0);
         return result;
     }
 }

@@ -7,8 +7,6 @@ public interface IBWReplayCounter extends IBWCounter {
 
     int lengthOfReplay();
 
-    boolean nextFrame();
-
-    boolean previousFrame();
+    void decreaseClock();
 
 }

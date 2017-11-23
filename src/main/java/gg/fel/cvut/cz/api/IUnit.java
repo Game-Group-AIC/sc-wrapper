@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * The IUnit class is used to get information about individual units as well as issue orders to units. Each unit in the game has a unique IUnit object, and IUnit objects are not deleted until the end of the match (so you don't need to worry about unit pointers becoming invalid). Every IUnit in the game is either accessible or inaccessible. To determine if an AI can access a particular unit, BWAPI checks to see if Flag::CompleteMapInformation is enabled. So there are two cases to consider - either the flag is enabled, or it is disabled: If Flag::CompleteMapInformation is disabled, then a unit is accessible if and only if it is visible. Note Some properties of visible enemy units will not be made available to the AI (such as the contents of visible enemy dropships). If a unit is not visible, UnitInterface::exists will return false, regardless of whether or not the unit exists. This is because absolutely no state information on invisible enemy units is made available to the AI. To determine if an enemy unit has been destroyed, the AI must watch for AIModule::onUnitDestroy messages from BWAPI, which is only called for visible units which get destroyed. If Flag::CompleteMapInformation is enabled, then all units that exist in the game are accessible, and UnitInterface::exists is accurate for all units. Similarly AIModule::onUnitDestroy messages are generated for all units that get destroyed, not just visible ones. If a IUnit is not accessible, then only the getInitial__ functions will be available to the AI. However for units that were owned by the player, getPlayer and getType will continue to work for units that have been destroyed.
+ * The IUnit class is used to get information about individual units as well as issue orders to units. Each unit in the game has a unique IUnit object, and IUnit objects are not deleted until the end of the match (so you don't need to worry about unit pointers becoming invalid). Every IUnit in the game is either accessible or inaccessible. To determine if an AI can readonly a particular unit, BWAPI checks to see if Flag::CompleteMapInformation is enabled. So there are two cases to consider - either the flag is enabled, or it is disabled: If Flag::CompleteMapInformation is disabled, then a unit is accessible if and only if it is visible. Note Some properties of visible enemy units will not be made available to the AI (such as the contents of visible enemy dropships). If a unit is not visible, UnitInterface::exists will return false, regardless of whether or not the unit exists. This is because absolutely no state information on invisible enemy units is made available to the AI. To determine if an enemy unit has been destroyed, the AI must watch for AIModule::onUnitDestroy messages from BWAPI, which is only called for visible units which get destroyed. If Flag::CompleteMapInformation is enabled, then all units that exist in the game are accessible, and UnitInterface::exists is accurate for all units. Similarly AIModule::onUnitDestroy messages are generated for all units that get destroyed, not just visible ones. If a IUnit is not accessible, then only the getInitial__ functions will be available to the AI. However for units that were owned by the player, getPlayer and getType will continue to work for units that have been destroyed.
  */
 public interface IUnit extends InGameInterface, Serializable {
 
@@ -17,7 +17,7 @@ public interface IUnit extends InGameInterface, Serializable {
     Optional<Integer> getID();
 
     /**
-     * Checks if the IUnit exists in the view of the BWAPI player. This is used primarily to check if BWAPI has access to a specific unit, or if the unit is alive. This function is more general and would be synonymous to an isAlive function if such a function were necessary. Return values true If the unit exists on the map and is visible according to BWAPI. false If the unit is not accessible or the unit is dead. In the event that this function returns false, there are two cases to consider: You own the unit. This means the unit is dead. Another player owns the unit. This could either mean that you don't have access to the unit or that the unit has died. You can specifically identify dead units by polling onUnitDestroy. See also isVisible, isCompleted
+     * Checks if the IUnit exists in the view of the BWAPI player. This is used primarily to check if BWAPI has readonly to a specific unit, or if the unit is alive. This function is more general and would be synonymous to an isAlive function if such a function were necessary. Return values true If the unit exists on the map and is visible according to BWAPI. false If the unit is not accessible or the unit is dead. In the event that this function returns false, there are two cases to consider: You own the unit. This means the unit is dead. Another player owns the unit. This could either mean that you don't have readonly to the unit or that the unit has died. You can specifically identify dead units by polling onUnitDestroy. See also isVisible, isCompleted
      */
     Optional<Boolean> exists();
 
@@ -92,17 +92,17 @@ public interface IUnit extends InGameInterface, Serializable {
     Optional<IPlayer> getLastAttackingPlayer();
 
     /**
-     * Retrieves the initial type of the unit. This is the type that the unit starts as in the beginning of the game. This is used to access the types of static neutral units such as mineral fields when they are not visible. Returns IUnitType of this unit as it was when it was created. Return values UnitTypes::Unknown if this unit was not a static neutral unit in the beginning of the game.
+     * Retrieves the initial type of the unit. This is the type that the unit starts as in the beginning of the game. This is used to readonly the types of static neutral units such as mineral fields when they are not visible. Returns IUnitType of this unit as it was when it was created. Return values UnitTypes::Unknown if this unit was not a static neutral unit in the beginning of the game.
      */
     Optional<IUnitType> getInitialType();
 
     /**
-     * Retrieves the initial position of this unit. This is the position that the unit starts at in the beginning of the game. This is used to access the positions of static neutral units such as mineral fields when they are not visible. Returns IPosition indicating the unit's initial position when it was created. Return values Positions::Unknown if this unit was not a static neutral unit in the beginning of the game.
+     * Retrieves the initial position of this unit. This is the position that the unit starts at in the beginning of the game. This is used to readonly the positions of static neutral units such as mineral fields when they are not visible. Returns IPosition indicating the unit's initial position when it was created. Return values Positions::Unknown if this unit was not a static neutral unit in the beginning of the game.
      */
     Optional<IPosition> getInitialPosition();
 
     /**
-     * Retrieves the initial build tile position of this unit. This is the tile position that the unit starts at in the beginning of the game. This is used to access the tile positions of static neutral units such as mineral fields when they are not visible. The build tile position corresponds to the upper left corner of the unit. Returns ITilePosition indicating the unit's initial tile position when it was created. Return values TilePositions::Unknown if this unit was not a static neutral unit in the beginning of the game.
+     * Retrieves the initial build tile position of this unit. This is the tile position that the unit starts at in the beginning of the game. This is used to readonly the tile positions of static neutral units such as mineral fields when they are not visible. The build tile position corresponds to the upper left corner of the unit. Returns ITilePosition indicating the unit's initial tile position when it was created. Return values TilePositions::Unknown if this unit was not a static neutral unit in the beginning of the game.
      */
     Optional<ITilePosition> getInitialTilePosition();
 
@@ -217,7 +217,7 @@ public interface IUnit extends InGameInterface, Serializable {
     Optional<IUnitType> getBuildType();
 
     /**
-     * Retrieves the Set of units queued up to be trained. Returns a IUnitType::set containing all the types that are in this factory's training queue. See also train, cancelTrain, isTraining
+     * Retrieves the Set of units queued up to be trained. Returns a IUnitType::set containing all the types that are in this factories's training queue. See also train, cancelTrain, isTraining
      */
     Optional<Set<IUnitType>> getTrainingQueue();
 

@@ -1,6 +1,7 @@
 package gg.fel.cvut.cz.data;
 
 import com.google.common.collect.Iterables;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,15 +13,18 @@ import java.util.Optional;
  *
  * @param <T>
  */
+@Slf4j
 public class DynamicPropertyRegister<T extends Serializable> implements IPropertyRegister<T>, Serializable {
+
+    //TODO replace by class with time. Make second transient - init it on access only
     private final List<Property<T>> propertyTimeline = new ArrayList<>();
     private final List<Integer> timelineWithReferenceToProperty = new ArrayList<>();
 
-    public synchronized void addProperty(T propertyValue, int inFrame) throws IllegalAccessException {
+    public void addProperty(T propertyValue, int inFrame) {
 
         //altering timeline
         if (timelineWithReferenceToProperty.size() > inFrame) {
-            throw new IllegalAccessException("The timeline can not be altered.");
+            log.error("The timeline can not be altered.");
         }
         //extending timeline
         else {

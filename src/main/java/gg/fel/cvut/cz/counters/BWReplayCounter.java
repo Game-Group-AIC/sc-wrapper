@@ -18,20 +18,8 @@ public class BWReplayCounter extends BWCounter implements IBWReplayCounter, Seri
     }
 
     @Override
-    public synchronized boolean nextFrame() {
-        if (getCurrentFrame() + 1 <= gameLength) {
-            increaseClocks();
-            return true;
-        }
-        return false;
+    public void decreaseClock() {
+        decrease();
     }
 
-    @Override
-    public synchronized boolean previousFrame() {
-        if (getCurrentFrame() == 0) {
-            return false;
-        }
-        decreaseClock();
-        return true;
-    }
 }

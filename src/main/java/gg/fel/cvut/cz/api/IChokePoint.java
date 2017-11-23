@@ -5,9 +5,9 @@ import java.util.Optional;
 
 public interface IChokePoint extends IAbstractPoint, InGameInterface, Serializable {
 
-    Optional<Pair<IRegion, IRegion>> getRegions();
+    Optional<Tuple<IRegion, IRegion>> getRegions();
 
-    Optional<Pair<IPosition, IPosition>> getSides();
+    Optional<Tuple<IPosition, IPosition>> getSides();
 
     default Optional<IPosition> getCenter() {
         return getPosition();

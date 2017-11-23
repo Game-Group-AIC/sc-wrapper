@@ -1,4 +1,4 @@
-package gg.fel.cvut.cz.data.access;
+package gg.fel.cvut.cz.data.readonly;
 
 import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.*;
@@ -7,15 +7,14 @@ import gg.fel.cvut.cz.data.DynamicPropertyRegister;
 import gg.fel.cvut.cz.data.StaticPropertyRegister;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 public class Region extends AContainer implements IRegion, Serializable {
-    protected final DynamicPropertyRegister<HashSet<IUnit>> units = new DynamicPropertyRegister<>();
-    protected final StaticPropertyRegister<HashSet<IChokePoint>> chokePoints = new StaticPropertyRegister<>();
-    protected final StaticPropertyRegister<HashSet<IBaseLocation>> baseLocations = new StaticPropertyRegister<>();
-    protected final StaticPropertyRegister<HashSet<IRegion>> reachableRegions = new StaticPropertyRegister<>();
+    protected final DynamicPropertyRegister<ImmutableSet<IUnit>> units = new DynamicPropertyRegister<>();
+    protected final StaticPropertyRegister<ImmutableSet<IChokePoint>> chokePoints = new StaticPropertyRegister<>();
+    protected final StaticPropertyRegister<ImmutableSet<IBaseLocation>> baseLocations = new StaticPropertyRegister<>();
+    protected final StaticPropertyRegister<ImmutableSet<IRegion>> reachableRegions = new StaticPropertyRegister<>();
     protected final StaticPropertyRegister<IPosition> position = new StaticPropertyRegister<>();
     private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(position);
 

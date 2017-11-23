@@ -1,5 +1,8 @@
 package gg.fel.cvut.cz.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gg.fel.cvut.cz.data.readonly.TilePosition;
+
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
@@ -9,9 +12,11 @@ import java.util.Set;
  * These are called build tiles because buildability data is available at this resolution, and correspond to the tiles seen in game.
  * For example, a Command Center occupies an area of 4x3 build tiles.
  */
+@JsonDeserialize(as = TilePosition.class)
 public interface ITilePosition extends IAbstractPoint, InGameInterface, Serializable {
     int SIZE_IN_PIXELS = 32;
 
+    //TODO distance computation - use in other classes as well
     //TODO neighbouring tiles - to add other related methods - can be player dependant
     //TODO is accessible
     //TODO find path using A* with air distance heuristic? - it could be cool to plan various paths (e.g. one maximizing enemy avoidance, one considering walls,...)

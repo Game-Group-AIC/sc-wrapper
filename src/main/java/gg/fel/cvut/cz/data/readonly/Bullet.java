@@ -1,5 +1,6 @@
-package gg.fel.cvut.cz.data.access;
+package gg.fel.cvut.cz.data.readonly;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IBullet;
 import gg.fel.cvut.cz.api.IPlayer;
@@ -11,7 +12,6 @@ import gg.fel.cvut.cz.data.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.BulletType;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,7 +28,7 @@ public class Bullet extends AContainer implements IBullet, Serializable {
     protected final DynamicPropertyRegister<IUnit> target = new DynamicPropertyRegister<>();
     protected final DynamicPropertyRegister<IPosition> targetPosition = new DynamicPropertyRegister<>();
     protected final DynamicPropertyRegister<Integer> removeTimer = new DynamicPropertyRegister<>();
-    protected final DynamicPropertyRegister<HashMap<IPlayer, Boolean>> isVisible = new DynamicPropertyRegister<>();
+    protected final DynamicPropertyRegister<ImmutableMap<IPlayer, Boolean>> isVisible = new DynamicPropertyRegister<>();
     private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(id);
 
     @Override

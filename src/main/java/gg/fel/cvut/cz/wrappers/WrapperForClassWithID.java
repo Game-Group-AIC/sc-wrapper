@@ -26,7 +26,7 @@ class WrapperForClassWithID<T> extends Wrapper<T> {
     }
 
     /**
-     * Hack - for types there are static instances - to use some meaningful ID for wrappers of those instances, their order
+     * Hack - for types there are static readonly - to use some meaningful ID for wrappers of those readonly, their order
      * in list is used
      *
      * @return

@@ -1,4 +1,4 @@
-package gg.fel.cvut.cz.data.access;
+package gg.fel.cvut.cz.data.readonly;
 
 import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IPosition;
@@ -9,15 +9,14 @@ import gg.fel.cvut.cz.data.DynamicPropertyRegister;
 import gg.fel.cvut.cz.data.StaticPropertyRegister;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 public class TilePosition extends AContainer implements ITilePosition, Serializable {
-    protected final DynamicPropertyRegister<HashSet<IUnit>> units = new DynamicPropertyRegister<>();
+    protected final DynamicPropertyRegister<ImmutableSet<IUnit>> units = new DynamicPropertyRegister<>();
     protected final StaticPropertyRegister<IPosition> position = new StaticPropertyRegister<>();
     protected final StaticPropertyRegister<Integer> groundHeight = new StaticPropertyRegister<>();
-    private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(position);
+    private transient final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(position);
 
     @Override
     public Optional<Integer> getGroundHeight() {

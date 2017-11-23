@@ -13,7 +13,7 @@ public enum RaceType {
     private static final java.util.Random RANDOM = new Random();
 
     /**
-     * Get random Race - from Z, T, P, R
+     * Get random UpdatableRace - from Z, T, P, R
      *
      * @return
      */

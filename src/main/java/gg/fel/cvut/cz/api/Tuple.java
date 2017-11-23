@@ -6,11 +6,11 @@ import java.io.Serializable;
 import java.util.Optional;
 
 @EqualsAndHashCode(of = {"first", "second"})
-public class Pair<K extends Serializable, V extends Serializable> implements Serializable {
+public class Tuple<K extends Serializable, V extends Serializable> implements Serializable {
     private final K first;
     private final V second;
 
-    public Pair(K first, V second) {
+    public Tuple(K first, V second) {
         this.first = first;
         this.second = second;
     }

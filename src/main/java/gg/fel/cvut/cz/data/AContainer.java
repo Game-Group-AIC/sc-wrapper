@@ -1,19 +1,23 @@
 package gg.fel.cvut.cz.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.InGameInterface;
 import gg.fel.cvut.cz.counters.BWCounter;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Common template class for containers of in-game instances
+ * Common template class for containers of in-game readonly
  */
-public abstract class AContainer implements InGameInterface, IContainer {
+public abstract class AContainer implements InGameInterface, IContainer, Serializable {
     private transient BWCounter bwCounter = null;
+    @JsonIgnore
+    protected transient final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
     public void setBwCounter(BWCounter bwCounter) {
         this.bwCounter = bwCounter;
@@ -27,10 +31,15 @@ public abstract class AContainer implements InGameInterface, IContainer {
      * @return
      */
     protected <T extends Serializable> Optional<T> getPropertyOnTimeLineStrategy(IPropertyRegister<T> register) {
-        if (bwCounter == null) {
-            return register.getLatestValue();
+        try {
+            lock.readLock().lock();
+            if (bwCounter == null) {
+                return register.getLatestValue();
+            }
+            return register.getValueInFrame(bwCounter.getCurrentFrame());
+        } finally {
+            lock.readLock().unlock();
         }
-        return register.getValueInFrame(bwCounter.getCurrentFrame());
     }
 
     /**
@@ -40,11 +49,16 @@ public abstract class AContainer implements InGameInterface, IContainer {
      * @param <V>
      * @return
      */
-    protected <V extends Serializable> Optional<Set<V>> getPropertyOnTimeLineStrategyOnSet(IPropertyRegister<HashSet<V>> register) {
-        if (bwCounter == null) {
-            return register.getLatestValue().map(vs -> vs);
+    protected <V extends Serializable> Optional<Set<V>> getPropertyOnTimeLineStrategyOnSet(IPropertyRegister<ImmutableSet<V>> register) {
+        try {
+            lock.readLock().lock();
+            if (bwCounter == null) {
+                return register.getLatestValue().map(vs -> vs);
+            }
+            return register.getValueInFrame(bwCounter.getCurrentFrame()).map(vs -> vs);
+        } finally {
+            lock.readLock().unlock();
         }
-        return register.getValueInFrame(bwCounter.getCurrentFrame()).map(vs -> vs);
     }
 
     /**
@@ -57,11 +71,25 @@ public abstract class AContainer implements InGameInterface, IContainer {
      * @param <T>
      * @return
      */
-    protected <V extends Serializable, K extends Serializable, T extends HashMap<V, K> & Serializable> Optional<K> getPropertyOnTimeLineStrategy(IPropertyRegister<T> register, V key) {
-        if (bwCounter == null) {
-            return register.getLatestValue().map(t -> t.get(key));
+    protected <V extends Serializable, K extends Serializable, T extends ImmutableMap<V, K> & Serializable> Optional<K> getPropertyOnTimeLineStrategy(IPropertyRegister<T> register, V key) {
+        try {
+            lock.readLock().lock();
+            if (bwCounter == null) {
+                return register.getLatestValue().map(t -> t.get(key));
+            }
+            return register.getValueInFrame(bwCounter.getCurrentFrame()).map(t -> t.get(key));
+        } finally {
+            lock.readLock().unlock();
         }
-        return register.getValueInFrame(bwCounter.getCurrentFrame()).map(t -> t.get(key));
+    }
+
+    private Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCodeWithLock() {
+        try {
+            lock.readLock().lock();
+            return staticPropertiesForEqualsAndHashCode();
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -75,11 +103,11 @@ public abstract class AContainer implements InGameInterface, IContainer {
         if (o == null || getClass() != o.getClass()) return false;
 
         AContainer that = (AContainer) o;
-        return staticPropertiesForEqualsAndHashCode().equals(that.staticPropertiesForEqualsAndHashCode());
+        return staticPropertiesForEqualsAndHashCodeWithLock().equals(that.staticPropertiesForEqualsAndHashCodeWithLock());
     }
 
     @Override
     public int hashCode() {
-        return staticPropertiesForEqualsAndHashCode().hashCode();
+        return staticPropertiesForEqualsAndHashCodeWithLock().hashCode();
     }
 }

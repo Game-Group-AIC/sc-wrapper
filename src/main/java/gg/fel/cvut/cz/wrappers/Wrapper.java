@@ -1,5 +1,6 @@
 package gg.fel.cvut.cz.wrappers;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,6 +9,7 @@ import lombok.Getter;
  *
  * @param <T>
  */
+@JsonIgnoreType
 @AllArgsConstructor
 public abstract class Wrapper<T> {
     @Getter

@@ -1,4 +1,4 @@
-package gg.fel.cvut.cz.data.access;
+package gg.fel.cvut.cz.data.readonly;
 
 import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IPosition;
@@ -16,7 +16,7 @@ public class Position extends AContainer implements IPosition, Serializable {
     protected final StaticPropertyRegister<Integer> x = new StaticPropertyRegister<>();
     protected final StaticPropertyRegister<Integer> y = new StaticPropertyRegister<>();
     protected final StaticPropertyRegister<IRegion> region = new StaticPropertyRegister<>();
-    private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(x, y);
+    private transient final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(x, y);
 
     @Override
     public Optional<Integer> getX() {

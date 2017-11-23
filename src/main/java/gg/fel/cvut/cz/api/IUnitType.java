@@ -27,7 +27,7 @@ public interface IUnitType extends InGameInterface, Serializable {
     /**
      * Obtains the source unit type that is used to build or train this unit type, as well as the amount of them that are required. Returns std::pair in which the first value is the IUnitType that builds this unit type, and the second value is the number of those types that are required (this value is 2 for Archons, and 1 for all other types). Return values pair(UnitTypes::None,0) If this unit type cannot be made by the player.
      */
-    Optional<Pair<IUnitType, Integer>> whatBuilds();
+    Optional<Tuple<IUnitType, Integer>> whatBuilds();
 
     /**
      * Retrieves the immediate technology tree requirements to make this unit type. Returns std::map containing a IUnitType to number mapping of UnitTypes required.
@@ -370,7 +370,7 @@ public interface IUnitType extends InGameInterface, Serializable {
     Optional<Boolean> isMineralField();
 
     /**
-     * Checks if this unit type is a neutral critter. Returns true if this unit type is a critter, and false otherwise. Example usage: BWAPI::Position myBasePosition( BWAPI::Broodwar->self()->getStartLocation() ); BWAPI::UnitSet unitsAroundTheBase = BWAPI::Broodwar->getUnitsInRadius(myBasePosition, 1024, !BWAPI::Filter::IsOwned && !BWAPI::Filter::IsParasited); for ( auto u : unitsAroundTheBase ) { if ( u->getType().isCritter() && !u->isInvincible() ) { BWAPI::IUnit myQueen = u->getClosestUnit(BWAPI::Filter::GetType == BWAPI::UnitTypes::Zerg_Queen && BWAPI::Filter::IsOwned); if ( myQueen ) myQueen->useTech(BWAPI::TechTypes::Parasite, u); } }
+     * Checks if this unit type is a neutral critter. Returns true if this unit type is a critter, and false otherwise. Example usage: BWAPI::UpdatablePosition myBasePosition( BWAPI::Broodwar->self()->getStartLocation() ); BWAPI::UnitSet unitsAroundTheBase = BWAPI::Broodwar->getUnitsInRadius(myBasePosition, 1024, !BWAPI::Filter::IsOwned && !BWAPI::Filter::IsParasited); for ( auto u : unitsAroundTheBase ) { if ( u->getType().isCritter() && !u->isInvincible() ) { BWAPI::IUnit myQueen = u->getClosestUnit(BWAPI::Filter::GetType == BWAPI::UnitTypes::Zerg_Queen && BWAPI::Filter::IsOwned); if ( myQueen ) myQueen->useTech(BWAPI::TechTypes::Parasite, u); } }
      */
     Optional<Boolean> isCritter();
 

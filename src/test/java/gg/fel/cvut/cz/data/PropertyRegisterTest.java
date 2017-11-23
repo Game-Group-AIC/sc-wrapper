@@ -2,7 +2,8 @@ package gg.fel.cvut.cz.data;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PropertyRegisterTest {
 
@@ -11,26 +12,13 @@ public class PropertyRegisterTest {
         String value = "Hello";
         DynamicPropertyRegister<String> dynamicPropertyRegister = new DynamicPropertyRegister<>();
         assertTrue(!dynamicPropertyRegister.getLatestValue().isPresent());
-        try {
-            dynamicPropertyRegister.addProperty(value, 10);
-        } catch (Exception e) {
-            fail("Should not have thrown any exception");
-        }
+        dynamicPropertyRegister.addProperty(value, 10);
         assertTrue(dynamicPropertyRegister.getLatestValue().isPresent());
         assertTrue(!dynamicPropertyRegister.getValueInFrame(9).isPresent());
         assertTrue(dynamicPropertyRegister.getValueInFrame(10).isPresent());
-        try {
-            dynamicPropertyRegister.addProperty(value, 12);
-        } catch (Exception e) {
-            fail("Should not have thrown any exception");
-        }
+        dynamicPropertyRegister.addProperty(value, 12);
         assertTrue(dynamicPropertyRegister.getValueInFrame(12).isPresent());
         assertEquals(dynamicPropertyRegister.getValueInFrame(12).get(), value);
-        try {
-            dynamicPropertyRegister.addProperty(value, 10);
-            fail("Should have thrown any exception");
-        } catch (Exception ignored) {
-        }
         assertTrue(dynamicPropertyRegister.getValueInFrame(14).isPresent());
         assertEquals(dynamicPropertyRegister.getValueInFrame(14).get(), value);
     }
