@@ -1,5 +1,6 @@
 package gg.fel.cvut.cz.data;
 
+import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

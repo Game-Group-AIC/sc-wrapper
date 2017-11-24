@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.enums;
 
-public enum UpgradeType {
+public enum UpgradeType implements IGameTypes {
     Terran_Infantry_Armor,
     Terran_Vehicle_Plating,
     Terran_Ship_Plating,

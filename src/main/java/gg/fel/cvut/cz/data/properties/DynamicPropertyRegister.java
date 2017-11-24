@@ -1,6 +1,7 @@
-package gg.fel.cvut.cz.data;
+package gg.fel.cvut.cz.data.properties;
 
 import com.google.common.collect.Iterables;
+import gg.fel.cvut.cz.data.IPropertyRegister;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;

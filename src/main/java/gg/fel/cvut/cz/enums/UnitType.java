@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.enums;
 
-public enum UnitType {
+public enum UnitType implements IGameTypes {
     Terran_Firebat,
     Terran_Ghost,
     Terran_Goliath,

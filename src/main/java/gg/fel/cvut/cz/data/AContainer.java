@@ -1,10 +1,11 @@
 package gg.fel.cvut.cz.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.InGameInterface;
 import gg.fel.cvut.cz.counters.BWCounter;
+import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
+import gg.fel.cvut.cz.facades.UpdateStrategy;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -16,12 +17,21 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public abstract class AContainer implements InGameInterface, IContainer, Serializable {
     private transient BWCounter bwCounter = null;
-    @JsonIgnore
     protected transient final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
     public void setBwCounter(BWCounter bwCounter) {
         this.bwCounter = bwCounter;
     }
+
+    /**
+     * Returns whether instance should be updated based on parameters
+     *
+     * @param updateStrategy
+     * @param deltaUpdate
+     * @param depth
+     * @return
+     */
+    public abstract boolean shouldBeUpdated(UpdateStrategy updateStrategy, int deltaUpdate, int depth);
 
     /**
      * Strategy to select property on timeline given the counter

@@ -1,8 +1,6 @@
-package gg.fel.cvut.cz.data;
+package gg.fel.cvut.cz.data.properties;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import lombok.Getter;
+import gg.fel.cvut.cz.data.IPropertyRegister;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;

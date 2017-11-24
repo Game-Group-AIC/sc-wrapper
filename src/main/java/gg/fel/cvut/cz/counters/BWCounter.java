@@ -1,6 +1,5 @@
 package gg.fel.cvut.cz.counters;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -9,11 +8,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Tracks time in SC:BW
  */
-@JsonIgnoreProperties({"lock"})
 @NoArgsConstructor
 public class BWCounter implements IBWCounter, Serializable {
-    int currentFrame = 0;
-    transient final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
+    private int currentFrame = 0;
+    private transient final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
     public void increaseClocks() {
         try {

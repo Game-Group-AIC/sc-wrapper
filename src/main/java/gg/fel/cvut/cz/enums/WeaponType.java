@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.enums;
 
-public enum WeaponType {
+public enum WeaponType implements IGameTypes {
     Gauss_Rifle,
     Gauss_Rifle_Jim_Raynor,
     C_10_Canister_Rifle,

@@ -5,8 +5,9 @@ import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.ITilePosition;
 import gg.fel.cvut.cz.api.IUnit;
 import gg.fel.cvut.cz.data.AContainer;
-import gg.fel.cvut.cz.data.DynamicPropertyRegister;
-import gg.fel.cvut.cz.data.StaticPropertyRegister;
+import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
+import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
+import gg.fel.cvut.cz.facades.UpdateStrategy;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -16,7 +17,7 @@ public class TilePosition extends AContainer implements ITilePosition, Serializa
     protected final DynamicPropertyRegister<ImmutableSet<IUnit>> units = new DynamicPropertyRegister<>();
     protected final StaticPropertyRegister<IPosition> position = new StaticPropertyRegister<>();
     protected final StaticPropertyRegister<Integer> groundHeight = new StaticPropertyRegister<>();
-    private transient final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(position);
+    private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(position);
 
     @Override
     public Optional<Integer> getGroundHeight() {
@@ -31,6 +32,11 @@ public class TilePosition extends AContainer implements ITilePosition, Serializa
     @Override
     public Optional<IPosition> getPosition() {
         return getPropertyOnTimeLineStrategy(position);
+    }
+
+    @Override
+    public boolean shouldBeUpdated(UpdateStrategy updateStrategy, int deltaUpdate, int depth) {
+        return updateStrategy.shouldBeUpdated(this, deltaUpdate, depth);
     }
 
     @Override

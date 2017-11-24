@@ -2,7 +2,6 @@ package gg.fel.cvut.cz.api;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gg.fel.cvut.cz.data.readonly.Position;
-import gg.fel.cvut.cz.data.updatable.UpdatablePosition;
 
 import java.io.Serializable;
 import java.util.Optional;

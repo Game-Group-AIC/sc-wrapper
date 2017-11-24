@@ -3,7 +3,7 @@ package gg.fel.cvut.cz.enums;
 /**
  * A representation of a unit command in BWAPI. This is used by bots to notify BWAPI which commands to use. BWAPI filters commands accordingly and then converts them to Broodwar commands, which differ in complexity. See also UnitCommandTypes
  */
-public enum UnitCommandType {
+public enum UnitCommandType implements IGameTypes {
     Attack_Move,
     Attack_Unit,
     Build,

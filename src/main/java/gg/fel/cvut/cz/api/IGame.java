@@ -9,6 +9,7 @@ import java.util.Set;
 /**
  * The abstract IGame class is implemented by BWAPI and is the primary means of obtaining all game state information from Starcraft Broodwar. IGame state information includes all units, resources, players, forces, bullets, terrain, fog of war, regions, etc.
  */
+//TODO move map related stuff to MAP?
 public interface IGame extends InGameInterface, Serializable {
 
     Optional<Set<IRegion>> getRegions();

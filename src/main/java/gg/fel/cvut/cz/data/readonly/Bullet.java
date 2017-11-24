@@ -7,9 +7,10 @@ import gg.fel.cvut.cz.api.IPlayer;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IUnit;
 import gg.fel.cvut.cz.data.AContainer;
-import gg.fel.cvut.cz.data.DynamicPropertyRegister;
-import gg.fel.cvut.cz.data.StaticPropertyRegister;
+import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
+import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.BulletType;
+import gg.fel.cvut.cz.facades.UpdateStrategy;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -94,6 +95,11 @@ public class Bullet extends AContainer implements IBullet, Serializable {
     @Override
     public Optional<Boolean> isVisible(IPlayer player) {
         return getPropertyOnTimeLineStrategy(isVisible, player);
+    }
+
+    @Override
+    public boolean shouldBeUpdated(UpdateStrategy updateStrategy, int deltaUpdate, int depth) {
+        return updateStrategy.shouldBeUpdated(this, deltaUpdate, depth);
     }
 
     @Override

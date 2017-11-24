@@ -217,7 +217,7 @@ public interface IUnit extends InGameInterface, Serializable {
     Optional<IUnitType> getBuildType();
 
     /**
-     * Retrieves the Set of units queued up to be trained. Returns a IUnitType::set containing all the types that are in this factories's training queue. See also train, cancelTrain, isTraining
+     * Retrieves the Set of units queued up to be trained. Returns a IUnitType::set containing all the types that are in this facades's training queue. See also train, cancelTrain, isTraining
      */
     Optional<Set<IUnitType>> getTrainingQueue();
 

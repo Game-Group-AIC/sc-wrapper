@@ -3,7 +3,7 @@ package gg.fel.cvut.cz.enums;
 /**
  * An Order (Order type) represents a IUnit's current action and can be retrieved with UnitInterface::getOrder. It can also be used to identify the current state of the unit during command execution (gathering minerals can consist of Orders::MoveToMinerals, Orders::WaitForMinerals, Orders::MiningMinerals, etc.). See also UnitInterface::getOrder, Orders
  */
-public enum Order {
+public enum Order implements IGameTypes {
     Die,
     Stop,
     Guard,

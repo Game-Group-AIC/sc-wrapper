@@ -3,8 +3,9 @@ package gg.fel.cvut.cz.data.readonly;
 import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.*;
 import gg.fel.cvut.cz.data.AContainer;
-import gg.fel.cvut.cz.data.DynamicPropertyRegister;
-import gg.fel.cvut.cz.data.StaticPropertyRegister;
+import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
+import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
+import gg.fel.cvut.cz.facades.UpdateStrategy;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -41,6 +42,11 @@ public class Region extends AContainer implements IRegion, Serializable {
     @Override
     public Optional<Set<IRegion>> getReachableRegions() {
         return getPropertyOnTimeLineStrategyOnSet(reachableRegions);
+    }
+
+    @Override
+    public boolean shouldBeUpdated(UpdateStrategy updateStrategy, int deltaUpdate, int depth) {
+        return updateStrategy.shouldBeUpdated(this, deltaUpdate, depth);
     }
 
     @Override
