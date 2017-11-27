@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.UpgradeType;
+import gg.fel.cvut.cz.enums.EUpgradeType;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -10,7 +10,7 @@ import java.util.Optional;
  */
 public interface IUpgradeType extends InGameInterface, Serializable {
 
-    UpgradeType getUpgradeType();
+    EUpgradeType getUpgradeType();
 
     /**
      * Retrieves the race the upgrade is for. For example, UpgradeTypes::Terran_Infantry_Armor.getRace() will return Races::Terran. Returns IRace that this upgrade belongs to.

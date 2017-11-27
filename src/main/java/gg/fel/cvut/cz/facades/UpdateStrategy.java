@@ -11,12 +11,12 @@ import lombok.Builder;
 @AllArgsConstructor
 public class UpdateStrategy {
     //TODO rest of the classes
-    private IUpdateContainerStrategy<Bullet> bulletUpdateContainerStrategy;
-    private IUpdateContainerStrategy<BaseLocation> baseLocationUpdateContainerStrategy;
-    private IUpdateContainerStrategy<ChokePoint> chokePointUpdateContainerStrategy;
-    private IUpdateContainerStrategy<Position> positionUpdateContainerStrategy;
-    private IUpdateContainerStrategy<Region> regionUpdateContainerStrategy;
-    private IUpdateContainerStrategy<TilePosition> tilePositionUpdateContainerStrategy;
+    private final IUpdateContainerStrategy<Bullet> bulletUpdateContainerStrategy;
+    private final IUpdateContainerStrategy<BaseLocation> baseLocationUpdateContainerStrategy;
+    private final IUpdateContainerStrategy<ChokePoint> chokePointUpdateContainerStrategy;
+    private final IUpdateContainerStrategy<Position> positionUpdateContainerStrategy;
+    private final IUpdateContainerStrategy<Region> regionUpdateContainerStrategy;
+    private final IUpdateContainerStrategy<TilePosition> tilePositionUpdateContainerStrategy;
 
     public boolean shouldBeUpdated(Bullet bullet, int deltaUpdate, int depth) {
         return bulletUpdateContainerStrategy.shouldBeUpdated(bullet, deltaUpdate, depth);

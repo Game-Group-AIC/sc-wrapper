@@ -3,6 +3,7 @@ package gg.fel.cvut.cz.facades;
 import gg.fel.cvut.cz.data.AContainer;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Interface to be implemented by each wrapping factory
@@ -13,15 +14,15 @@ import java.util.Optional;
 public interface IUpdater<T, L extends AContainer> {
 
     /**
-     * Returns container corresponding to this instance
+     * Returns container corresponding to this instance. If instance container is not present, new one is created
      *
-     * @param instanceToWrap
+     * @param wrappedInstance
      * @return
      */
-    Optional<L> getWrappedInstance(T instanceToWrap);
+    Optional<L> getWrappedInstance(T wrappedInstance);
 
     /**
-     * Return BW instance for given container
+     * Return BW instance for given container. If container is not present, empty optional is returned
      *
      * @param container
      * @return
@@ -29,10 +30,20 @@ public interface IUpdater<T, L extends AContainer> {
     Optional<T> getBWInstance(L container);
 
     /**
-     * Method to update given container
+     * Method to update given container and to return dependent containers
      *
      * @param containerToUpdate
      */
-    void update(L containerToUpdate);
+    Stream<? extends AContainer> update(L containerToUpdate, int currentFrame);
+
+    /**
+     * Returns delta of current time and last updated. If object has not been updated yet max integer is returned.
+     * For object updated after current frame, zero is returned.
+     *
+     * @param containerToUpdate
+     * @param currentFrame
+     * @return
+     */
+    int getDeltaUpdate(L containerToUpdate, int currentFrame);
 
 }

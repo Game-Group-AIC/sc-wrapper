@@ -2,10 +2,8 @@ package gg.fel.cvut.cz.data;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import gg.fel.cvut.cz.api.InGameInterface;
 import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
-import gg.fel.cvut.cz.facades.UpdateStrategy;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -15,23 +13,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Common template class for containers of in-game readonly
  */
-public abstract class AContainer implements InGameInterface, IContainer, Serializable {
+public abstract class AContainer implements IContainer {
     private transient BWCounter bwCounter = null;
     protected transient final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
     public void setBwCounter(BWCounter bwCounter) {
         this.bwCounter = bwCounter;
     }
-
-    /**
-     * Returns whether instance should be updated based on parameters
-     *
-     * @param updateStrategy
-     * @param deltaUpdate
-     * @param depth
-     * @return
-     */
-    public abstract boolean shouldBeUpdated(UpdateStrategy updateStrategy, int deltaUpdate, int depth);
 
     /**
      * Strategy to select property on timeline given the counter

@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.Order;
+import gg.fel.cvut.cz.enums.EOrder;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -267,14 +267,14 @@ public interface IUnit extends InGameInterface, Serializable {
     Optional<IPosition> getTargetPosition();
 
     /**
-     * Retrieves the primary Order that the unit is assigned. Primary orders are distinct actions such as Orders::AttackUnit and Orders::PlayerGuard. Returns The primary Order that the unit is executing.
+     * Retrieves the primary EOrder that the unit is assigned. Primary orders are distinct actions such as Orders::AttackUnit and Orders::PlayerGuard. Returns The primary EOrder that the unit is executing.
      */
-    Optional<Order> getOrder();
+    Optional<EOrder> getOrder();
 
     /**
-     * Retrieves the secondary Order that the unit is assigned. Secondary orders are run in the background as a sub-order. An example would be Orders::TrainFighter, because a Carrier can move and train fighters at the same time. Returns The secondary Order that the unit is executing.
+     * Retrieves the secondary EOrder that the unit is assigned. Secondary orders are run in the background as a sub-order. An example would be Orders::TrainFighter, because a Carrier can move and train fighters at the same time. Returns The secondary EOrder that the unit is executing.
      */
-    Optional<Order> getSecondaryOrder();
+    Optional<EOrder> getSecondaryOrder();
 
     /**
      * Retrieves the unit's primary order target. This is usually set when the low level unit AI acquires a new target automatically. For example if an enemy Probe comes in range of your Marine, the Marine will start attacking it, and getOrderTarget will be set in this case, but not getTarget. Returns The IUnit that this unit is currently targetting. See also getTarget, getOrder
@@ -467,7 +467,7 @@ public interface IUnit extends InGameInterface, Serializable {
     Optional<Boolean> isHoldingPosition();
 
     /**
-     * Checks if this unit is running an idle order. This function is particularly useful when checking for units that aren't doing any tasks that you assigned. A unit is considered idle if it is not doing any of the following: Training Constructing Morphing Researching Upgrading In addition to running one of the following orders: Orders::PlayerGuard: IPlayer unit idle. Orders::Guard: Generic unit idle. Orders::Stop Orders::PickupIdle Orders::Nothing: Structure/generic idle. Orders::Medic: Medic idle. Orders::Carrier: Carrier idle. Orders::Reaver: Reaver idle. Orders::Critter: Critter idle. Orders::Neutral: Neutral unit idle. Orders::TowerGuard: Turret structure idle. Orders::Burrowed: Burrowed unit idle. Orders::NukeTrain Orders::Larva: Larva idle. BWAPI::Unitset myUnits = BWAPI::Broodwar->self()->getUnits(); for ( auto u = myUnits.begin(); u != myUnits.end(); ++u ) { // Order idle worker to gather from closest mineral field if ( u->getType().isWorker() && u->isIdle() ) u->gather( u->getClosestUnit( BWAPI::Filter::IsMineralField ) ); } Returns true if this unit is idle, and false if this unit is performing any action, such as moving or attacking Note If this function returns a successful state, then the following function calls will also return a successful state: isCompleted See also UnitInterface::stop
+     * Checks if this unit is running an idle order. This function is particularly useful when checking for units that aren't doing any tasks that you assigned. A unit is considered idle if it is not doing any of the following: Training Constructing Morphing Researching Upgrading In addition to running one of the following orders: Orders::PlayerGuard: IPlayer unit idle. Orders::Guard: Generic unit idle. Orders::Stop Orders::PickupIdle Orders::Nothing: Structure/generic idle. Orders::Medic: Medic idle. Orders::Carrier: Carrier idle. Orders::Reaver: Reaver idle. Orders::Critter: Critter idle. Orders::Neutral: Neutral unit idle. Orders::TowerGuard: Turret structure idle. Orders::Burrowed: Burrowed unit idle. Orders::NukeTrain Orders::Larva: Larva idle. BWAPI::Unitset myUnits = BWAPI::Broodwar->self()->getUnits(); for ( auto u = myUnits.begin(); u != myUnits.end(); ++u ) { // EOrder idle worker to gather from closest mineral field if ( u->getType().isWorker() && u->isIdle() ) u->gather( u->getClosestUnit( BWAPI::Filter::IsMineralField ) ); } Returns true if this unit is idle, and false if this unit is performing any action, such as moving or attacking Note If this function returns a successful state, then the following function calls will also return a successful state: isCompleted See also UnitInterface::stop
      */
     Optional<Boolean> isIdle();
 

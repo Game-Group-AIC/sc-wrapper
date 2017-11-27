@@ -7,7 +7,6 @@ import gg.fel.cvut.cz.api.IRegion;
 import gg.fel.cvut.cz.api.Tuple;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
-import gg.fel.cvut.cz.facades.UpdateStrategy;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -40,10 +39,6 @@ public class ChokePoint extends AContainer implements IChokePoint, Serializable 
         return getPropertyOnTimeLineStrategy(position);
     }
 
-    @Override
-    public boolean shouldBeUpdated(UpdateStrategy updateStrategy, int deltaUpdate, int depth) {
-        return updateStrategy.shouldBeUpdated(this, deltaUpdate, depth);
-    }
 
     @Override
     protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {

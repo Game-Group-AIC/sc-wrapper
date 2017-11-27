@@ -1,8 +1,8 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.UnitSizeType;
-import gg.fel.cvut.cz.enums.UnitType;
-import gg.fel.cvut.cz.enums.WeaponType;
+import gg.fel.cvut.cz.enums.EUnitSizeType;
+import gg.fel.cvut.cz.enums.EUnitType;
+import gg.fel.cvut.cz.enums.EWeaponType;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -22,7 +22,7 @@ public interface IUnitType extends InGameInterface, Serializable {
      */
     IRace getRace();
 
-    UnitType getUnitType();
+    EUnitType getUnitType();
 
     /**
      * Obtains the source unit type that is used to build or train this unit type, as well as the amount of them that are required. Returns std::pair in which the first value is the IUnitType that builds this unit type, and the second value is the number of those types that are required (this value is 2 for Archons, and 1 for all other types). Return values pair(UnitTypes::None,0) If this unit type cannot be made by the player.
@@ -125,9 +125,9 @@ public interface IUnitType extends InGameInterface, Serializable {
     Optional<Integer> destroyScore();
 
     /**
-     * Retrieves the UnitSizeType of this unit, which is used in calculations along with weapon damage types to determine the amount of damage that will be dealt to this type. Returns UnitSizeType indicating the conceptual size of the unit type. See also IWeaponType::damageType
+     * Retrieves the EUnitSizeType of this unit, which is used in calculations along with weapon damage types to determine the amount of damage that will be dealt to this type. Returns EUnitSizeType indicating the conceptual size of the unit type. See also IWeaponType::damageType
      */
-    Optional<UnitSizeType> size();
+    Optional<EUnitSizeType> size();
 
     /**
      * Retrieves the width of this unit type, in tiles. Used for determining the tile size of structures. Returns Width of this unit type, in tiles.
@@ -421,11 +421,11 @@ public interface IUnitType extends InGameInterface, Serializable {
     }
 
     default boolean isBunker() {
-        return hasType(UnitType.Terran_Bunker);
+        return hasType(EUnitType.Terran_Bunker);
     }
 
     default boolean isSpiderMine() {
-        return hasType(UnitType.Terran_Vulture_Spider_Mine);
+        return hasType(EUnitType.Terran_Vulture_Spider_Mine);
     }
 
     default boolean isLarvaOrEgg() {
@@ -433,11 +433,11 @@ public interface IUnitType extends InGameInterface, Serializable {
     }
 
     default boolean isLarva() {
-        return hasType(UnitType.Zerg_Larva);
+        return hasType(EUnitType.Zerg_Larva);
     }
 
     default boolean isEgg() {
-        return hasType(UnitType.Zerg_Egg);
+        return hasType(EUnitType.Zerg_Egg);
     }
 
     /**
@@ -454,7 +454,7 @@ public interface IUnitType extends InGameInterface, Serializable {
         if (!groundWeapon().isPresent()) {
             return Optional.empty();
         }
-        return Optional.of(!groundWeapon().get().getWeaponType().equals(WeaponType.None));
+        return Optional.of(!groundWeapon().get().getWeaponType().equals(EWeaponType.None));
     }
 
     /**
@@ -464,14 +464,14 @@ public interface IUnitType extends InGameInterface, Serializable {
         if (!airWeapon().isPresent()) {
             return Optional.empty();
         }
-        return Optional.of(!airWeapon().get().getWeaponType().equals(WeaponType.None));
+        return Optional.of(!airWeapon().get().getWeaponType().equals(EWeaponType.None));
     }
 
     /**
      * Returns true if unit has anti-air weapon.
      */
     default boolean isMedic() {
-        return hasType(UnitType.Terran_Medic);
+        return hasType(EUnitType.Terran_Medic);
     }
 
     default Optional<Boolean> isRepairableMechanically() {
@@ -486,40 +486,40 @@ public interface IUnitType extends InGameInterface, Serializable {
         return Optional.of((isRepairableMechanically().isPresent() && isRepairableMechanically().get()) || (isHealable().isPresent() && isHealable().get()));
     }
 
-    default boolean hasType(UnitType... unitTypes) {
-        return Stream.of(unitTypes).anyMatch(unitType -> unitType.equals(getUnitType()));
+    default boolean hasType(EUnitType... EUnitTypes) {
+        return Stream.of(EUnitTypes).anyMatch(EUnitType -> EUnitType.equals(getUnitType()));
     }
 
     default boolean isBase() {
-        return hasType(UnitType.Terran_Command_Center, UnitType.Protoss_Nexus, UnitType.Zerg_Hatchery,
-                UnitType.Zerg_Lair, UnitType.Zerg_Hive);
+        return hasType(EUnitType.Terran_Command_Center, EUnitType.Protoss_Nexus, EUnitType.Zerg_Hatchery,
+                EUnitType.Zerg_Lair, EUnitType.Zerg_Hive);
     }
 
     default boolean isGasBuilding() {
-        return hasType(UnitType.Terran_Refinery, UnitType.Protoss_Assimilator, UnitType.Zerg_Extractor);
+        return hasType(EUnitType.Terran_Refinery, EUnitType.Protoss_Assimilator, EUnitType.Zerg_Extractor);
     }
 
     default boolean isSupplyUnit() {
-        return hasType(UnitType.Protoss_Pylon, UnitType.Terran_Supply_Depot, UnitType.Zerg_Overlord);
+        return hasType(EUnitType.Protoss_Pylon, EUnitType.Terran_Supply_Depot, EUnitType.Zerg_Overlord);
     }
 
     default boolean isMilitaryBuilding() {
-        return hasType(UnitType.Terran_Bunker, UnitType.Terran_Missile_Turret, UnitType.Protoss_Photon_Cannon,
-                UnitType.Zerg_Sunken_Colony, UnitType.Zerg_Spore_Colony, UnitType.Zerg_Creep_Colony);
+        return hasType(EUnitType.Terran_Bunker, EUnitType.Terran_Missile_Turret, EUnitType.Protoss_Photon_Cannon,
+                EUnitType.Zerg_Sunken_Colony, EUnitType.Zerg_Spore_Colony, EUnitType.Zerg_Creep_Colony);
     }
 
     default boolean isMilitaryBuildingAntiAir() {
-        return hasType(UnitType.Terran_Bunker, UnitType.Protoss_Photon_Cannon, UnitType.Zerg_Spore_Colony);
+        return hasType(EUnitType.Terran_Bunker, EUnitType.Protoss_Photon_Cannon, EUnitType.Zerg_Spore_Colony);
     }
 
     default boolean isMilitaryBuildingAntiGround() {
-        return hasType(UnitType.Terran_Bunker, UnitType.Protoss_Photon_Cannon, UnitType.Zerg_Sunken_Colony);
+        return hasType(EUnitType.Terran_Bunker, EUnitType.Protoss_Photon_Cannon, EUnitType.Zerg_Sunken_Colony);
     }
 
     default boolean isMelee() {
-        return hasType(UnitType.Terran_SCV, UnitType.Terran_Firebat, UnitType.Protoss_Probe,
-                UnitType.Protoss_Zealot, UnitType.Protoss_Dark_Templar, UnitType.Zerg_Drone, UnitType.Zerg_Zergling,
-                UnitType.Zerg_Broodling);
+        return hasType(EUnitType.Terran_SCV, EUnitType.Terran_Firebat, EUnitType.Protoss_Probe,
+                EUnitType.Protoss_Zealot, EUnitType.Protoss_Dark_Templar, EUnitType.Zerg_Drone, EUnitType.Zerg_Zergling,
+                EUnitType.Zerg_Broodling);
     }
 
 }

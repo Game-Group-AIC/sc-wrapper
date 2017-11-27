@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.enums;
 
-public enum RaceType implements IGameTypes {
+public enum ERaceType implements IGameTypes {
     Zerg,
     Terran,
     Protoss,

@@ -9,8 +9,7 @@ import gg.fel.cvut.cz.api.IUnit;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
-import gg.fel.cvut.cz.enums.BulletType;
-import gg.fel.cvut.cz.facades.UpdateStrategy;
+import gg.fel.cvut.cz.enums.EBulletType;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -20,7 +19,7 @@ public class Bullet extends AContainer implements IBullet, Serializable {
     protected final DynamicPropertyRegister<Boolean> exists = new DynamicPropertyRegister<>();
     protected final StaticPropertyRegister<Integer> id = new StaticPropertyRegister<>();
     protected final DynamicPropertyRegister<IPlayer> player = new DynamicPropertyRegister<>();
-    protected final DynamicPropertyRegister<BulletType> type = new DynamicPropertyRegister<>();
+    protected final DynamicPropertyRegister<EBulletType> type = new DynamicPropertyRegister<>();
     protected final StaticPropertyRegister<IUnit> source = new StaticPropertyRegister<>();
     protected final DynamicPropertyRegister<IPosition> position = new DynamicPropertyRegister<>();
     protected final DynamicPropertyRegister<Double> angle = new DynamicPropertyRegister<>();
@@ -48,7 +47,7 @@ public class Bullet extends AContainer implements IBullet, Serializable {
     }
 
     @Override
-    public Optional<BulletType> getType() {
+    public Optional<EBulletType> getType() {
         return getPropertyOnTimeLineStrategy(type);
     }
 
@@ -95,11 +94,6 @@ public class Bullet extends AContainer implements IBullet, Serializable {
     @Override
     public Optional<Boolean> isVisible(IPlayer player) {
         return getPropertyOnTimeLineStrategy(isVisible, player);
-    }
-
-    @Override
-    public boolean shouldBeUpdated(UpdateStrategy updateStrategy, int deltaUpdate, int depth) {
-        return updateStrategy.shouldBeUpdated(this, deltaUpdate, depth);
     }
 
     @Override

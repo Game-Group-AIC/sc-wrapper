@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.UnitCommandType;
+import gg.fel.cvut.cz.enums.EUnitCommandType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -13,7 +13,7 @@ import java.util.Optional;
 @EqualsAndHashCode(of = {"unit", "unitCommandType", "target", "x", "y", "extra", "targetPosition", "targetTilePosition"})
 public class UnitCommand implements Serializable {
     private final IUnit unit;
-    private final UnitCommandType unitCommandType;
+    private final EUnitCommandType unitCommandType;
     private final IUnit target;
     private final int x, y;
     private final Integer extra;
@@ -24,7 +24,7 @@ public class UnitCommand implements Serializable {
         return Optional.ofNullable(unit);
     }
 
-    public UnitCommandType getUnitCommandType() {
+    public EUnitCommandType getEUnitCommandType() {
         return unitCommandType;
     }
 
@@ -33,7 +33,7 @@ public class UnitCommand implements Serializable {
     }
 
     public Optional<Integer> getSlot() {
-        if (unitCommandType == UnitCommandType.None) {
+        if (unitCommandType == EUnitCommandType.None) {
             return Optional.ofNullable(extra);
         }
         return Optional.empty();
@@ -48,24 +48,14 @@ public class UnitCommand implements Serializable {
     }
 
     public boolean isQueued() {
-        if (unitCommandType == UnitCommandType.Attack_Move ||
-                unitCommandType == UnitCommandType.Attack_Unit ||
-                unitCommandType == UnitCommandType.Move ||
-                unitCommandType == UnitCommandType.Patrol ||
-                unitCommandType == UnitCommandType.Hold_Position ||
-                unitCommandType == UnitCommandType.Stop ||
-                unitCommandType == UnitCommandType.Follow ||
-                unitCommandType == UnitCommandType.Gather ||
-                unitCommandType == UnitCommandType.Return_Cargo ||
-                unitCommandType == UnitCommandType.Repair ||
-                unitCommandType == UnitCommandType.Load ||
-                unitCommandType == UnitCommandType.Unload_All ||
-                unitCommandType == UnitCommandType.Unload_All_Position ||
-                unitCommandType == UnitCommandType.Right_Click_Position ||
-                unitCommandType == UnitCommandType.Right_Click_Unit) {
-            return extra != 0;
-        }
-        return false;
+        return (unitCommandType == EUnitCommandType.Attack_Move || unitCommandType == EUnitCommandType.Attack_Unit
+                || unitCommandType == EUnitCommandType.Move || unitCommandType == EUnitCommandType.Patrol
+                || unitCommandType == EUnitCommandType.Hold_Position || unitCommandType == EUnitCommandType.Stop
+                || unitCommandType == EUnitCommandType.Follow || unitCommandType == EUnitCommandType.Gather
+                || unitCommandType == EUnitCommandType.Return_Cargo || unitCommandType == EUnitCommandType.Repair
+                || unitCommandType == EUnitCommandType.Load || unitCommandType == EUnitCommandType.Unload_All
+                || unitCommandType == EUnitCommandType.Unload_All_Position || unitCommandType == EUnitCommandType.Right_Click_Position
+                || unitCommandType == EUnitCommandType.Right_Click_Unit) && extra != 0;
     }
 
 }

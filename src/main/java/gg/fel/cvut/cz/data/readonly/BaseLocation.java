@@ -8,7 +8,6 @@ import gg.fel.cvut.cz.api.IUnit;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
-import gg.fel.cvut.cz.facades.UpdateStrategy;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -27,10 +26,6 @@ public class BaseLocation extends AContainer implements IBaseLocation, Serializa
     protected final StaticPropertyRegister<ImmutableMap<IBaseLocation, Double>> airDistanceToBases = new StaticPropertyRegister<>();
     private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(position);
 
-    @Override
-    public boolean shouldBeUpdated(UpdateStrategy updateStrategy, int deltaUpdate, int depth) {
-        return updateStrategy.shouldBeUpdated(this, deltaUpdate, depth);
-    }
 
     @Override
     public Optional<Integer> minerals() {

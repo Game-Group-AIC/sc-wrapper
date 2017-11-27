@@ -6,7 +6,6 @@ import gg.fel.cvut.cz.api.IRegion;
 import gg.fel.cvut.cz.api.ITilePosition;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
-import gg.fel.cvut.cz.facades.UpdateStrategy;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -39,11 +38,6 @@ public class Position extends AContainer implements IPosition, Serializable {
     @Override
     public Optional<IRegion> getRegion() {
         return getPropertyOnTimeLineStrategy(region);
-    }
-
-    @Override
-    public boolean shouldBeUpdated(UpdateStrategy updateStrategy, int deltaUpdate, int depth) {
-        return updateStrategy.shouldBeUpdated(this, deltaUpdate, depth);
     }
 
     @Override

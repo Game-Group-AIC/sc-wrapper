@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.enums;
 
-public enum TechType implements IGameTypes {
+public enum ETechType implements IGameTypes {
     Stim_Packs,
     Lockdown,
     EMP_Shockwave,

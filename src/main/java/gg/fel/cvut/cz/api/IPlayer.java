@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.PlayerType;
+import gg.fel.cvut.cz.enums.EPlayerType;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 /**
- * The IPlayer represents a unique controller in the game. Each player in a match will have his or her own player instance. There is also a neutral player which owns all the neutral units (such as mineral patches and vespene geysers). See also Playerset, PlayerType, IRace
+ * The IPlayer represents a unique controller in the game. Each player in a match will have his or her own player instance. There is also a neutral player which owns all the neutral units (such as mineral patches and vespene geysers). See also Playerset, EPlayerType, IRace
  */
 public interface IPlayer extends InGameInterface, Serializable {
 
@@ -109,9 +109,9 @@ public interface IPlayer extends InGameInterface, Serializable {
     Optional<IRace> getRace();
 
     /**
-     * Retrieves the player's controller type. This allows you to distinguish betweeen computer and human players. Returns The PlayerType that identifies who is controlling a player. Note Other players using BWAPI will be treated as a human player and return PlayerTypes::IPlayer. if ( BWAPI::Broodwar->enemy() ) { if ( BWAPI::Broodwar->enemy()->getType() == PlayerTypes::Computer ) BWAPI::Broodwar << "Looks like something I can abuse!" << std::endl; }
+     * Retrieves the player's controller type. This allows you to distinguish betweeen computer and human players. Returns The EPlayerType that identifies who is controlling a player. Note Other players using BWAPI will be treated as a human player and return PlayerTypes::IPlayer. if ( BWAPI::Broodwar->enemy() ) { if ( BWAPI::Broodwar->enemy()->getType() == PlayerTypes::Computer ) BWAPI::Broodwar << "Looks like something I can abuse!" << std::endl; }
      */
-    Optional<PlayerType> getType();
+    Optional<EPlayerType> getType();
 
     /**
      * Checks if this player is allied to the specified player. Parameters player The player to check alliance with. Return values true if this player is allied with player . false if this player is not allied with player. Note This function will also return false if this player is neutral or an observer, or if player is neutral or an observer. See also isEnemy

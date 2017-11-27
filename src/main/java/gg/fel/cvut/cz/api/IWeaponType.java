@@ -1,8 +1,8 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.DamageType;
-import gg.fel.cvut.cz.enums.ExplosionType;
-import gg.fel.cvut.cz.enums.WeaponType;
+import gg.fel.cvut.cz.enums.EDamageType;
+import gg.fel.cvut.cz.enums.EExplosionType;
+import gg.fel.cvut.cz.enums.EWeaponType;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public interface IWeaponType extends InGameInterface, Serializable {
 
-    WeaponType getWeaponType();
+    EWeaponType getWeaponType();
 
     /**
      * Retrieves the technology type that must be researched before this weapon can be used. Returns ITechType required by this weapon. Return values TechTypes::None if no tech type is required to use this weapon. See also ITechType::getWeapon
@@ -25,7 +25,7 @@ public interface IWeaponType extends InGameInterface, Serializable {
     Optional<IUnitType> whatUses();
 
     /**
-     * Retrieves the base amount of damage that this weapon can deal per attack. Note That this damage amount must go through a DamageType and UnitSizeType filter before it is applied to a unit. Returns Amount of base damage that this weapon deals.
+     * Retrieves the base amount of damage that this weapon can deal per attack. Note That this damage amount must go through a EDamageType and EUnitSizeType filter before it is applied to a unit. Returns Amount of base damage that this weapon deals.
      */
     Optional<Integer> damageAmount();
 
@@ -50,14 +50,14 @@ public interface IWeaponType extends InGameInterface, Serializable {
     Optional<IUpgradeType> upgradeType();
 
     /**
-     * Retrieves the damage type that this weapon applies to a unit type. Returns DamageType used for damage calculation. See also DamageType, UnitSizeType
+     * Retrieves the damage type that this weapon applies to a unit type. Returns EDamageType used for damage calculation. See also EDamageType, EUnitSizeType
      */
-    Optional<DamageType> damageType();
+    Optional<EDamageType> damageType();
 
     /**
-     * Retrieves the explosion type that indicates how the weapon deals damage. Returns ExplosionType identifying how damage is applied to a target location.
+     * Retrieves the explosion type that indicates how the weapon deals damage. Returns EExplosionType identifying how damage is applied to a target location.
      */
-    Optional<ExplosionType> explosionType();
+    Optional<EExplosionType> explosionType();
 
     /**
      * Retrieves the minimum attack range of the weapon, measured in pixels. This value is 0 for almost all weapon types, except for WeaponTypes::Arclite_Shock_Cannon and WeaponTypes::Arclite_Shock_Cannon_Edmund_Duke. Returns Minimum attack range, in pixels.
@@ -130,7 +130,7 @@ public interface IWeaponType extends InGameInterface, Serializable {
     Optional<Boolean> targetsOwn();
 
     default Optional<Double> getDamageNormalized() {
-        if (getWeaponType().equals(WeaponType.Psi_Blades)) {
+        if (getWeaponType().equals(EWeaponType.Psi_Blades)) {
             return Optional.of(16.0);
         } else {
             if (!damageAmount().isPresent() || !damageFactor().isPresent()) {

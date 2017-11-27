@@ -13,7 +13,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public abstract class Wrapper<T> {
     @Getter
-    final T scInstance;
+    private final T scInstance;
 
     @Override
     public abstract int hashCode();

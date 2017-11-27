@@ -1,7 +1,7 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.Order;
-import gg.fel.cvut.cz.enums.TechType;
+import gg.fel.cvut.cz.enums.EOrder;
+import gg.fel.cvut.cz.enums.ETechType;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 public interface ITechType extends InGameInterface, Serializable {
 
-    TechType getTechType();
+    ETechType getTechType();
 
     /**
      * Retrieves the race that is required to research or use the ITechType. Note There is an exception where Infested Kerrigan can use Psionic Storm. This does not apply to the behavior of this function. Returns IRace object indicating which race is designed to use this technology type.
@@ -54,9 +54,9 @@ public interface ITechType extends InGameInterface, Serializable {
     Optional<Boolean> targetsPosition();
 
     /**
-     * Retrieves the Order that a IUnit uses when using this ability. Returns Order representing the action a IUnit uses to perform this ability
+     * Retrieves the EOrder that a IUnit uses when using this ability. Returns EOrder representing the action a IUnit uses to perform this ability
      */
-    Optional<Order> getOrder();
+    Optional<EOrder> getOrder();
 
     /**
      * Retrieves the IUnitType required to research this technology. The required unit type must be a completed unit owned by the player researching the technology. Returns IUnitType that is needed to research this tech type. Return values UnitTypes::None if no unit is required to research this tech type. See also PlayerInterface::completedUnitCount Since 4.1.2

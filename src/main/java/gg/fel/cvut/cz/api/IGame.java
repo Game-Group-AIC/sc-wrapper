@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.GameType;
+import gg.fel.cvut.cz.enums.EGameType;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -26,9 +26,9 @@ public interface IGame extends InGameInterface, Serializable {
     Optional<Set<IPlayer>> getPlayers();
 
     /**
-     * Retrieves the GameType of the current game. Returns GameType indicating the rules of the match. See also GameType
+     * Retrieves the EGameType of the current game. Returns EGameType indicating the rules of the match. See also EGameType
      */
-    Optional<GameType> getGameType();
+    Optional<EGameType> getGameType();
 
     /**
      * Retrieves the number of logical frames since the beginning of the match. If the game is paused, then getFrameCount will not increase. Returns Number of logical frames that have elapsed since the game started as an integer.
