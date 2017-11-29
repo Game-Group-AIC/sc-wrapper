@@ -6,20 +6,21 @@ import java.io.Serializable;
  * Tracks time in replays for SC:BW
  */
 public class BWReplayCounter extends BWCounter implements IBWReplayCounter, Serializable {
-    private final int gameLength;
 
-    public BWReplayCounter(int gameLength) {
-        this.gameLength = gameLength;
-    }
+  private final int gameLength;
 
-    @Override
-    public int lengthOfReplay() {
-        return gameLength;
-    }
+  public BWReplayCounter(int gameLength) {
+    this.gameLength = gameLength;
+  }
 
-    @Override
-    public void decreaseClock() {
-        decrease();
-    }
+  @Override
+  public int lengthOfReplay() {
+    return gameLength;
+  }
+
+  @Override
+  public void decreaseClock() {
+    decrease();
+  }
 
 }

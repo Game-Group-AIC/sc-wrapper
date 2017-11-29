@@ -2,24 +2,24 @@ package gg.fel.cvut.cz.api;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gg.fel.cvut.cz.data.readonly.TilePosition;
-
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
 
 /**
- * Build Tiles - each build tile is a 4x4 square of walk tiles, or a 32x32 square of pixels.
- * These are called build tiles because buildability data is available at this resolution, and correspond to the tiles seen in game.
- * For example, a Command Center occupies an area of 4x3 build tiles.
+ * Build Tiles - each build tile is a 4x4 square of walk tiles, or a 32x32 square of pixels. These
+ * are called build tiles because buildability data is available at this resolution, and correspond
+ * to the tiles seen in game. For example, a Command Center occupies an area of 4x3 build tiles.
  */
 @JsonDeserialize(as = TilePosition.class)
 public interface ITilePosition extends IAbstractPoint, InGameInterface, Serializable {
-    int SIZE_IN_PIXELS = 32;
 
-    //TODO distance computation - use in other classes as well
-    //TODO neighbouring tiles - to add other related methods - can be player dependant
-    //TODO is accessible
-    //TODO find path using A* with air distance heuristic? - it could be cool to plan various paths (e.g. one maximizing enemy avoidance, one considering walls,...)
+  int SIZE_IN_PIXELS = 32;
+
+  //TODO distance computation - use in other classes as well
+  //TODO neighbouring tiles - to add other related methods - can be player dependant
+  //TODO is accessible
+  //TODO find path using A* with air distance heuristic? - it could be cool to plan various paths (e.g. one maximizing enemy avoidance, one considering walls,...)
 //    /**
 //     * Checks if the given tile position has Zerg creep on it. Parameters tileX The x tile coordinate to check. tileY The y tile coordinate to check. Return values true If the given tile has creep on it. false If the given tile does not have creep, or if it is concealed by the fog of war.
 //     */
@@ -36,13 +36,13 @@ public interface ITilePosition extends IAbstractPoint, InGameInterface, Serializ
 //
 //    boolean canBuildHere(ITilePosition position, IUnitType type);
 
-    Optional<Integer> getGroundHeight();
+  Optional<Integer> getGroundHeight();
 
-    Optional<Set<IUnit>> getUnitsOnTile();
+  Optional<Set<IUnit>> getUnitsOnTile();
 
-    Optional<IPosition> getPosition();
+  Optional<IPosition> getPosition();
 
-    default Optional<ITilePosition> getTilePosition() {
-        return Optional.of(this);
-    }
+  default Optional<ITilePosition> getTilePosition() {
+    return Optional.of(this);
+  }
 }

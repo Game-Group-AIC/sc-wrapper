@@ -5,8 +5,8 @@ package gg.fel.cvut.cz.counters;
  */
 public interface IBWReplayCounter extends IBWCounter {
 
-    int lengthOfReplay();
+  int lengthOfReplay();
 
-    void decreaseClock();
+  void decreaseClock();
 
 }

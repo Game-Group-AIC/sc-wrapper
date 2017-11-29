@@ -5,8 +5,8 @@ package gg.fel.cvut.cz.counters;
  */
 public interface IBWCounter {
 
-    void increaseClocks();
+  void increaseClocks();
 
-    int getCurrentFrame();
+  int getCurrentFrame();
 
 }

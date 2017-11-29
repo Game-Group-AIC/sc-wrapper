@@ -1,365 +1,508 @@
 package gg.fel.cvut.cz.api;
 
 import gg.fel.cvut.cz.enums.EPlayerType;
-
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
 /**
- * The IPlayer represents a unique controller in the game. Each player in a match will have his or her own player instance. There is also a neutral player which owns all the neutral units (such as mineral patches and vespene geysers). See also Playerset, EPlayerType, IRace
+ * The IPlayer represents a unique controller in the game. Each player in a match will have his or
+ * her own player instance. There is also a neutral player which owns all the neutral units (such as
+ * mineral patches and vespene geysers). See also Playerset, EPlayerType, IRace
  */
 public interface IPlayer extends InGameInterface, Serializable {
 
-    /**
-     * Retrieves a unique ID that represents the player. Returns An integer representing the ID of the player.
-     */
-    Optional<Integer> getID();
+  /**
+   * Retrieves a unique ID that represents the player. Returns An integer representing the ID of the
+   * player.
+   */
+  Optional<Integer> getID();
 
-    /**
-     * Retrieves the name of the player. Returns A std::string object containing the player's name. Note Don't forget to use std::string::c_str() when passing this parameter to IGame::sendText and other variadic functions. Example usage: BWAPI::IPlayer myEnemy = BWAPI::Broodwar->enemy(); if ( myEnemy != nullptr ) // Make sure there is an enemy! BWAPI::Broodwar->sendText("Prepare to be crushed, %s!", myEnemy->getName().c_str());
-     */
-    Optional<String> getName();
+  /**
+   * Retrieves the name of the player. Returns A std::string object containing the player's name.
+   * Note Don't forget to use std::string::c_str() when passing this parameter to IGame::sendText
+   * and other variadic functions. Example usage: BWAPI::IPlayer myEnemy = BWAPI::Broodwar->enemy();
+   * if ( myEnemy != nullptr ) // Make sure there is an enemy! BWAPI::Broodwar->sendText("Prepare to
+   * be crushed, %s!", myEnemy->getName().c_str());
+   */
+  Optional<String> getName();
 
-    /**
-     * Retrieves the set of all units that the player owns. This also includes incomplete units. Returns Reference to a Unitset containing the units. Note This does not include units that are loaded into transports, Bunkers, Refineries, Assimilators, or Extractors. Example usage: Unitset myUnits = BWAPI::Broodwar->self()->getUnits(); for ( auto u = myUnits.begin(); u != myUnits.end(); ++u ) { // Do something with your units }
-     */
-    default Optional<Stream<IUnit>> getUnits() {
-        return getAllUnits().map(iUnits -> iUnits.stream()
-                .filter(iUnit -> iUnit.getPlayer().map(iPlayer -> iPlayer.equals(this)).orElse(false)));
+  /**
+   * Retrieves the set of all units that the player owns. This also includes incomplete units.
+   * Returns Reference to a Unitset containing the units. Note This does not include units that are
+   * loaded into transports, Bunkers, Refineries, Assimilators, or Extractors. Example usage:
+   * Unitset myUnits = BWAPI::Broodwar->self()->getUnits(); for ( auto u = myUnits.begin(); u !=
+   * myUnits.end(); ++u ) { // Do something with your units }
+   */
+  default Optional<Stream<IUnit>> getUnits() {
+    return getAllUnits().map(iUnits -> iUnits.stream()
+        .filter(iUnit -> iUnit.getPlayer().map(iPlayer -> iPlayer.equals(this)).orElse(false)));
+  }
+
+  /**
+   * Retrieves the set of all accessible units. If Flag::CompleteMapInformation is enabled, then the
+   * set also includes units that are not visible to the player. Note Units that are inside
+   * refineries are not included in this set. Returns Unitset containing all known units in the
+   * game.
+   */
+  Optional<Set<IUnit>> getAllUnits();
+
+  /**
+   * Retrieves the set of all accessible enemy units. If Flag::CompleteMapInformation is enabled,
+   * then the set also includes units that are not visible to the player. Note Units that are inside
+   * refineries are not included in this set. Returns Unitset containing all known units in the
+   * game.
+   */
+  default Optional<Stream<IUnit>> getEnemyUnits() {
+    if (!getEnemies().isPresent()) {
+      return Optional.empty();
     }
-
-    /**
-     * Retrieves the set of all accessible units. If Flag::CompleteMapInformation is enabled, then the set also includes units that are not visible to the player. Note Units that are inside refineries are not included in this set. Returns Unitset containing all known units in the game.
-     */
-    Optional<Set<IUnit>> getAllUnits();
-
-    /**
-     * Retrieves the set of all accessible enemy units. If Flag::CompleteMapInformation is enabled, then the set also includes units that are not visible to the player. Note Units that are inside refineries are not included in this set. Returns Unitset containing all known units in the game.
-     */
-    default Optional<Stream<IUnit>> getEnemyUnits() {
-        if (!getEnemies().isPresent()) {
-            return Optional.empty();
-        }
-        Set<IPlayer> enemies = getEnemies().get();
-        if (enemies.isEmpty()) {
-            return Optional.of(Stream.empty());
-        }
-        return getAllUnits().map(iUnits -> iUnits.stream()
-                .filter(iUnit -> iUnit.getPlayer().map(enemies::contains).orElse(false)));
+    Set<IPlayer> enemies = getEnemies().get();
+    if (enemies.isEmpty()) {
+      return Optional.of(Stream.empty());
     }
+    return getAllUnits().map(iUnits -> iUnits.stream()
+        .filter(iUnit -> iUnit.getPlayer().map(enemies::contains).orElse(false)));
+  }
 
-    /**
-     * Retrieves the set of all accessible bullets. Returns Bulletset containing all accessible IBullet objects.
-     */
-    Optional<Set<IBullet>> getAllBullets();
+  /**
+   * Retrieves the set of all accessible bullets. Returns Bulletset containing all accessible
+   * IBullet objects.
+   */
+  Optional<Set<IBullet>> getAllBullets();
 
-    default Optional<Stream<IBullet>> getEnemyBullets() {
-        if (!getEnemies().isPresent()) {
-            return Optional.empty();
-        }
-        Set<IPlayer> enemies = getEnemies().get();
-        if (enemies.isEmpty()) {
-            return Optional.of(Stream.empty());
-        }
-        return getAllBullets().map(iUnits -> iUnits.stream()
-                .filter(iUnit -> iUnit.getPlayer().map(enemies::contains).orElse(false)));
+  default Optional<Stream<IBullet>> getEnemyBullets() {
+    if (!getEnemies().isPresent()) {
+      return Optional.empty();
     }
-
-    default Optional<Stream<IBullet>> getBullets() {
-        return getAllBullets().map(iUnits -> iUnits.stream()
-                .filter(iUnit -> iUnit.getPlayer().map(iPlayer -> iPlayer.equals(this)).orElse(false)));
+    Set<IPlayer> enemies = getEnemies().get();
+    if (enemies.isEmpty()) {
+      return Optional.of(Stream.empty());
     }
+    return getAllBullets().map(iUnits -> iUnits.stream()
+        .filter(iUnit -> iUnit.getPlayer().map(enemies::contains).orElse(false)));
+  }
 
-    default Optional<Stream<IBullet>> getFriendlyBullets() {
-        if (!getAllies().isPresent()) {
-            return Optional.empty();
-        }
-        Set<IPlayer> allies = getAllies().get();
-        if (allies.isEmpty()) {
-            return Optional.of(Stream.empty());
-        }
-        return getAllBullets().map(iUnits -> iUnits.stream()
-                .filter(iUnit -> iUnit.getPlayer().map(allies::contains).orElse(false)));
+  default Optional<Stream<IBullet>> getBullets() {
+    return getAllBullets().map(iUnits -> iUnits.stream()
+        .filter(iUnit -> iUnit.getPlayer().map(iPlayer -> iPlayer.equals(this)).orElse(false)));
+  }
+
+  default Optional<Stream<IBullet>> getFriendlyBullets() {
+    if (!getAllies().isPresent()) {
+      return Optional.empty();
     }
-
-    /**
-     * Retrieves the set of all accessible friendly units. If Flag::CompleteMapInformation is enabled, then the set also includes units that are not visible to the player. Note Units that are inside refineries are not included in this set. Returns Unitset containing all known units in the game.
-     */
-    default Optional<Stream<IUnit>> getFriendlyUnits() {
-        if (!getAllies().isPresent()) {
-            return Optional.empty();
-        }
-        Set<IPlayer> allies = getAllies().get();
-        if (allies.isEmpty()) {
-            return Optional.of(Stream.empty());
-        }
-        return getAllUnits().map(iUnits -> iUnits.stream()
-                .filter(iUnit -> iUnit.getPlayer().map(allies::contains).orElse(false)));
+    Set<IPlayer> allies = getAllies().get();
+    if (allies.isEmpty()) {
+      return Optional.of(Stream.empty());
     }
+    return getAllBullets().map(iUnits -> iUnits.stream()
+        .filter(iUnit -> iUnit.getPlayer().map(allies::contains).orElse(false)));
+  }
 
-    Optional<Set<IPlayer>> getAllies();
-
-    Optional<Set<IPlayer>> getEnemies();
-
-    /**
-     * Retrieves the race of the player. This allows you to change strategies against different races, or generalize some commands for yourself. Return values Races::Unknown If the player chose Races::Random when the game started and they have not been seen. Returns The IRace that the player is using. Example usage: if ( BWAPI::Broodwar->enemy() ) { BWAPI::IRace enemyRace = BWAPI::Broodwar->enemy()->getRace(); if ( enemyRace == Races::Zerg ) BWAPI::Broodwar->sendText("Do you really think you can beat me with a zergling rush?"); }
-     */
-    Optional<IRace> getRace();
-
-    /**
-     * Retrieves the player's controller type. This allows you to distinguish betweeen computer and human players. Returns The EPlayerType that identifies who is controlling a player. Note Other players using BWAPI will be treated as a human player and return PlayerTypes::IPlayer. if ( BWAPI::Broodwar->enemy() ) { if ( BWAPI::Broodwar->enemy()->getType() == PlayerTypes::Computer ) BWAPI::Broodwar << "Looks like something I can abuse!" << std::endl; }
-     */
-    Optional<EPlayerType> getType();
-
-    /**
-     * Checks if this player is allied to the specified player. Parameters player The player to check alliance with. Return values true if this player is allied with player . false if this player is not allied with player. Note This function will also return false if this player is neutral or an observer, or if player is neutral or an observer. See also isEnemy
-     */
-    default Optional<Boolean> isAlly(IPlayer player) {
-        return getAllies().map(iPlayers -> iPlayers.contains(player));
+  /**
+   * Retrieves the set of all accessible friendly units. If Flag::CompleteMapInformation is enabled,
+   * then the set also includes units that are not visible to the player. Note Units that are inside
+   * refineries are not included in this set. Returns Unitset containing all known units in the
+   * game.
+   */
+  default Optional<Stream<IUnit>> getFriendlyUnits() {
+    if (!getAllies().isPresent()) {
+      return Optional.empty();
     }
-
-    /**
-     * Checks if this player is unallied to the specified player. Parameters player The player to check alliance with. Return values true if this player is allied with player . false if this player is not allied with player . Note This function will also return false if this player is neutral or an observer, or if player is neutral or an observer. See also isAlly
-     */
-    default Optional<Boolean> isEnemy(IPlayer player) {
-        return getEnemies().map(iPlayers -> iPlayers.contains(player));
+    Set<IPlayer> allies = getAllies().get();
+    if (allies.isEmpty()) {
+      return Optional.of(Stream.empty());
     }
+    return getAllUnits().map(iUnits -> iUnits.stream()
+        .filter(iUnit -> iUnit.getPlayer().map(allies::contains).orElse(false)));
+  }
 
-    /**
-     * Checks if this player is the neutral player. Return values true if this player is the neutral player. false if this player is any other player.
-     */
-    Optional<Boolean> isNeutral();
+  Optional<Set<IPlayer>> getAllies();
 
-    /**
-     * Checks if the player has achieved victory. Returns true if this player has achieved victory, otherwise false
-     */
-    Optional<Boolean> isVictorious();
+  Optional<Set<IPlayer>> getEnemies();
 
-    /**
-     * Checks if the player has been defeated. Returns true if the player is defeated, otherwise false
-     */
-    Optional<Boolean> isDefeated();
+  /**
+   * Retrieves the race of the player. This allows you to change strategies against different races,
+   * or generalize some commands for yourself. Return values Races::Unknown If the player chose
+   * Races::Random when the game started and they have not been seen. Returns The IRace that the
+   * player is using. Example usage: if ( BWAPI::Broodwar->enemy() ) { BWAPI::IRace enemyRace =
+   * BWAPI::Broodwar->enemy()->getRace(); if ( enemyRace == Races::Zerg )
+   * BWAPI::Broodwar->sendText("Do you really think you can beat me with a zergling rush?"); }
+   */
+  Optional<IRace> getRace();
 
-    /**
-     * Checks if the player has left the game. Returns true if the player has left the game, otherwise false
-     */
-    Optional<Boolean> leftGame();
+  /**
+   * Retrieves the player's controller type. This allows you to distinguish betweeen computer and
+   * human players. Returns The EPlayerType that identifies who is controlling a player. Note Other
+   * players using BWAPI will be treated as a human player and return PlayerTypes::IPlayer. if (
+   * BWAPI::Broodwar->enemy() ) { if ( BWAPI::Broodwar->enemy()->getType() == PlayerTypes::Computer
+   * ) BWAPI::Broodwar << "Looks like something I can abuse!" << std::endl; }
+   */
+  Optional<EPlayerType> getType();
 
-    /**
-     * Retrieves the current amount of minerals/ore that this player has. Note This function will return 0 if the player is inaccessible. Returns Amount of minerals that the player currently has for spending.
-     */
-    Optional<Integer> minerals();
+  /**
+   * Checks if this player is allied to the specified player. Parameters player The player to check
+   * alliance with. Return values true if this player is allied with player . false if this player
+   * is not allied with player. Note This function will also return false if this player is neutral
+   * or an observer, or if player is neutral or an observer. See also isEnemy
+   */
+  default Optional<Boolean> isAlly(IPlayer player) {
+    return getAllies().map(iPlayers -> iPlayers.contains(player));
+  }
 
-    /**
-     * Retrieves the current amount of vespene gas that this player has. Note This function will return 0 if the player is inaccessible. Returns Amount of gas that the player currently has for spending.
-     */
-    Optional<Integer> gas();
+  /**
+   * Checks if this player is unallied to the specified player. Parameters player The player to
+   * check alliance with. Return values true if this player is allied with player . false if this
+   * player is not allied with player . Note This function will also return false if this player is
+   * neutral or an observer, or if player is neutral or an observer. See also isAlly
+   */
+  default Optional<Boolean> isEnemy(IPlayer player) {
+    return getEnemies().map(iPlayers -> iPlayers.contains(player));
+  }
 
-    /**
-     * Retrieves the cumulative amount of minerals/ore that this player has gathered since the beginning of the game, including the amount that the player starts the game with (if any). Note This function will return 0 if the player is inaccessible. Returns Cumulative amount of minerals that the player has gathered.
-     */
-    Optional<Integer> gatheredMinerals();
+  /**
+   * Checks if this player is the neutral player. Return values true if this player is the neutral
+   * player. false if this player is any other player.
+   */
+  Optional<Boolean> isNeutral();
 
-    /**
-     * Retrieves the cumulative amount of vespene gas that this player has gathered since the beginning of the game, including the amount that the player starts the game with (if any). Note This function will return 0 if the player is inaccessible. Returns Cumulative amount of gas that the player has gathered.
-     */
-    Optional<Integer> gatheredGas();
+  /**
+   * Checks if the player has achieved victory. Returns true if this player has achieved victory,
+   * otherwise false
+   */
+  Optional<Boolean> isVictorious();
 
-    /**
-     * Retrieves the cumulative amount of minerals/ore that this player has spent on repairing units since the beginning of the game. This function only applies to Terran players. Note This function will return 0 if the player is inaccessible. Returns Cumulative amount of minerals that the player has spent repairing.
-     */
-    Optional<Integer> repairedMinerals();
+  /**
+   * Checks if the player has been defeated. Returns true if the player is defeated, otherwise
+   * false
+   */
+  Optional<Boolean> isDefeated();
 
-    /**
-     * Retrieves the cumulative amount of vespene gas that this player has spent on repairing units since the beginning of the game. This function only applies to Terran players. Note This function will return 0 if the player is inaccessible. Returns Cumulative amount of gas that the player has spent repairing.
-     */
-    Optional<Integer> repairedGas();
+  /**
+   * Checks if the player has left the game. Returns true if the player has left the game, otherwise
+   * false
+   */
+  Optional<Boolean> leftGame();
 
-    /**
-     * Retrieves the cumulative amount of minerals/ore that this player has gained from refunding (cancelling) units and structures. Note This function will return 0 if the player is inaccessible. Returns Cumulative amount of minerals that the player has received from refunds.
-     */
-    Optional<Integer> refundedMinerals();
+  /**
+   * Retrieves the current amount of minerals/ore that this player has. Note This function will
+   * return 0 if the player is inaccessible. Returns Amount of minerals that the player currently
+   * has for spending.
+   */
+  Optional<Integer> minerals();
 
-    /**
-     * Retrieves the cumulative amount of vespene gas that this player has gained from refunding (cancelling) units and structures. Note This function will return 0 if the player is inaccessible. Returns Cumulative amount of gas that the player has received from refunds.
-     */
-    Optional<Integer> refundedGas();
+  /**
+   * Retrieves the current amount of vespene gas that this player has. Note This function will
+   * return 0 if the player is inaccessible. Returns Amount of gas that the player currently has for
+   * spending.
+   */
+  Optional<Integer> gas();
 
-    /**
-     * Retrieves the cumulative amount of minerals/ore that this player has spent, excluding repairs. Note This function will return 0 if the player is inaccessible. Returns Cumulative amount of minerals that the player has spent.
-     */
-    Optional<Integer> spentMinerals();
+  /**
+   * Retrieves the cumulative amount of minerals/ore that this player has gathered since the
+   * beginning of the game, including the amount that the player starts the game with (if any). Note
+   * This function will return 0 if the player is inaccessible. Returns Cumulative amount of
+   * minerals that the player has gathered.
+   */
+  Optional<Integer> gatheredMinerals();
 
-    /**
-     * Retrieves the cumulative amount of vespene gas that this player has spent, excluding repairs. Note This function will return 0 if the player is inaccessible. Returns Cumulative amount of gas that the player has spent.
-     */
-    Optional<Integer> spentGas();
+  /**
+   * Retrieves the cumulative amount of vespene gas that this player has gathered since the
+   * beginning of the game, including the amount that the player starts the game with (if any). Note
+   * This function will return 0 if the player is inaccessible. Returns Cumulative amount of gas
+   * that the player has gathered.
+   */
+  Optional<Integer> gatheredGas();
 
-    /**
-     * Retrieves the total amount of supply the player has available for unit control. Note In Starcraft programming, the managed supply values are double than what they appear in the game. The reason for this is because Zerglings use 0.5 visible supply. In Starcraft, the supply for each race is separate. Having a Pylon and an Overlord will not give you 32 supply. It will instead give you 16 Protoss supply and 16 Zerg supply. Parameters race (optional) The race to query the total supply for. If this is omitted, then the player's current race will be used. Returns The total supply available for this player and the given race. Example usage: if ( BWAPI::Broodwar->self()->supplyUsed() + 8 >= BWAPI::Broodwar->self()->supplyTotal() ) { // Construct pylons, supply depots, or overlords } See also supplyUsed
-     */
-    default Optional<Integer> supplyTotal() {
-        return getFriendlyUnits().map(iUnitStream -> iUnitStream.map(IUnit::getType)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .filter(IUnitType::isSupplyUnit)
-                .mapToInt(value -> value.supplyProvided().orElse(0))
-                .sum());
-    }
+  /**
+   * Retrieves the cumulative amount of minerals/ore that this player has spent on repairing units
+   * since the beginning of the game. This function only applies to Terran players. Note This
+   * function will return 0 if the player is inaccessible. Returns Cumulative amount of minerals
+   * that the player has spent repairing.
+   */
+  Optional<Integer> repairedMinerals();
 
-    /**
-     * Retrieves the current amount of supply that the player is using for unit control. Parameters race (optional) The race to query the used supply for. If this is omitted, then the player's current race will be used. Returns The supply that is in use for this player and the given race. See also supplyTotal
-     */
-    default Optional<Integer> supplyUsed() {
-        return getFriendlyUnits().map(iUnitStream -> iUnitStream.map(IUnit::getType)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .mapToInt(value -> value.supplyRequired().orElse(0))
-                .sum());
-    }
+  /**
+   * Retrieves the cumulative amount of vespene gas that this player has spent on repairing units
+   * since the beginning of the game. This function only applies to Terran players. Note This
+   * function will return 0 if the player is inaccessible. Returns Cumulative amount of gas that the
+   * player has spent repairing.
+   */
+  Optional<Integer> repairedGas();
 
-    /**
-     * Retrieves the total number of units that the player has. If the information about the player is limited, then this function will only return the number of visible units. Parameters unit (optional) The unit type to query. IUnitType macros are accepted. If this parameter is omitted, then it will use UnitTypes::AllUnits by default. Returns The total number of units of the given type that the player owns. See also visibleUnitCount, completedUnitCount, incompleteUnitCount
-     */
-    default Optional<Integer> allUnitCount() {
-        return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream.count());
-    }
+  /**
+   * Retrieves the cumulative amount of minerals/ore that this player has gained from refunding
+   * (cancelling) units and structures. Note This function will return 0 if the player is
+   * inaccessible. Returns Cumulative amount of minerals that the player has received from refunds.
+   */
+  Optional<Integer> refundedMinerals();
 
-    default Optional<Integer> allUnitCount(IUnitType unitType) {
-        return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream
-                .filter(iUnit -> iUnit.getType().map(iUnitType -> iUnitType.equals(unitType)).orElse(false))
-                .count()
-        );
-    }
+  /**
+   * Retrieves the cumulative amount of vespene gas that this player has gained from refunding
+   * (cancelling) units and structures. Note This function will return 0 if the player is
+   * inaccessible. Returns Cumulative amount of gas that the player has received from refunds.
+   */
+  Optional<Integer> refundedGas();
 
-    /**
-     * Retrieves the number of completed units that the player has. If the information about the player is limited, then this function will only return the number of visible completed units. Parameters unit (optional) The unit type to query. IUnitType macros are accepted. If this parameter is omitted, then it will use UnitTypes::AllUnits by default. Returns The number of completed units of the given type that the player owns. Example usage: bool obtainNextUpgrade(BWAPI::IUpgradeType upgType) { BWAPI::IPlayer self = BWAPI::Broodwar->self(); int maxLvl = self->getMaxUpgradeLevel(upgType); int currentLvl = self->getUpgradeLevel(upgType); if ( !self->isUpgrading(upgType) && currentLvl < maxLvl && self->completedUnitCount(upgType.whatsRequired(currentLvl+1)) > 0 && self->completedUnitCount(upgType.whatUpgrades()) > 0 ) return self->getUnits().upgrade(upgType); return false; } See also allUnitCount, visibleUnitCount, incompleteUnitCount
-     */
-    default Optional<Integer> completedUnitCount() {
-        return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream.filter(iUnit -> iUnit.isCompleted().orElse(false)).count());
-    }
+  /**
+   * Retrieves the cumulative amount of minerals/ore that this player has spent, excluding repairs.
+   * Note This function will return 0 if the player is inaccessible. Returns Cumulative amount of
+   * minerals that the player has spent.
+   */
+  Optional<Integer> spentMinerals();
 
-    default Optional<Integer> completedUnitCount(IUnitType unitType) {
-        return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream
-                .filter(iUnit -> iUnit.getType().map(iUnitType -> iUnitType.equals(unitType)).orElse(false))
-                .filter(iUnit -> iUnit.isCompleted().orElse(false)).count());
-    }
+  /**
+   * Retrieves the cumulative amount of vespene gas that this player has spent, excluding repairs.
+   * Note This function will return 0 if the player is inaccessible. Returns Cumulative amount of
+   * gas that the player has spent.
+   */
+  Optional<Integer> spentGas();
 
-    /**
-     * Retrieves the number of incomplete units that the player has. If the information about the player is limited, then this function will only return the number of visible incomplete units. Note This function is a macro for allUnitCount() - completedUnitCount(). Parameters unit (optional) The unit type to query. IUnitType macros are accepted. If this parameter is omitted, then it will use UnitTypes::AllUnits by default. Returns The number of incomplete units of the given type that the player owns. See also allUnitCount, visibleUnitCount, completedUnitCount
-     */
-    default Optional<Integer> incompleteUnitCount() {
-        return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream.filter(iUnit -> !(iUnit.isCompleted().orElse(true))).count());
-    }
+  /**
+   * Retrieves the total amount of supply the player has available for unit control. Note In
+   * Starcraft programming, the managed supply values are double than what they appear in the game.
+   * The reason for this is because Zerglings use 0.5 visible supply. In Starcraft, the supply for
+   * each race is separate. Having a Pylon and an Overlord will not give you 32 supply. It will
+   * instead give you 16 Protoss supply and 16 Zerg supply. Parameters race (optional) The race to
+   * query the total supply for. If this is omitted, then the player's current race will be used.
+   * Returns The total supply available for this player and the given race. Example usage: if (
+   * BWAPI::Broodwar->self()->supplyUsed() + 8 >= BWAPI::Broodwar->self()->supplyTotal() ) { //
+   * Construct pylons, supply depots, or overlords } See also supplyUsed
+   */
+  default Optional<Integer> supplyTotal() {
+    return getFriendlyUnits().map(iUnitStream -> iUnitStream.map(IUnit::getType)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .filter(IUnitType::isSupplyUnit)
+        .mapToInt(value -> value.supplyProvided().orElse(0))
+        .sum());
+  }
 
-    default Optional<Integer> incompleteUnitCount(IUnitType unitType) {
-        return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream
-                .filter(iUnit -> iUnit.getType().map(iUnitType -> iUnitType.equals(unitType)).orElse(false))
-                .filter(iUnit -> !(iUnit.isCompleted().orElse(true))).count());
-    }
+  /**
+   * Retrieves the current amount of supply that the player is using for unit control. Parameters
+   * race (optional) The race to query the used supply for. If this is omitted, then the player's
+   * current race will be used. Returns The supply that is in use for this player and the given
+   * race. See also supplyTotal
+   */
+  default Optional<Integer> supplyUsed() {
+    return getFriendlyUnits().map(iUnitStream -> iUnitStream.map(IUnit::getType)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .mapToInt(value -> value.supplyRequired().orElse(0))
+        .sum());
+  }
 
-    /**
-     * Retrieves the number units that have died for this player. Parameters unit (optional) The unit type to query. IUnitType macros are accepted. If this parameter is omitted, then it will use UnitTypes::AllUnits by default. Returns The total number of units that have died throughout the game.
-     */
-    Optional<Integer> deadUnitCount();
+  /**
+   * Retrieves the total number of units that the player has. If the information about the player is
+   * limited, then this function will only return the number of visible units. Parameters unit
+   * (optional) The unit type to query. IUnitType macros are accepted. If this parameter is omitted,
+   * then it will use UnitTypes::AllUnits by default. Returns The total number of units of the given
+   * type that the player owns. See also visibleUnitCount, completedUnitCount, incompleteUnitCount
+   */
+  default Optional<Integer> allUnitCount() {
+    return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream.count());
+  }
 
-    Optional<Integer> deadUnitCount(IUnitType unitType);
+  default Optional<Integer> allUnitCount(IUnitType unitType) {
+    return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream
+        .filter(iUnit -> iUnit.getType().map(iUnitType -> iUnitType.equals(unitType)).orElse(false))
+        .count()
+    );
+  }
 
-    /**
-     * Retrieves the number units that the player has killed. Parameters unit (optional) The unit type to query. IUnitType macros are accepted. If this parameter is omitted, then it will use UnitTypes::AllUnits by default. Returns The total number of units that the player has killed throughout the game.
-     */
-    Optional<Integer> killedUnitCount();
+  /**
+   * Retrieves the number of completed units that the player has. If the information about the
+   * player is limited, then this function will only return the number of visible completed units.
+   * Parameters unit (optional) The unit type to query. IUnitType macros are accepted. If this
+   * parameter is omitted, then it will use UnitTypes::AllUnits by default. Returns The number of
+   * completed units of the given type that the player owns. Example usage: bool
+   * obtainNextUpgrade(BWAPI::IUpgradeType upgType) { BWAPI::IPlayer self = BWAPI::Broodwar->self();
+   * int maxLvl = self->getMaxUpgradeLevel(upgType); int currentLvl =
+   * self->getUpgradeLevel(upgType); if ( !self->isUpgrading(upgType) && currentLvl < maxLvl &&
+   * self->completedUnitCount(upgType.whatsRequired(currentLvl+1)) > 0 &&
+   * self->completedUnitCount(upgType.whatUpgrades()) > 0 ) return self->getUnits().upgrade(upgType);
+   * return false; } See also allUnitCount, visibleUnitCount, incompleteUnitCount
+   */
+  default Optional<Integer> completedUnitCount() {
+    return getFriendlyUnits().map(
+        iUnitStream -> (int) iUnitStream.filter(iUnit -> iUnit.isCompleted().orElse(false))
+            .count());
+  }
 
-    Optional<Integer> killedUnitCount(IUnitType unitType);
+  default Optional<Integer> completedUnitCount(IUnitType unitType) {
+    return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream
+        .filter(iUnit -> iUnit.getType().map(iUnitType -> iUnitType.equals(unitType)).orElse(false))
+        .filter(iUnit -> iUnit.isCompleted().orElse(false)).count());
+  }
 
-    /**
-     * Retrieves the current upgrade level that the player has attained for a given upgrade type. Parameters upgrade The IUpgradeType to query. Returns The number of levels that the upgrade has been upgraded for this player. Example usage: bool obtainNextUpgrade(BWAPI::IUpgradeType upgType) { BWAPI::IPlayer self = BWAPI::Broodwar->self(); int maxLvl = self->getMaxUpgradeLevel(upgType); int currentLvl = self->getUpgradeLevel(upgType); if ( !self->isUpgrading(upgType) && currentLvl < maxLvl && self->completedUnitCount(upgType.whatsRequired(currentLvl+1)) > 0 && self->completedUnitCount(upgType.whatUpgrades()) > 0 ) return self->getUnits().upgrade(upgType); return false; } See also UnitInterface::upgrade, getMaxUpgradeLevel
-     */
-    Optional<Integer> getUpgradeLevel(IUpgradeType upgrade);
+  /**
+   * Retrieves the number of incomplete units that the player has. If the information about the
+   * player is limited, then this function will only return the number of visible incomplete units.
+   * Note This function is a macro for allUnitCount() - completedUnitCount(). Parameters unit
+   * (optional) The unit type to query. IUnitType macros are accepted. If this parameter is omitted,
+   * then it will use UnitTypes::AllUnits by default. Returns The number of incomplete units of the
+   * given type that the player owns. See also allUnitCount, visibleUnitCount, completedUnitCount
+   */
+  default Optional<Integer> incompleteUnitCount() {
+    return getFriendlyUnits().map(
+        iUnitStream -> (int) iUnitStream.filter(iUnit -> !(iUnit.isCompleted().orElse(true)))
+            .count());
+  }
 
-    /**
-     * Checks if the player has already researched a given technology. Parameters tech The ITechType to query. Returns true if the player has obtained the given tech, or false if they have not See also isResearching, UnitInterface::research, isResearchAvailable
-     */
-    Optional<Boolean> hasResearched(ITechType tech);
+  default Optional<Integer> incompleteUnitCount(IUnitType unitType) {
+    return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream
+        .filter(iUnit -> iUnit.getType().map(iUnitType -> iUnitType.equals(unitType)).orElse(false))
+        .filter(iUnit -> !(iUnit.isCompleted().orElse(true))).count());
+  }
 
-    /**
-     * Checks if the player is researching a given technology type. Parameters tech The ITechType to query. Returns true if the player is currently researching the tech, or false otherwise See also UnitInterface::research, hasResearched
-     */
-    Optional<Boolean> isResearching(ITechType tech);
+  /**
+   * Retrieves the number units that have died for this player. Parameters unit (optional) The unit
+   * type to query. IUnitType macros are accepted. If this parameter is omitted, then it will use
+   * UnitTypes::AllUnits by default. Returns The total number of units that have died throughout the
+   * game.
+   */
+  Optional<Integer> deadUnitCount();
 
-    /**
-     * Checks if the player is upgrading a given upgrade type. Parameters upgrade The upgrade type to query. Returns true if the player is currently upgrading the given upgrade, false otherwise Example usage: bool obtainNextUpgrade(BWAPI::IUpgradeType upgType) { BWAPI::IPlayer self = BWAPI::Broodwar->self(); int maxLvl = self->getMaxUpgradeLevel(upgType); int currentLvl = self->getUpgradeLevel(upgType); if ( !self->isUpgrading(upgType) && currentLvl < maxLvl && self->completedUnitCount(upgType.whatsRequired(currentLvl+1)) > 0 && self->completedUnitCount(upgType.whatUpgrades()) > 0 ) return self->getUnits().upgrade(upgType); return false; } See also UnitInterface::upgrade
-     */
-    Optional<Boolean> isUpgrading(IUpgradeType upgrade);
+  Optional<Integer> deadUnitCount(IUnitType unitType);
 
-    /**
-     * Retrieves the maximum amount of energy that a unit type will have, taking the player's energy upgrades into consideration. Parameters unit The IUnitType to retrieve the maximum energy for. Returns Maximum amount of energy that the given unit type can have.
-     */
-    Optional<Integer> maxEnergy(IUnitType unit);
+  /**
+   * Retrieves the number units that the player has killed. Parameters unit (optional) The unit type
+   * to query. IUnitType macros are accepted. If this parameter is omitted, then it will use
+   * UnitTypes::AllUnits by default. Returns The total number of units that the player has killed
+   * throughout the game.
+   */
+  Optional<Integer> killedUnitCount();
 
-    /**
-     * Retrieves the top speed of a unit type, taking the player's speed upgrades into consideration. Parameters unit The IUnitType to retrieve the top speed for. Returns Top speed of the provided unit type for this player.
-     */
-    Optional<Double> topSpeed(IUnitType unit);
+  Optional<Integer> killedUnitCount(IUnitType unitType);
 
-    /**
-     * Retrieves the maximum weapon range of a weapon type, taking the player's weapon upgrades into consideration. Parameters weapon The IWeaponType to retrieve the maximum range for. Returns Maximum range of the given weapon type for units owned by this player.
-     */
-    Optional<Integer> weaponMaxRange(IWeaponType weapon);
+  /**
+   * Retrieves the current upgrade level that the player has attained for a given upgrade type.
+   * Parameters upgrade The IUpgradeType to query. Returns The number of levels that the upgrade has
+   * been upgraded for this player. Example usage: bool obtainNextUpgrade(BWAPI::IUpgradeType
+   * upgType) { BWAPI::IPlayer self = BWAPI::Broodwar->self(); int maxLvl =
+   * self->getMaxUpgradeLevel(upgType); int currentLvl = self->getUpgradeLevel(upgType); if (
+   * !self->isUpgrading(upgType) && currentLvl < maxLvl && self->completedUnitCount(upgType.whatsRequired(currentLvl+1))
+   * > 0 && self->completedUnitCount(upgType.whatUpgrades()) > 0 ) return
+   * self->getUnits().upgrade(upgType); return false; } See also UnitInterface::upgrade,
+   * getMaxUpgradeLevel
+   */
+  Optional<Integer> getUpgradeLevel(IUpgradeType upgrade);
 
-    /**
-     * Retrieves the sight range of a unit type, taking the player's sight range upgrades into consideration. Parameters unit The IUnitType to retrieve the sight range for. Returns Sight range of the provided unit type for this player.
-     */
-    Optional<Integer> sightRange(IUnitType unit);
+  /**
+   * Checks if the player has already researched a given technology. Parameters tech The ITechType
+   * to query. Returns true if the player has obtained the given tech, or false if they have not See
+   * also isResearching, UnitInterface::research, isResearchAvailable
+   */
+  Optional<Boolean> hasResearched(ITechType tech);
 
-    /**
-     * Retrieves the weapon cooldown of a unit type, taking the player's attack speed upgrades into consideration. Parameters unit The IUnitType to retrieve the damage cooldown for. Returns Weapon cooldown of the provided unit type for this player.
-     */
-    Optional<Integer> weaponDamageCooldown(IUnitType unit);
+  /**
+   * Checks if the player is researching a given technology type. Parameters tech The ITechType to
+   * query. Returns true if the player is currently researching the tech, or false otherwise See
+   * also UnitInterface::research, hasResearched
+   */
+  Optional<Boolean> isResearching(ITechType tech);
 
-    /**
-     * Calculates the armor that a given unit type will have, including upgrades. Parameters unit The unit type to calculate armor for, using the current player's upgrades. Returns The amount of armor that the unit will have with the player's upgrades.
-     */
-    Optional<Integer> armor(IUnitType unit);
+  /**
+   * Checks if the player is upgrading a given upgrade type. Parameters upgrade The upgrade type to
+   * query. Returns true if the player is currently upgrading the given upgrade, false otherwise
+   * Example usage: bool obtainNextUpgrade(BWAPI::IUpgradeType upgType) { BWAPI::IPlayer self =
+   * BWAPI::Broodwar->self(); int maxLvl = self->getMaxUpgradeLevel(upgType); int currentLvl =
+   * self->getUpgradeLevel(upgType); if ( !self->isUpgrading(upgType) && currentLvl < maxLvl &&
+   * self->completedUnitCount(upgType.whatsRequired(currentLvl+1)) > 0 &&
+   * self->completedUnitCount(upgType.whatUpgrades()) > 0 ) return self->getUnits().upgrade(upgType);
+   * return false; } See also UnitInterface::upgrade
+   */
+  Optional<Boolean> isUpgrading(IUpgradeType upgrade);
 
-    /**
-     * Calculates the damage that a given weapon type can deal, including upgrades. Parameters wpn The weapon type to calculate for. Returns The amount of damage that the weapon deals with this player's upgrades.
-     */
-    Optional<Integer> damage(IWeaponType wpn);
+  /**
+   * Retrieves the maximum amount of energy that a unit type will have, taking the player's energy
+   * upgrades into consideration. Parameters unit The IUnitType to retrieve the maximum energy for.
+   * Returns Maximum amount of energy that the given unit type can have.
+   */
+  Optional<Integer> maxEnergy(IUnitType unit);
 
-    /**
-     * Retrieves the total unit score, as seen in the end-game score screen. Returns The player's unit score.
-     */
-    Optional<Integer> getUnitScore();
+  /**
+   * Retrieves the top speed of a unit type, taking the player's speed upgrades into consideration.
+   * Parameters unit The IUnitType to retrieve the top speed for. Returns Top speed of the provided
+   * unit type for this player.
+   */
+  Optional<Double> topSpeed(IUnitType unit);
 
-    /**
-     * Retrieves the total kill score, as seen in the end-game score screen. Returns The player's kill score.
-     */
-    Optional<Integer> getKillScore();
+  /**
+   * Retrieves the maximum weapon range of a weapon type, taking the player's weapon upgrades into
+   * consideration. Parameters weapon The IWeaponType to retrieve the maximum range for. Returns
+   * Maximum range of the given weapon type for units owned by this player.
+   */
+  Optional<Integer> weaponMaxRange(IWeaponType weapon);
 
-    /**
-     * Retrieves the total building score, as seen in the end-game score screen. Returns The player's building score.
-     */
-    Optional<Integer> getBuildingScore();
+  /**
+   * Retrieves the sight range of a unit type, taking the player's sight range upgrades into
+   * consideration. Parameters unit The IUnitType to retrieve the sight range for. Returns Sight
+   * range of the provided unit type for this player.
+   */
+  Optional<Integer> sightRange(IUnitType unit);
 
-    /**
-     * Retrieves the total razing score, as seen in the end-game score screen. Returns The player's razing score.
-     */
-    Optional<Integer> getRazingScore();
+  /**
+   * Retrieves the weapon cooldown of a unit type, taking the player's attack speed upgrades into
+   * consideration. Parameters unit The IUnitType to retrieve the damage cooldown for. Returns
+   * Weapon cooldown of the provided unit type for this player.
+   */
+  Optional<Integer> weaponDamageCooldown(IUnitType unit);
 
-    /**
-     * Retrieves the player's custom score. This score is used in Use Map Settings game types. Returns The player's custom score.
-     */
-    Optional<Integer> getCustomScore();
+  /**
+   * Calculates the armor that a given unit type will have, including upgrades. Parameters unit The
+   * unit type to calculate armor for, using the current player's upgrades. Returns The amount of
+   * armor that the unit will have with the player's upgrades.
+   */
+  Optional<Integer> armor(IUnitType unit);
 
-    /**
-     * Checks if the player is an observer player, typically in a Use Map Settings observer game. An observer player does not participate in the game. Returns true if the player is observing, or false if the player is capable of playing in the game.
-     */
-    Optional<Boolean> isObserver();
+  /**
+   * Calculates the damage that a given weapon type can deal, including upgrades. Parameters wpn The
+   * weapon type to calculate for. Returns The amount of damage that the weapon deals with this
+   * player's upgrades.
+   */
+  Optional<Integer> damage(IWeaponType wpn);
 
-    //TODO
+  /**
+   * Retrieves the total unit score, as seen in the end-game score screen. Returns The player's unit
+   * score.
+   */
+  Optional<Integer> getUnitScore();
+
+  /**
+   * Retrieves the total kill score, as seen in the end-game score screen. Returns The player's kill
+   * score.
+   */
+  Optional<Integer> getKillScore();
+
+  /**
+   * Retrieves the total building score, as seen in the end-game score screen. Returns The player's
+   * building score.
+   */
+  Optional<Integer> getBuildingScore();
+
+  /**
+   * Retrieves the total razing score, as seen in the end-game score screen. Returns The player's
+   * razing score.
+   */
+  Optional<Integer> getRazingScore();
+
+  /**
+   * Retrieves the player's custom score. This score is used in Use Map Settings game types. Returns
+   * The player's custom score.
+   */
+  Optional<Integer> getCustomScore();
+
+  /**
+   * Checks if the player is an observer player, typically in a Use Map Settings observer game. An
+   * observer player does not participate in the game. Returns true if the player is observing, or
+   * false if the player is capable of playing in the game.
+   */
+  Optional<Boolean> isObserver();
+
+  //TODO
 //    /**
 //     * Checks if a technology can be researched by the player. Certain technologies may be disabled in Use Map Settings game types. Parameters tech The ITechType to query. Returns true if the tech type is available to the player for research.
 //     */
@@ -387,7 +530,7 @@ public interface IPlayer extends InGameInterface, Serializable {
 //     */
 //    Optional<Boolean> canResearch(ITechType type);
 
-    //todo heuristic
+  //todo heuristic
 //    /**
 //     * Retrieve's the player's starting location. Returns A ITilePosition containing the position of the start location. Return values TilePositions::None if the player does not have a start location. TilePositions::Unknown if an error occured while trying to retrieve the start location. See also IGame::getStartLocations, IGame::getLastError
 //     */
