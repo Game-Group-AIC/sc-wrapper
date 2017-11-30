@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.EPlayerType;
+import gg.fel.cvut.cz.enums.PlayerTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 /**
  * The IPlayer represents a unique controller in the game. Each player in a match will have his or
  * her own player instance. There is also a neutral player which owns all the neutral units (such as
- * mineral patches and vespene geysers). See also Playerset, EPlayerType, IRace
+ * mineral patches and vespene geysers). See also Playerset, PlayerTypeEnum, IRace
  */
 public interface IPlayer extends InGameInterface, Serializable {
 
@@ -135,12 +135,12 @@ public interface IPlayer extends InGameInterface, Serializable {
 
   /**
    * Retrieves the player's controller type. This allows you to distinguish betweeen computer and
-   * human players. Returns The EPlayerType that identifies who is controlling a player. Note Other
-   * players using BWAPI will be treated as a human player and return PlayerTypes::IPlayer. if (
-   * BWAPI::Broodwar->enemy() ) { if ( BWAPI::Broodwar->enemy()->getType() == PlayerTypes::Computer
-   * ) BWAPI::Broodwar << "Looks like something I can abuse!" << std::endl; }
+   * human players. Returns The PlayerTypeEnum that identifies who is controlling a player. Note
+   * Other players using BWAPI will be treated as a human player and return PlayerTypes::IPlayer. if
+   * ( BWAPI::Broodwar->enemy() ) { if ( BWAPI::Broodwar->enemy()->getType() ==
+   * PlayerTypes::Computer ) BWAPI::Broodwar << "Looks like something I can abuse!" << std::endl; }
    */
-  Optional<EPlayerType> getType();
+  Optional<PlayerTypeEnum> getType();
 
   /**
    * Checks if this player is allied to the specified player. Parameters player The player to check

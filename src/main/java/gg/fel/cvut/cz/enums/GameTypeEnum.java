@@ -4,7 +4,7 @@ package gg.fel.cvut.cz.enums;
  * A class that represents game types in Broodwar. A game type is selected when creating a game. See
  * also GameTypes
  */
-public enum EGameType implements IGameTypes {
+public enum GameTypeEnum implements IGameTypes {
   Melee,
   Free_For_All,
   One_on_One,

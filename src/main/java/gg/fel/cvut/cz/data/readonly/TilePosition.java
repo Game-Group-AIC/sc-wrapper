@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.ITilePosition;
 import gg.fel.cvut.cz.api.IUnit;
+import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
@@ -17,6 +18,10 @@ public class TilePosition extends AContainer implements ITilePosition, Serializa
   protected final StaticPropertyRegister<IPosition> position = new StaticPropertyRegister<>();
   protected final StaticPropertyRegister<Integer> groundHeight = new StaticPropertyRegister<>();
   private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(position);
+
+  public TilePosition(BWCounter bwCounter) {
+    super(bwCounter);
+  }
 
   @Override
   public Optional<Integer> getGroundHeight() {

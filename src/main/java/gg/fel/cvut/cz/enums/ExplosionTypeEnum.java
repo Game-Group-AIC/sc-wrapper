@@ -4,7 +4,7 @@ package gg.fel.cvut.cz.enums;
  * A representation of a weapon's explosion type. This indicates how the weapon behaves, such as if
  * it deals splash damage or causes an effect to occur. See also ExplosionTypes
  */
-public enum EExplosionType implements IGameTypes {
+public enum ExplosionTypeEnum implements IGameTypes {
   None,
   Normal,
   Radial_Splash,

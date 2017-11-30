@@ -1,7 +1,7 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.EOrder;
-import gg.fel.cvut.cz.enums.ETechType;
+import gg.fel.cvut.cz.enums.OrderEnum;
+import gg.fel.cvut.cz.enums.TechTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -13,7 +13,7 @@ import java.util.Optional;
  */
 public interface ITechType extends InGameInterface, Serializable {
 
-  ETechType getTechType();
+  Optional<TechTypeEnum> getTechType();
 
   /**
    * Retrieves the race that is required to research or use the ITechType. Note There is an
@@ -68,10 +68,10 @@ public interface ITechType extends InGameInterface, Serializable {
   Optional<Boolean> targetsPosition();
 
   /**
-   * Retrieves the EOrder that a IUnit uses when using this ability. Returns EOrder representing the
-   * action a IUnit uses to perform this ability
+   * Retrieves the OrderEnum that a IUnit uses when using this ability. Returns OrderEnum
+   * representing the action a IUnit uses to perform this ability
    */
-  Optional<EOrder> getOrder();
+  Optional<OrderEnum> getOrder();
 
   /**
    * Retrieves the IUnitType required to research this technology. The required unit type must be a

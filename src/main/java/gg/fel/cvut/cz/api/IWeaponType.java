@@ -1,8 +1,8 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.EDamageType;
-import gg.fel.cvut.cz.enums.EExplosionType;
-import gg.fel.cvut.cz.enums.EWeaponType;
+import gg.fel.cvut.cz.enums.DamageTypeEnum;
+import gg.fel.cvut.cz.enums.ExplosionTypeEnum;
+import gg.fel.cvut.cz.enums.WeaponTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public interface IWeaponType extends InGameInterface, Serializable {
 
-  EWeaponType getWeaponType();
+  Optional<WeaponTypeEnum> getWeaponType();
 
   /**
    * Retrieves the technology type that must be researched before this weapon can be used. Returns
@@ -30,8 +30,8 @@ public interface IWeaponType extends InGameInterface, Serializable {
 
   /**
    * Retrieves the base amount of damage that this weapon can deal per attack. Note That this damage
-   * amount must go through a EDamageType and EUnitSizeType filter before it is applied to a unit.
-   * Returns Amount of base damage that this weapon deals.
+   * amount must go through a DamageTypeEnum and UnitSizeTypeEnum filter before it is applied to a
+   * unit. Returns Amount of base damage that this weapon deals.
    */
   Optional<Integer> damageAmount();
 
@@ -62,16 +62,16 @@ public interface IWeaponType extends InGameInterface, Serializable {
   Optional<IUpgradeType> upgradeType();
 
   /**
-   * Retrieves the damage type that this weapon applies to a unit type. Returns EDamageType used for
-   * damage calculation. See also EDamageType, EUnitSizeType
+   * Retrieves the damage type that this weapon applies to a unit type. Returns DamageTypeEnum used
+   * for damage calculation. See also DamageTypeEnum, UnitSizeTypeEnum
    */
-  Optional<EDamageType> damageType();
+  Optional<DamageTypeEnum> damageType();
 
   /**
-   * Retrieves the explosion type that indicates how the weapon deals damage. Returns EExplosionType
-   * identifying how damage is applied to a target location.
+   * Retrieves the explosion type that indicates how the weapon deals damage. Returns
+   * ExplosionTypeEnum identifying how damage is applied to a target location.
    */
-  Optional<EExplosionType> explosionType();
+  Optional<ExplosionTypeEnum> explosionType();
 
   /**
    * Retrieves the minimum attack range of the weapon, measured in pixels. This value is 0 for
@@ -164,7 +164,7 @@ public interface IWeaponType extends InGameInterface, Serializable {
   Optional<Boolean> targetsOwn();
 
   default Optional<Double> getDamageNormalized() {
-    if (getWeaponType().equals(EWeaponType.Psi_Blades)) {
+    if (getWeaponType().equals(WeaponTypeEnum.Psi_Blades)) {
       return Optional.of(16.0);
     } else {
       if (!damageAmount().isPresent() || !damageFactor().isPresent()) {

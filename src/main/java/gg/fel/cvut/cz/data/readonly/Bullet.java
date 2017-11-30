@@ -6,10 +6,11 @@ import gg.fel.cvut.cz.api.IBullet;
 import gg.fel.cvut.cz.api.IPlayer;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IUnit;
+import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
-import gg.fel.cvut.cz.enums.EBulletType;
+import gg.fel.cvut.cz.enums.BulletTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
@@ -19,7 +20,7 @@ public class Bullet extends AContainer implements IBullet, Serializable {
   protected final DynamicPropertyRegister<Boolean> exists = new DynamicPropertyRegister<>();
   protected final StaticPropertyRegister<Integer> id = new StaticPropertyRegister<>();
   protected final DynamicPropertyRegister<IPlayer> player = new DynamicPropertyRegister<>();
-  protected final DynamicPropertyRegister<EBulletType> type = new DynamicPropertyRegister<>();
+  protected final DynamicPropertyRegister<BulletTypeEnum> type = new DynamicPropertyRegister<>();
   protected final StaticPropertyRegister<IUnit> source = new StaticPropertyRegister<>();
   protected final DynamicPropertyRegister<IPosition> position = new DynamicPropertyRegister<>();
   protected final DynamicPropertyRegister<Double> angle = new DynamicPropertyRegister<>();
@@ -30,6 +31,10 @@ public class Bullet extends AContainer implements IBullet, Serializable {
   protected final DynamicPropertyRegister<Integer> removeTimer = new DynamicPropertyRegister<>();
   protected final DynamicPropertyRegister<ImmutableMap<IPlayer, Boolean>> isVisible = new DynamicPropertyRegister<>();
   private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(id);
+
+  public Bullet(BWCounter bwCounter) {
+    super(bwCounter);
+  }
 
   @Override
   public Optional<Integer> getID() {
@@ -47,7 +52,7 @@ public class Bullet extends AContainer implements IBullet, Serializable {
   }
 
   @Override
-  public Optional<EBulletType> getType() {
+  public Optional<BulletTypeEnum> getType() {
     return getPropertyOnTimeLineStrategy(type);
   }
 

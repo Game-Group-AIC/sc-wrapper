@@ -11,6 +11,14 @@ public interface IUpdateContainerStrategy<L extends AContainer> {
    * Returns whether container should be updated based on difference from last update and depth of
    * update tree
    */
-  boolean shouldBeUpdated(L container, int deltaUpdate, int depth);
+  default boolean shouldBeUpdated(L container, int deltaUpdate, int depth) {
+    return deltaUpdate != 0 && shouldBeUpdatedByUser(container, deltaUpdate, depth);
+  }
+
+  /**
+   * Returns whether container should be updated based on difference from last update and depth of
+   * update tree. Update is always skiped when delta is 0.
+   */
+  boolean shouldBeUpdatedByUser(L container, int deltaUpdate, int depth);
 
 }

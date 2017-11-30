@@ -5,7 +5,7 @@ package gg.fel.cvut.cz.enums;
  * to use. BWAPI filters commands accordingly and then converts them to Broodwar commands, which
  * differ in complexity. See also UnitCommandTypes
  */
-public enum EUnitCommandType implements IGameTypes {
+public enum UnitCommandTypeEnum implements IGameTypes {
   Attack_Move,
   Attack_Unit,
   Build,

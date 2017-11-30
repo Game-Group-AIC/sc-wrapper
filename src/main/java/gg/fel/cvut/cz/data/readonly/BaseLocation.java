@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IBaseLocation;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IUnit;
+import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
@@ -26,6 +27,9 @@ public class BaseLocation extends AContainer implements IBaseLocation, Serializa
   protected final StaticPropertyRegister<ImmutableMap<IBaseLocation, Double>> airDistanceToBases = new StaticPropertyRegister<>();
   private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(position);
 
+  public BaseLocation(BWCounter bwCounter) {
+    super(bwCounter);
+  }
 
   @Override
   public Optional<Integer> minerals() {

@@ -4,26 +4,25 @@ import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
-import gg.fel.cvut.cz.data.readonly.Race;
+import gg.fel.cvut.cz.data.readonly.BulletType;
 import gg.fel.cvut.cz.facades.IUpdateManager;
 import gg.fel.cvut.cz.facades.managers.UpdateManager;
 import gg.fel.cvut.cz.facades.strategies.UpdateStrategy;
-import gg.fel.cvut.cz.wrappers.WRace;
+import gg.fel.cvut.cz.wrappers.WBulletType;
 import java.util.stream.Stream;
 
-//TODO implement
-public class UpdatableRace extends Race implements
-    IUpdatableContainer<WRace, Race> {
+public class UpdatableBulletType extends BulletType implements
+    IUpdatableContainer<WBulletType, BulletType> {
 
-  private final transient WRace wrapped;
+  private final transient WBulletType wrapped;
 
-  public UpdatableRace(BWCounter bwCounter, WRace wrapped) {
+  public UpdatableBulletType(BWCounter bwCounter, WBulletType wrapped) {
     super(bwCounter);
     this.wrapped = wrapped;
   }
 
   @Override
-  public WRace getWrappedSCInstance() {
+  public WBulletType getWrappedSCInstance() {
     return wrapped;
   }
 
@@ -33,12 +32,12 @@ public class UpdatableRace extends Race implements
   }
 
   @Override
-  public Race getContainer() {
+  public BulletType getContainer() {
     return this;
   }
 
   @Override
-  public Race getCopyOfContainer(BWReplayCounter bwReplayCounter) {
+  public BulletType getCopyOfContainer(BWReplayCounter bwReplayCounter) {
     this.bwCounter = bwReplayCounter;
     return this;
   }
@@ -54,5 +53,4 @@ public class UpdatableRace extends Race implements
       int currentFrame) {
     updaterFacade.update(this, updateStrategy, depth, currentFrame);
   }
-
 }

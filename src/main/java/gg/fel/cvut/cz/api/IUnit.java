@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.EOrder;
+import gg.fel.cvut.cz.enums.OrderEnum;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
@@ -409,18 +409,19 @@ public interface IUnit extends InGameInterface, Serializable {
   Optional<IPosition> getTargetPosition();
 
   /**
-   * Retrieves the primary EOrder that the unit is assigned. Primary orders are distinct actions
-   * such as Orders::AttackUnit and Orders::PlayerGuard. Returns The primary EOrder that the unit is
-   * executing.
+   * Retrieves the primary OrderEnum that the unit is assigned. Primary orders are distinct actions
+   * such as Orders::AttackUnit and Orders::PlayerGuard. Returns The primary OrderEnum that the unit
+   * is executing.
    */
-  Optional<EOrder> getOrder();
+  Optional<OrderEnum> getOrder();
 
   /**
-   * Retrieves the secondary EOrder that the unit is assigned. Secondary orders are run in the
+   * Retrieves the secondary OrderEnum that the unit is assigned. Secondary orders are run in the
    * background as a sub-order. An example would be Orders::TrainFighter, because a Carrier can move
-   * and train fighters at the same time. Returns The secondary EOrder that the unit is executing.
+   * and train fighters at the same time. Returns The secondary OrderEnum that the unit is
+   * executing.
    */
-  Optional<EOrder> getSecondaryOrder();
+  Optional<OrderEnum> getSecondaryOrder();
 
   /**
    * Retrieves the unit's primary order target. This is usually set when the low level unit AI
@@ -727,7 +728,7 @@ public interface IUnit extends InGameInterface, Serializable {
    * Orders::TowerGuard: Turret structure idle. Orders::Burrowed: Burrowed unit idle.
    * Orders::NukeTrain Orders::Larva: Larva idle. BWAPI::Unitset myUnits =
    * BWAPI::Broodwar->self()->getUnits(); for ( auto u = myUnits.begin(); u != myUnits.end(); ++u )
-   * { // EOrder idle worker to gather from closest mineral field if ( u->getType().isWorker() &&
+   * { // OrderEnum idle worker to gather from closest mineral field if ( u->getType().isWorker() &&
    * u->isIdle() ) u->gather( u->getClosestUnit( BWAPI::Filter::IsMineralField ) ); } Returns true
    * if this unit is idle, and false if this unit is performing any action, such as moving or
    * attacking Note If this function returns a successful state, then the following function calls

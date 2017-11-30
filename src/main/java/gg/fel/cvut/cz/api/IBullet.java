@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.EBulletType;
+import gg.fel.cvut.cz.enums.BulletTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -44,9 +44,9 @@ public interface IBullet extends InGameInterface, Serializable {
 
   /**
    * Retrieves the type of this IBullet. Return values BulletTypes::Unknown if the IBullet is
-   * inaccessible. Returns A EBulletType representing the IBullet's type.
+   * inaccessible. Returns A BulletTypeEnum representing the IBullet's type.
    */
-  Optional<EBulletType> getType();
+  Optional<BulletTypeEnum> getType();
 
   /**
    * Retrieves the IUnit interface that the IBullet spawned from. Return values nullptr If the

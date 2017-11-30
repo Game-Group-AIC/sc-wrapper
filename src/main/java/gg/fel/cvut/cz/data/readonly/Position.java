@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IRegion;
 import gg.fel.cvut.cz.api.ITilePosition;
+import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import java.io.Serializable;
@@ -19,6 +20,10 @@ public class Position extends AContainer implements IPosition, Serializable {
   protected final StaticPropertyRegister<Integer> y = new StaticPropertyRegister<>();
   protected final StaticPropertyRegister<IRegion> region = new StaticPropertyRegister<>();
   private final List<StaticPropertyRegister<?>> toHash = ImmutableList.of(x, y);
+
+  public Position(BWCounter bwCounter) {
+    super(bwCounter);
+  }
 
   @Override
   public Optional<Integer> getX() {

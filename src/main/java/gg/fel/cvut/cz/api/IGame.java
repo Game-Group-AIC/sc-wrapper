@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.api;
 
-import gg.fel.cvut.cz.enums.EGameType;
+import gg.fel.cvut.cz.enums.GameTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
@@ -10,16 +10,9 @@ import java.util.Set;
  * state information from Starcraft Broodwar. IGame state information includes all units, resources,
  * players, forces, bullets, terrain, fog of war, regions, etc.
  */
-//TODO move map related stuff to MAP?
 public interface IGame extends InGameInterface, Serializable {
 
-  Optional<Set<IRegion>> getRegions();
-
-  Optional<Set<IChokePoint>> getChokePoints();
-
-  Optional<Set<IBaseLocation>> getBaseLocations();
-
-  Optional<Set<IBaseLocation>> getStartLocations();
+  Optional<IPlayer> getSelf();
 
   /**
    * Retrieves the set of all players in the match. This includes the neutral player, which owns all
@@ -28,10 +21,10 @@ public interface IGame extends InGameInterface, Serializable {
   Optional<Set<IPlayer>> getPlayers();
 
   /**
-   * Retrieves the EGameType of the current game. Returns EGameType indicating the rules of the
-   * match. See also EGameType
+   * Retrieves the GameTypeEnum of the current game. Returns GameTypeEnum indicating the rules of
+   * the match. See also GameTypeEnum
    */
-  Optional<EGameType> getGameType();
+  Optional<GameTypeEnum> getGameType();
 
   /**
    * Retrieves the number of logical frames since the beginning of the match. If the game is paused,
@@ -58,6 +51,20 @@ public interface IGame extends InGameInterface, Serializable {
   Optional<Double> getAverageFPS();
 
   /**
+   * Retrieves current amount of time in seconds that the game has elapsed. Returns Time, in
+   * seconds, that the game has elapsed as an integer.
+   */
+  Optional<Integer> elapsedTime();
+
+  Optional<Set<IRegion>> getRegions();
+
+  Optional<Set<IChokePoint>> getChokePoints();
+
+  Optional<Set<IBaseLocation>> getBaseLocations();
+
+  Optional<Set<IBaseLocation>> getStartLocations();
+
+  /**
    * Retrieves the width of the map in build tile units. Returns Width of the map in tiles. See also
    * mapHeight
    */
@@ -76,9 +83,8 @@ public interface IGame extends InGameInterface, Serializable {
   Optional<String> mapName();
 
   /**
-   * Retrieves current amount of time in seconds that the game has elapsed. Returns Time, in
-   * seconds, that the game has elapsed as an integer.
+   * Returns grid
    */
-  Optional<Integer> elapsedTime();
+  Optional<Set<ITilePosition>> getGrid();
 
 }

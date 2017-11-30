@@ -16,12 +16,12 @@ import lombok.AllArgsConstructor;
  * Template for SC:BW type updater
  */
 @AllArgsConstructor
-public class AUpdater<T extends Wrapper<?>, L extends AContainer, U extends IUpdatableContainer<T, L>> implements
+public class Updater<T extends Wrapper<?>, L extends AContainer, U extends IUpdatableContainer<T, L>> implements
     IUpdater<T, L> {
 
   private final WrapInstanceToUpdatableContainerStrategy<T, L, U> wrapInstanceToUpdatableContainerStrategy;
   private final ReentrantReadWriteLock lockForMaps = new ReentrantReadWriteLock(true);
-  private final UpdaterFacade updaterFacade;
+  private final UpdateManager updaterFacade;
 
   //to store data
   private final Map<T, U> register = new HashMap<>();

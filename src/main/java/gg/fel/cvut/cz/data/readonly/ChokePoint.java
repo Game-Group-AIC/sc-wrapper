@@ -5,6 +5,7 @@ import gg.fel.cvut.cz.api.IChokePoint;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IRegion;
 import gg.fel.cvut.cz.api.Tuple;
+import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import java.io.Serializable;
@@ -18,6 +19,10 @@ public class ChokePoint extends AContainer implements IChokePoint, Serializable 
   protected final StaticPropertyRegister<Double> width = new StaticPropertyRegister<>();
   protected final StaticPropertyRegister<IPosition> position = new StaticPropertyRegister<>();
   private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(position);
+
+  public ChokePoint(BWCounter bwCounter) {
+    super(bwCounter);
+  }
 
   @Override
   public Optional<Tuple<IRegion, IRegion>> getRegions() {

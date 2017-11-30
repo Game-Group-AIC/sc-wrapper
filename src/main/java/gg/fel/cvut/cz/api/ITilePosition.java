@@ -16,6 +16,7 @@ public interface ITilePosition extends IAbstractPoint, InGameInterface, Serializ
 
   int SIZE_IN_PIXELS = 32;
 
+  //TODO find building place
   //TODO distance computation - use in other classes as well
   //TODO neighbouring tiles - to add other related methods - can be player dependant
   //TODO is accessible

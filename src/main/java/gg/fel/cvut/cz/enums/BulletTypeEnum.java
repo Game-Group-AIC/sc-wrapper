@@ -4,7 +4,7 @@ package gg.fel.cvut.cz.enums;
  * This class represents a type of bullet. Note Internally, these are the same IDs as flingy types
  * in Broodwar. See also BulletTypes
  */
-public enum EBulletType implements IGameTypes {
+public enum BulletTypeEnum implements IGameTypes {
   Melee,
   Fusion_Cutter_Hit,
   Gauss_Rifle_Hit,

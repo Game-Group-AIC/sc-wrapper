@@ -5,6 +5,7 @@ import java.io.Serializable;
 /**
  * Tracks time in replays for SC:BW
  */
+//TODO id when serialized
 public class BWReplayCounter extends BWCounter implements IBWReplayCounter, Serializable {
 
   private final int gameLength;

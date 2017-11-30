@@ -1,19 +1,25 @@
 package gg.fel.cvut.cz.data.updatable;
 
+import gg.fel.cvut.cz.counters.BWCounter;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
 import gg.fel.cvut.cz.data.readonly.Bullet;
-import gg.fel.cvut.cz.facades.IUpdaterFacade;
-import gg.fel.cvut.cz.facades.managers.UpdaterFacade;
+import gg.fel.cvut.cz.facades.IUpdateManager;
+import gg.fel.cvut.cz.facades.managers.UpdateManager;
 import gg.fel.cvut.cz.facades.strategies.UpdateStrategy;
 import gg.fel.cvut.cz.wrappers.WBullet;
 import java.util.stream.Stream;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
+//TODO implement
 public class UpdatableBullet extends Bullet implements IUpdatableContainer<WBullet, Bullet> {
 
   private final transient WBullet wrapped;
+
+  public UpdatableBullet(BWCounter bwCounter, WBullet wrapped) {
+    super(bwCounter);
+    this.wrapped = wrapped;
+  }
 
   @Override
   public WBullet getWrappedSCInstance() {
@@ -21,8 +27,7 @@ public class UpdatableBullet extends Bullet implements IUpdatableContainer<WBull
   }
 
   @Override
-  public Stream<? extends AContainer> update(UpdaterFacade internalUpdaterFacade) {
-    //TODO set fields + lock
+  public Stream<? extends AContainer> update(UpdateManager internalUpdaterFacade) {
     return null;
   }
 
@@ -32,13 +37,19 @@ public class UpdatableBullet extends Bullet implements IUpdatableContainer<WBull
   }
 
   @Override
-  public boolean shouldBeUpdated(UpdateStrategy updateStrategy, IUpdaterFacade updaterFacade,
+  public Bullet getCopyOfContainer(BWReplayCounter bwReplayCounter) {
+    this.bwCounter = bwReplayCounter;
+    return this;
+  }
+
+  @Override
+  public boolean shouldBeUpdated(UpdateStrategy updateStrategy, IUpdateManager updaterFacade,
       int depth) {
     return updateStrategy.shouldBeUpdated(this, updaterFacade.getDeltaUpdate(this), depth);
   }
 
   @Override
-  public void update(UpdateStrategy updateStrategy, IUpdaterFacade updaterFacade, int depth,
+  public void update(UpdateStrategy updateStrategy, IUpdateManager updaterFacade, int depth,
       int currentFrame) {
     updaterFacade.update(this, updateStrategy, depth, currentFrame);
   }

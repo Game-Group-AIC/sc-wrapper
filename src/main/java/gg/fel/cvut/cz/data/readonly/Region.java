@@ -6,6 +6,7 @@ import gg.fel.cvut.cz.api.IChokePoint;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IRegion;
 import gg.fel.cvut.cz.api.IUnit;
+import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
@@ -21,6 +22,10 @@ public class Region extends AContainer implements IRegion, Serializable {
   protected final StaticPropertyRegister<ImmutableSet<IRegion>> reachableRegions = new StaticPropertyRegister<>();
   protected final StaticPropertyRegister<IPosition> position = new StaticPropertyRegister<>();
   private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(position);
+
+  public Region(BWCounter bwCounter) {
+    super(bwCounter);
+  }
 
   @Override
   public Optional<IPosition> getPosition() {

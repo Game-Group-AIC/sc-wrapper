@@ -104,7 +104,7 @@ public class QueueManager implements ICommandExecutor {
   }
 
   @Override
-  public void addCommand(Command<?> command) {
+  public void addCommand(Command command) {
     Queue queue;
 
     //is queue to handle this type present
@@ -137,7 +137,7 @@ public class QueueManager implements ICommandExecutor {
 
     private final CommandType commandType;
     private final Object queueMonitor = new Object();
-    private final LinkedList<Command<?>> commands = new LinkedList<>();
+    private final LinkedList<Command> commands = new LinkedList<>();
     private long averageExecution = 0;
     private int countOfExecutions = 0;
 
@@ -145,7 +145,7 @@ public class QueueManager implements ICommandExecutor {
       this.commandType = commandType;
     }
 
-    void addCommand(Command<?> command) {
+    void addCommand(Command command) {
       synchronized (queueMonitor) {
         commands.add(command);
       }
@@ -156,7 +156,7 @@ public class QueueManager implements ICommandExecutor {
     }
 
     boolean executedCommand() {
-      Optional<Command<?>> command;
+      Optional<Command> command;
       synchronized (queueMonitor) {
         command = Optional.ofNullable(commands.pollFirst());
       }

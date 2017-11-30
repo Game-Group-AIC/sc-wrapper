@@ -15,18 +15,18 @@ class WrapperForPosition<T> extends Wrapper<T> {
 
   @Override
   public boolean equals(Object o) {
-      if (this == o) {
-          return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-          return false;
-      }
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
     WrapperForPosition<?> that = (WrapperForPosition<?>) o;
 
-      if (x != that.x) {
-          return false;
-      }
+    if (x != that.x) {
+      return false;
+    }
     return y == that.y;
   }
 

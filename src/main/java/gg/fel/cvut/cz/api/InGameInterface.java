@@ -9,5 +9,4 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id")
 public interface InGameInterface {
   //TODO more specific interfaces
-  //TODO specific interfaces to command units
 }
