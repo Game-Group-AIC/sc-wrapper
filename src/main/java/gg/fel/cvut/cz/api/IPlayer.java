@@ -140,7 +140,7 @@ public interface IPlayer extends InGameInterface, Serializable {
    * ( BWAPI::Broodwar->enemy() ) { if ( BWAPI::Broodwar->enemy()->getType() ==
    * PlayerTypes::Computer ) BWAPI::Broodwar << "Looks like something I can abuse!" << std::endl; }
    */
-  Optional<PlayerTypeEnum> getType();
+  PlayerTypeEnum getType();
 
   /**
    * Checks if this player is allied to the specified player. Parameters player The player to check

@@ -1,40 +1,53 @@
 package gg.fel.cvut.cz.enums;
 
-public enum TechTypeEnum implements IGameTypes {
-  Stim_Packs,
+import bwapi.TechType;
+import java.util.List;
+
+public enum TechTypeEnum implements IGameTypes<TechType, TechTypeEnum> {
+  StimPacks,
   Lockdown,
-  EMP_Shockwave,
-  Spider_Mines,
-  Scanner_Sweep,
-  Tank_Siege_Mode,
-  Defensive_Matrix,
+  EMPShockwave,
+  SpiderMines,
+  ScannerSweep,
+  TankSiegeMode,
+  DefensiveMatrix,
   Irradiate,
-  Yamato_Gun,
-  Cloaking_Field,
-  Personnel_Cloaking,
+  YamatoGun,
+  CloakingField,
+  PersonnelCloaking,
   Restoration,
-  Optical_Flare,
+  OpticalFlare,
   Healing,
-  Nuclear_Strike,
+  NuclearStrike,
   Burrowing,
   Infestation,
-  Spawn_Broodlings,
-  Dark_Swarm,
+  SpawnBroodlings,
+  DarkSwarm,
   Plague,
   Consume,
   Ensnare,
   Parasite,
-  Lurker_Aspect,
-  Psionic_Storm,
+  LurkerAspect,
+  PsionicStorm,
   Hallucination,
   Recall,
-  Stasis_Field,
-  Archon_Warp,
-  Disruption_Web,
-  Mind_Control,
-  Dark_Archon_Meld,
+  StasisField,
+  ArchonWarp,
+  DisruptionWeb,
+  MindControl,
+  DarkArchonMeld,
   Feedback,
   Maelstrom,
   None,
-  Unknown
+  Unknown;
+
+  @Override
+  public List<TechType> getTypes() {
+    return TECH_TYPES;
+  }
+
+  @Override
+  public TechTypeEnum[] getValues() {
+    return TechTypeEnum.values();
+  }
 }

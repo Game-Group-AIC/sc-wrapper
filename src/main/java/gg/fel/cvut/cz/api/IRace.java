@@ -1,6 +1,7 @@
 package gg.fel.cvut.cz.api;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 
 public interface IRace extends InGameInterface, Serializable {
@@ -10,7 +11,7 @@ public interface IRace extends InGameInterface, Serializable {
    * units that are used to construct structures. Returns UnitTypeEnum of the worker that this race
    * uses.
    */
-  IUnitType getWorker();
+  Optional<IUnitType> getWorker();
 
   /**
    * Retrieves the default resource center UnitTypeEnum that is used to create expansions for this
@@ -18,7 +19,7 @@ public interface IRace extends InGameInterface, Serializable {
    * technology tree. Also known as its base of operations or resource depot. Returns UnitTypeEnum
    * of the center that this race uses.
    */
-  IUnitType getCenter();
+  Optional<IUnitType> getCenter();
 
   /**
    * Retrieves the default structure UnitTypeEnum for this UpdatableRace that is used to harvest gas
@@ -26,14 +27,14 @@ public interface IRace extends InGameInterface, Serializable {
    * Geyser in order to begin harvesting Vespene Gas. Returns UnitTypeEnum of the structure used to
    * harvest gas.
    */
-  IUnitType getRefinery();
+  Optional<IUnitType> getRefinery();
 
   /**
    * Retrieves the default transport UnitTypeEnum for this race that is used to transport ground
    * units across the map. Note In Starcraft, transports will allow you to carry ground units over
    * unpassable terrain. Returns UnitTypeEnum for transportation.
    */
-  IUnitType getTransport();
+  Optional<IUnitType> getTransport();
 
   /**
    * Retrieves the default supply provider UnitTypeEnum for this race that is used to construct
@@ -41,14 +42,14 @@ public interface IRace extends InGameInterface, Serializable {
    * sufficient supply available for their UpdatableRace. Returns UnitTypeEnum that provides the
    * player with supply.
    */
-  IUnitType getSupplyProvider();
+  Optional<IUnitType> getSupplyProvider();
 
-  Set<IUnitType> getAllUnitTypesOfThisRace();
+  Optional<Set<IUnitType>> getAllUnitTypesOfThisRace();
 
-  Set<ITechType> getAllTechTypesOfThisRace();
+  Optional<Set<ITechType>> getAllTechTypesOfThisRace();
 
-  Set<IUpgradeType> getAllUpgradeTypesOfThisRace();
+  Optional<Set<IUpgradeType>> getAllUpgradeTypesOfThisRace();
 
-  Set<IWeaponType> getAllWeaponTypesOfThisRace();
+  Optional<Set<IWeaponType>> getAllWeaponTypesOfThisRace();
 
 }

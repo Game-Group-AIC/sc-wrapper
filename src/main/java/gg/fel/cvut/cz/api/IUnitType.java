@@ -22,9 +22,9 @@ public interface IUnitType extends InGameInterface, Serializable {
    * this unit type. Return values IRace::None indicating that the unit type does not belong to any
    * particular race (a critter for example).
    */
-  IRace getRace();
+  Optional<IRace> getRace();
 
-  Optional<UnitTypeEnum> getUnitType();
+  UnitTypeEnum getUnitType();
 
   /**
    * Obtains the source unit type that is used to build or train this unit type, as well as the
@@ -595,11 +595,11 @@ public interface IUnitType extends InGameInterface, Serializable {
   }
 
   default boolean isBunker() {
-    return hasType(UnitTypeEnum.Terran_Bunker);
+    return hasType(UnitTypeEnum.TerranBunker);
   }
 
   default boolean isSpiderMine() {
-    return hasType(UnitTypeEnum.Terran_Vulture_Spider_Mine);
+    return hasType(UnitTypeEnum.TerranVultureSpiderMine);
   }
 
   default boolean isLarvaOrEgg() {
@@ -607,11 +607,11 @@ public interface IUnitType extends InGameInterface, Serializable {
   }
 
   default boolean isLarva() {
-    return hasType(UnitTypeEnum.Zerg_Larva);
+    return hasType(UnitTypeEnum.ZergLarva);
   }
 
   default boolean isEgg() {
-    return hasType(UnitTypeEnum.Zerg_Egg);
+    return hasType(UnitTypeEnum.ZergEgg);
   }
 
   /**
@@ -645,7 +645,7 @@ public interface IUnitType extends InGameInterface, Serializable {
    * Returns true if unit has anti-air weapon.
    */
   default boolean isMedic() {
-    return hasType(UnitTypeEnum.Terran_Medic);
+    return hasType(UnitTypeEnum.TerranMedic);
   }
 
   default Optional<Boolean> isRepairableMechanically() {
@@ -671,43 +671,43 @@ public interface IUnitType extends InGameInterface, Serializable {
   }
 
   default boolean isBase() {
-    return hasType(UnitTypeEnum.Terran_Command_Center, UnitTypeEnum.Protoss_Nexus,
-        UnitTypeEnum.Zerg_Hatchery,
-        UnitTypeEnum.Zerg_Lair, UnitTypeEnum.Zerg_Hive);
+    return hasType(UnitTypeEnum.TerranCommandCenter, UnitTypeEnum.ProtossNexus,
+        UnitTypeEnum.ZergHatchery,
+        UnitTypeEnum.ZergLair, UnitTypeEnum.ZergHive);
   }
 
   default boolean isGasBuilding() {
-    return hasType(UnitTypeEnum.Terran_Refinery, UnitTypeEnum.Protoss_Assimilator,
-        UnitTypeEnum.Zerg_Extractor);
+    return hasType(UnitTypeEnum.TerranRefinery, UnitTypeEnum.ProtossAssimilator,
+        UnitTypeEnum.ZergExtractor);
   }
 
   default boolean isSupplyUnit() {
-    return hasType(UnitTypeEnum.Protoss_Pylon, UnitTypeEnum.Terran_Supply_Depot,
-        UnitTypeEnum.Zerg_Overlord);
+    return hasType(UnitTypeEnum.ProtossPylon, UnitTypeEnum.TerranSupplyDepot,
+        UnitTypeEnum.ZergOverlord);
   }
 
   default boolean isMilitaryBuilding() {
-    return hasType(UnitTypeEnum.Terran_Bunker, UnitTypeEnum.Terran_Missile_Turret,
-        UnitTypeEnum.Protoss_Photon_Cannon,
-        UnitTypeEnum.Zerg_Sunken_Colony, UnitTypeEnum.Zerg_Spore_Colony,
-        UnitTypeEnum.Zerg_Creep_Colony);
+    return hasType(UnitTypeEnum.TerranBunker, UnitTypeEnum.TerranMissileTurret,
+        UnitTypeEnum.ProtossPhotonCannon,
+        UnitTypeEnum.ZergSunkenColony, UnitTypeEnum.ZergSporeColony,
+        UnitTypeEnum.ZergCreepColony);
   }
 
   default boolean isMilitaryBuildingAntiAir() {
-    return hasType(UnitTypeEnum.Terran_Bunker, UnitTypeEnum.Protoss_Photon_Cannon,
-        UnitTypeEnum.Zerg_Spore_Colony);
+    return hasType(UnitTypeEnum.TerranBunker, UnitTypeEnum.ProtossPhotonCannon,
+        UnitTypeEnum.ZergSporeColony);
   }
 
   default boolean isMilitaryBuildingAntiGround() {
-    return hasType(UnitTypeEnum.Terran_Bunker, UnitTypeEnum.Protoss_Photon_Cannon,
-        UnitTypeEnum.Zerg_Sunken_Colony);
+    return hasType(UnitTypeEnum.TerranBunker, UnitTypeEnum.ProtossPhotonCannon,
+        UnitTypeEnum.ZergSunkenColony);
   }
 
   default boolean isMelee() {
-    return hasType(UnitTypeEnum.Terran_SCV, UnitTypeEnum.Terran_Firebat, UnitTypeEnum.Protoss_Probe,
-        UnitTypeEnum.Protoss_Zealot, UnitTypeEnum.Protoss_Dark_Templar, UnitTypeEnum.Zerg_Drone,
-        UnitTypeEnum.Zerg_Zergling,
-        UnitTypeEnum.Zerg_Broodling);
+    return hasType(UnitTypeEnum.TerranSCV, UnitTypeEnum.TerranFirebat, UnitTypeEnum.ProtossProbe,
+        UnitTypeEnum.ProtossZealot, UnitTypeEnum.ProtossDarkTemplar, UnitTypeEnum.ZergDrone,
+        UnitTypeEnum.ZergZergling,
+        UnitTypeEnum.ZergBroodling);
   }
 
 }

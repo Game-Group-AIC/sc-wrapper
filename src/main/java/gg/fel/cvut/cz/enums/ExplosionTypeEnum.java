@@ -1,33 +1,46 @@
 package gg.fel.cvut.cz.enums;
 
+import bwapi.ExplosionType;
+import java.util.List;
+
 /**
  * A representation of a weapon's explosion type. This indicates how the weapon behaves, such as if
  * it deals splash damage or causes an effect to occur. See also ExplosionTypes
  */
-public enum ExplosionTypeEnum implements IGameTypes {
+public enum ExplosionTypeEnum implements IGameTypes<ExplosionType, ExplosionTypeEnum> {
   None,
   Normal,
-  Radial_Splash,
-  Enemy_Splash,
+  RadialSplash,
+  EnemySplash,
   Lockdown,
-  Nuclear_Missile,
+  NuclearMissile,
   Parasite,
   Broodlings,
-  EMP_Shockwave,
+  EMPShockwave,
   Irradiate,
   Ensnare,
   Plague,
-  Stasis_Field,
-  Dark_Swarm,
+  StasisField,
+  DarkSwarm,
   Consume,
-  Yamato_Gun,
+  YamatoGun,
   Restoration,
-  Disruption_Web,
-  Corrosive_Acid,
-  Mind_Control,
+  DisruptionWeb,
+  CorrosiveAcid,
+  MindControl,
   Feedback,
-  Optical_Flare,
+  OpticalFlare,
   Maelstrom,
-  Air_Splash,
-  Unknown,
+  AirSplash,
+  Unknown;
+
+  @Override
+  public List<ExplosionType> getTypes() {
+    return EXPLOSION_TYPES;
+  }
+
+  @Override
+  public ExplosionTypeEnum[] getValues() {
+    return ExplosionTypeEnum.values();
+  }
 }

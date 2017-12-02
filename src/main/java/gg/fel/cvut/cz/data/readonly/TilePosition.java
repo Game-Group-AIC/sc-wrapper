@@ -17,6 +17,7 @@ public class TilePosition extends AContainer implements ITilePosition, Serializa
   protected final DynamicPropertyRegister<ImmutableSet<IUnit>> units = new DynamicPropertyRegister<>();
   protected final StaticPropertyRegister<IPosition> position = new StaticPropertyRegister<>();
   protected final StaticPropertyRegister<Integer> groundHeight = new StaticPropertyRegister<>();
+  protected final StaticPropertyRegister<ImmutableSet<ITilePosition>> neighbours = new StaticPropertyRegister<>();
   private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(position);
 
   public TilePosition(BWCounter bwCounter) {
@@ -36,6 +37,11 @@ public class TilePosition extends AContainer implements ITilePosition, Serializa
   @Override
   public Optional<IPosition> getPosition() {
     return getPropertyOnTimeLineStrategy(position);
+  }
+
+  @Override
+  public Optional<Set<ITilePosition>> getNeighbours() {
+    return getPropertyOnTimeLineStrategyOnSet(neighbours);
   }
 
   @Override

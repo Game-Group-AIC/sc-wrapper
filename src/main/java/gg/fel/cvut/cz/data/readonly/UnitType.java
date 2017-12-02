@@ -24,12 +24,12 @@ public class UnitType extends AContainer implements IUnitType, Serializable {
   }
 
   @Override
-  public IRace getRace() {
+  public Optional<IRace> getRace() {
     return null;
   }
 
   @Override
-  public Optional<UnitTypeEnum> getUnitType() {
+  public UnitTypeEnum getUnitType() {
     return null;
   }
 

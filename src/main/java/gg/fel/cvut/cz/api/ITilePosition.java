@@ -46,4 +46,9 @@ public interface ITilePosition extends IAbstractPoint, InGameInterface, Serializ
   default Optional<ITilePosition> getTilePosition() {
     return Optional.of(this);
   }
+
+  /**
+   * Returns grid
+   */
+  Optional<Set<ITilePosition>> getNeighbours();
 }

@@ -22,7 +22,7 @@ public class WeaponType extends AContainer implements IWeaponType, Serializable 
   }
 
   @Override
-  public Optional<WeaponTypeEnum> getWeaponType() {
+  public WeaponTypeEnum getWeaponType() {
     return null;
   }
 
@@ -47,7 +47,7 @@ public class WeaponType extends AContainer implements IWeaponType, Serializable 
   }
 
   @Override
-  public Optional<Integer> damageCooldown() {
+  public Optional<Integer> damageCoolDown() {
     return null;
   }
 

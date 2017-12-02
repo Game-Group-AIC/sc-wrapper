@@ -1,23 +1,37 @@
 package gg.fel.cvut.cz.enums;
 
+import bwapi.GameType;
+import java.util.List;
+
 /**
  * A class that represents game types in Broodwar. A game type is selected when creating a game. See
  * also GameTypes
  */
-public enum GameTypeEnum implements IGameTypes {
+public enum GameTypeEnum implements IGameTypes<GameType, GameTypeEnum> {
   Melee,
-  Free_For_All,
-  One_on_One,
-  Capture_The_Flag,
+  FreeForAll,
+  OneOnOne,
+  CaptureTheFlag,
   Greed,
   Slaughter,
-  Sudden_Death,
+  SuddenDeath,
   Ladder,
-  Use_Map_Settings,
-  Team_Melee,
-  Team_Free_For_All,
-  Team_Capture_The_Flag,
-  Top_vs_Bottom,
+  UseMapSettings,
+  TeamMelee,
+  TeamFreeForAll,
+  TeamCaptureTheFlag,
+  TopvsBottom,
   None,
-  Unknown
+  Unknown;
+
+
+  @Override
+  public List<GameType> getTypes() {
+    return GAME_TYPES;
+  }
+
+  @Override
+  public GameTypeEnum[] getValues() {
+    return GameTypeEnum.values();
+  }
 }

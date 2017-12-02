@@ -1,6 +1,7 @@
 package gg.fel.cvut.cz.wrappers;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import gg.fel.cvut.cz.enums.IGameTypes;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import lombok.Getter;
@@ -55,6 +56,29 @@ public abstract class Wrapper<T> {
     }
   }
 
+  static <T, L extends WrapperForType<T, ?>, K extends IGameTypes<T, K>> L getOrCreateWrapper(
+      K key, Map<K, L> register
+      , IWrappingStrategyForType<T, L, K> wrappingStrategy, ReentrantReadWriteLock lock) {
+    L wrapper;
+    try {
+      lock.readLock().lock();
+      wrapper = register.get(key);
+      if (wrapper != null) {
+        return wrapper;
+      }
+    } finally {
+      lock.readLock().unlock();
+    }
+    try {
+      lock.writeLock().lock();
+      wrapper = wrappingStrategy.wrap(key);
+      register.put(key, wrapper);
+      return wrapper;
+    } finally {
+      lock.writeLock().unlock();
+    }
+  }
+
   /**
    * Strategy to build key
    */
@@ -68,7 +92,7 @@ public abstract class Wrapper<T> {
   }
 
   /**
-   * Strategy to build key
+   * Strategy to wrap BW instance
    */
   interface IWrappingStrategy<T, L extends Wrapper<T>> {
 
@@ -76,6 +100,18 @@ public abstract class Wrapper<T> {
      * Wrap
      */
     L wrap(T scInstance);
+
+  }
+
+  /**
+   * Strategy to wrap BW instance
+   */
+  interface IWrappingStrategyForType<T, L extends WrapperForType<T, ?>, V extends IGameTypes<T, V>> {
+
+    /**
+     * Wrap
+     */
+    L wrap(V type);
 
   }
 

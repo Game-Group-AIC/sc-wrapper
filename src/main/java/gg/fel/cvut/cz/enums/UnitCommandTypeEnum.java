@@ -1,28 +1,31 @@
 package gg.fel.cvut.cz.enums;
 
+import bwapi.UnitCommandType;
+import java.util.List;
+
 /**
- * A representation of a unit command in BWAPI. This is used by bots to notify BWAPI which commands
+ * A representation of a unit command in BWAPI. This is used by bots to notifySubscriber BWAPI which commands
  * to use. BWAPI filters commands accordingly and then converts them to Broodwar commands, which
  * differ in complexity. See also UnitCommandTypes
  */
-public enum UnitCommandTypeEnum implements IGameTypes {
-  Attack_Move,
-  Attack_Unit,
+public enum UnitCommandTypeEnum implements IGameTypes<UnitCommandType, UnitCommandTypeEnum> {
+  AttackMove,
+  AttackUnit,
   Build,
-  Build_Addon,
+  BuildAddon,
   Train,
   Morph,
   Research,
   Upgrade,
-  Set_Rally_Position,
-  Set_Rally_Unit,
+  SetRallyPosition,
+  SetRallyUnit,
   Move,
   Patrol,
-  Hold_Position,
+  HoldPosition,
   Stop,
   Follow,
   Gather,
-  Return_Cargo,
+  ReturnCargo,
   Repair,
   Burrow,
   Unburrow,
@@ -34,22 +37,32 @@ public enum UnitCommandTypeEnum implements IGameTypes {
   Land,
   Load,
   Unload,
-  Unload_All,
-  Unload_All_Position,
-  Right_Click_Position,
-  Right_Click_Unit,
-  Halt_Construction,
-  Cancel_Construction,
-  Cancel_Addon,
-  Cancel_Train,
-  Cancel_Train_Slot,
-  Cancel_Morph,
-  Cancel_Research,
-  Cancel_Upgrade,
-  Use_Tech,
-  Use_Tech_Position,
-  Use_Tech_Unit,
-  Place_COP,
+  UnloadAll,
+  UnloadAllPosition,
+  RightClickPosition,
+  RightClickUnit,
+  HaltConstruction,
+  CancelConstruction,
+  CancelAddon,
+  CancelTrain,
+  CancelTrainSlot,
+  CancelMorph,
+  CancelResearch,
+  CancelUpgrade,
+  UseTech,
+  UseTechPosition,
+  UseTechUnit,
+  PlaceCOP,
   None,
-  Unknown
+  Unknown;
+
+  @Override
+  public List<UnitCommandType> getTypes() {
+    return UNIT_COMMAND_TYPES;
+  }
+
+  @Override
+  public UnitCommandTypeEnum[] getValues() {
+    return UnitCommandTypeEnum.values();
+  }
 }

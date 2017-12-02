@@ -10,13 +10,13 @@ import java.util.Optional;
  */
 public interface IUpgradeType extends InGameInterface, Serializable {
 
-  Optional<UpgradeTypeEnum> getUpgradeType();
+  UpgradeTypeEnum getUpgradeType();
 
   /**
    * Retrieves the race the upgrade is for. For example, UpgradeTypes::Terran_Infantry_Armor.getRace()
    * will return Races::Terran. Returns IRace that this upgrade belongs to.
    */
-  IRace getRace();
+  Optional<IRace> getRace();
 
   /**
    * Returns the mineral price for the upgrade. Parameters level (optional) The next upgrade level.

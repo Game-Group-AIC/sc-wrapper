@@ -30,7 +30,7 @@ public class UpdatablePosition extends Position implements
 
   @Override
   public Stream<? extends AContainer> update(UpdateManager internalUpdaterFacade) {
-    return null;
+    return Stream.empty();
   }
 
   @Override

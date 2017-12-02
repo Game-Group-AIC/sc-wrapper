@@ -21,12 +21,12 @@ public class TechType extends AContainer implements ITechType, Serializable {
   }
 
   @Override
-  public Optional<TechTypeEnum> getTechType() {
+  public TechTypeEnum getTechType() {
     return null;
   }
 
   @Override
-  public IRace getRace() {
+  public Optional<IRace> getRace() {
     return null;
   }
 

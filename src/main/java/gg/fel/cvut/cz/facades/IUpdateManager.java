@@ -3,7 +3,6 @@ package gg.fel.cvut.cz.facades;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.readonly.BaseLocation;
 import gg.fel.cvut.cz.data.readonly.Bullet;
-import gg.fel.cvut.cz.data.readonly.BulletType;
 import gg.fel.cvut.cz.data.readonly.ChokePoint;
 import gg.fel.cvut.cz.data.readonly.Game;
 import gg.fel.cvut.cz.data.readonly.Player;
@@ -17,12 +16,23 @@ import gg.fel.cvut.cz.data.readonly.UnitType;
 import gg.fel.cvut.cz.data.readonly.UpgradeType;
 import gg.fel.cvut.cz.data.readonly.WeaponType;
 import gg.fel.cvut.cz.facades.strategies.UpdateStrategy;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
  * Contract of UpdateManager (updatable methods)
  */
 public interface IUpdateManager extends IGameDataWrapper {
+
+  /**
+   * Method to be called preferably at the beginning of the game to init game instance
+   */
+  Optional<Game> wrapGame(bwapi.Game game);
+
+  /**
+   * Method to be called preferably at the beginning of the game to init all types
+   */
+  void initializeAllTypes(UpdateStrategy updateStrategy);
 
   /**
    * Update bullet
@@ -221,20 +231,48 @@ public interface IUpdateManager extends IGameDataWrapper {
       int currentFrame);
 
   /**
-   * Returns delta of current time and last updated. If object has not been updated yet max integer
-   * is returned. For object updated after current frame, zero is returned.
+   * Returns are containers associated with this updater
    */
-  int getDeltaUpdate(BulletType bulletType);
+  Stream<? extends AContainer> getAllContainers();
+
+  /**
+   * Update game
+   */
+  boolean update(Game game, UpdateStrategy updateStrategy);
+
+  /**
+   * Update player
+   */
+  boolean update(Player player, UpdateStrategy updateStrategy);
+
+  /**
+   * Update race
+   */
+  boolean update(Race race, UpdateStrategy updateStrategy);
+
+  /**
+   * Update techType
+   */
+  boolean update(TechType techType, UpdateStrategy updateStrategy);
+
+  /**
+   * Update unit
+   */
+  boolean update(Unit unit, UpdateStrategy updateStrategy);
+
+  /**
+   * Update unitType
+   */
+  boolean update(UnitType unitType, UpdateStrategy updateStrategy);
 
   /**
    * Update upgradeType
    */
-  void update(BulletType bulletType, UpdateStrategy updateStrategy, int depth,
-      int currentFrame);
+  boolean update(UpgradeType upgradeType, UpdateStrategy updateStrategy);
 
   /**
-   * Returns are containers associated with this updater
+   * Update weaponType
    */
-  Stream<? extends AContainer> getAllContainers();
+  boolean update(WeaponType weaponType, UpdateStrategy updateStrategy);
 
 }

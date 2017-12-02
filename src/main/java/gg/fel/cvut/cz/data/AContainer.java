@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Common template class for containers of in-game readonly
  */
-//TODO replace game interfaces by containers
+//TODO use concrete implementations in data containers
 public abstract class AContainer implements IContainer {
 
   protected BWCounter bwCounter;

@@ -59,7 +59,7 @@ public class Player extends AContainer implements IPlayer, Serializable {
   }
 
   @Override
-  public Optional<PlayerTypeEnum> getType() {
+  public PlayerTypeEnum getType() {
     return null;
   }
 

@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public interface IWeaponType extends InGameInterface, Serializable {
 
-  Optional<WeaponTypeEnum> getWeaponType();
+  WeaponTypeEnum getWeaponType();
 
   /**
    * Retrieves the technology type that must be researched before this weapon can be used. Returns
@@ -46,7 +46,7 @@ public interface IWeaponType extends InGameInterface, Serializable {
    * of base cooldown applied to the unit after an attack. See also UnitInterface::getGroundWeaponCooldown,
    * UnitInterface::getAirWeaponCooldown
    */
-  Optional<Integer> damageCooldown();
+  Optional<Integer> damageCoolDown();
 
   /**
    * Obtains the intended number of missiles/attacks that are used. This is used to multiply with
@@ -164,7 +164,7 @@ public interface IWeaponType extends InGameInterface, Serializable {
   Optional<Boolean> targetsOwn();
 
   default Optional<Double> getDamageNormalized() {
-    if (getWeaponType().equals(WeaponTypeEnum.Psi_Blades)) {
+    if (getWeaponType().equals(WeaponTypeEnum.PsiBlades)) {
       return Optional.of(16.0);
     } else {
       if (!damageAmount().isPresent() || !damageFactor().isPresent()) {

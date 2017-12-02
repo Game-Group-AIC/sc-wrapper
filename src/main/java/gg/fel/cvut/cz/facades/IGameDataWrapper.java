@@ -2,9 +2,7 @@ package gg.fel.cvut.cz.facades;
 
 import gg.fel.cvut.cz.data.readonly.BaseLocation;
 import gg.fel.cvut.cz.data.readonly.Bullet;
-import gg.fel.cvut.cz.data.readonly.BulletType;
 import gg.fel.cvut.cz.data.readonly.ChokePoint;
-import gg.fel.cvut.cz.data.readonly.Game;
 import gg.fel.cvut.cz.data.readonly.Player;
 import gg.fel.cvut.cz.data.readonly.Position;
 import gg.fel.cvut.cz.data.readonly.Race;
@@ -17,9 +15,7 @@ import gg.fel.cvut.cz.data.readonly.UpgradeType;
 import gg.fel.cvut.cz.data.readonly.WeaponType;
 import gg.fel.cvut.cz.wrappers.WBaseLocation;
 import gg.fel.cvut.cz.wrappers.WBullet;
-import gg.fel.cvut.cz.wrappers.WBulletType;
 import gg.fel.cvut.cz.wrappers.WChokePoint;
-import gg.fel.cvut.cz.wrappers.WGame;
 import gg.fel.cvut.cz.wrappers.WPlayer;
 import gg.fel.cvut.cz.wrappers.WPosition;
 import gg.fel.cvut.cz.wrappers.WRace;
@@ -45,17 +41,9 @@ public interface IGameDataWrapper {
 
   Optional<WBaseLocation> getBWInstance(BaseLocation container);
 
-  Optional<BulletType> getDataContainer(WBulletType bulletType);
-
-  Optional<WBulletType> getBWInstance(BulletType container);
-
   Optional<ChokePoint> getDataContainer(WChokePoint chokePoint);
 
   Optional<WChokePoint> getBWInstance(ChokePoint container);
-
-  Optional<Game> getDataContainer(WGame game);
-
-  Optional<WGame> getBWInstance(Game container);
 
   Optional<Player> getDataContainer(WPlayer player);
 

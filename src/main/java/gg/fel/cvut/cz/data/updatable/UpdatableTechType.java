@@ -29,7 +29,7 @@ public class UpdatableTechType extends TechType implements
 
   @Override
   public Stream<? extends AContainer> update(UpdateManager internalUpdaterFacade) {
-    return null;
+    return Stream.empty();
   }
 
   @Override

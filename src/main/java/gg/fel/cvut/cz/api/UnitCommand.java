@@ -49,21 +49,21 @@ public class UnitCommand implements Serializable {
   }
 
   public boolean isQueued() {
-    return (unitCommandType == UnitCommandTypeEnum.Attack_Move
-        || unitCommandType == UnitCommandTypeEnum.Attack_Unit
+    return (unitCommandType == UnitCommandTypeEnum.AttackMove
+        || unitCommandType == UnitCommandTypeEnum.AttackUnit
         || unitCommandType == UnitCommandTypeEnum.Move
         || unitCommandType == UnitCommandTypeEnum.Patrol
-        || unitCommandType == UnitCommandTypeEnum.Hold_Position
+        || unitCommandType == UnitCommandTypeEnum.HoldPosition
         || unitCommandType == UnitCommandTypeEnum.Stop
         || unitCommandType == UnitCommandTypeEnum.Follow
         || unitCommandType == UnitCommandTypeEnum.Gather
-        || unitCommandType == UnitCommandTypeEnum.Return_Cargo
+        || unitCommandType == UnitCommandTypeEnum.ReturnCargo
         || unitCommandType == UnitCommandTypeEnum.Repair
         || unitCommandType == UnitCommandTypeEnum.Load
-        || unitCommandType == UnitCommandTypeEnum.Unload_All
-        || unitCommandType == UnitCommandTypeEnum.Unload_All_Position
-        || unitCommandType == UnitCommandTypeEnum.Right_Click_Position
-        || unitCommandType == UnitCommandTypeEnum.Right_Click_Unit) && extra != 0;
+        || unitCommandType == UnitCommandTypeEnum.UnloadAll
+        || unitCommandType == UnitCommandTypeEnum.UnloadAllPosition
+        || unitCommandType == UnitCommandTypeEnum.RightClickPosition
+        || unitCommandType == UnitCommandTypeEnum.RightClickUnit) && extra != 0;
   }
 
 }

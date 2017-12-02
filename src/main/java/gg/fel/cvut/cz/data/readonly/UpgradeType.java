@@ -19,12 +19,12 @@ public class UpgradeType extends AContainer implements IUpgradeType, Serializabl
   }
 
   @Override
-  public Optional<UpgradeTypeEnum> getUpgradeType() {
+  public UpgradeTypeEnum getUpgradeType() {
     return null;
   }
 
   @Override
-  public IRace getRace() {
+  public Optional<IRace> getRace() {
     return null;
   }
 

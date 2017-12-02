@@ -2,7 +2,6 @@ package gg.fel.cvut.cz.facades.strategies;
 
 import gg.fel.cvut.cz.data.readonly.BaseLocation;
 import gg.fel.cvut.cz.data.readonly.Bullet;
-import gg.fel.cvut.cz.data.readonly.BulletType;
 import gg.fel.cvut.cz.data.readonly.ChokePoint;
 import gg.fel.cvut.cz.data.readonly.Game;
 import gg.fel.cvut.cz.data.readonly.Player;
@@ -53,13 +52,6 @@ public class UpdateStrategy {
   private final IUpdateContainerStrategy<UpgradeType> upgradeTypeUpdateContainerStrategy = (container, deltaUpdate, depth) -> true;
   @Builder.Default
   private final IUpdateContainerStrategy<WeaponType> weaponTypeUpdateContainerStrategy = (container, deltaUpdate, depth) -> true;
-  @Builder.Default
-  private final IUpdateContainerStrategy<BulletType> bulletTypeUpdateContainerStrategy = (container, deltaUpdate, depth) -> true;
-
-  public boolean shouldBeUpdated(BulletType bulletType, int deltaUpdate, int depth) {
-    return bulletTypeUpdateContainerStrategy
-        .shouldBeUpdated(bulletType, deltaUpdate, depth);
-  }
 
   public boolean shouldBeUpdated(WeaponType weaponType, int deltaUpdate, int depth) {
     return weaponTypeUpdateContainerStrategy

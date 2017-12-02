@@ -13,7 +13,7 @@ import java.util.Optional;
  */
 public interface ITechType extends InGameInterface, Serializable {
 
-  Optional<TechTypeEnum> getTechType();
+  TechTypeEnum getTechType();
 
   /**
    * Retrieves the race that is required to research or use the ITechType. Note There is an
@@ -21,7 +21,7 @@ public interface ITechType extends InGameInterface, Serializable {
    * this function. Returns IRace object indicating which race is designed to use this technology
    * type.
    */
-  IRace getRace();
+  Optional<IRace> getRace();
 
   /**
    * Retrieves the mineral cost of researching this technology. Returns Amount of minerals needed in

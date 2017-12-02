@@ -82,9 +82,4 @@ public interface IGame extends InGameInterface, Serializable {
    */
   Optional<String> mapName();
 
-  /**
-   * Returns grid
-   */
-  Optional<Set<ITilePosition>> getGrid();
-
 }

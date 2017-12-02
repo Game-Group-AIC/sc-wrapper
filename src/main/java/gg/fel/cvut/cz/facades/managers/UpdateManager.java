@@ -4,7 +4,6 @@ import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.readonly.BaseLocation;
 import gg.fel.cvut.cz.data.readonly.Bullet;
-import gg.fel.cvut.cz.data.readonly.BulletType;
 import gg.fel.cvut.cz.data.readonly.ChokePoint;
 import gg.fel.cvut.cz.data.readonly.Game;
 import gg.fel.cvut.cz.data.readonly.Player;
@@ -19,7 +18,6 @@ import gg.fel.cvut.cz.data.readonly.UpgradeType;
 import gg.fel.cvut.cz.data.readonly.WeaponType;
 import gg.fel.cvut.cz.data.updatable.UpdatableBaseLocation;
 import gg.fel.cvut.cz.data.updatable.UpdatableBullet;
-import gg.fel.cvut.cz.data.updatable.UpdatableBulletType;
 import gg.fel.cvut.cz.data.updatable.UpdatableChokePoint;
 import gg.fel.cvut.cz.data.updatable.UpdatableGame;
 import gg.fel.cvut.cz.data.updatable.UpdatablePlayer;
@@ -36,7 +34,6 @@ import gg.fel.cvut.cz.facades.IUpdateManager;
 import gg.fel.cvut.cz.facades.strategies.UpdateStrategy;
 import gg.fel.cvut.cz.wrappers.WBaseLocation;
 import gg.fel.cvut.cz.wrappers.WBullet;
-import gg.fel.cvut.cz.wrappers.WBulletType;
 import gg.fel.cvut.cz.wrappers.WChokePoint;
 import gg.fel.cvut.cz.wrappers.WGame;
 import gg.fel.cvut.cz.wrappers.WPlayer;
@@ -55,15 +52,12 @@ import java.util.stream.Stream;
 /**
  * Manages updates
  */
-//TODO implement methods
 public class UpdateManager extends BWDataFacade<BWCounter> implements IUpdateManager {
 
   private final Updater<WBullet, Bullet, UpdatableBullet> bulletUpdater = new Updater<>(
       instance -> new UpdatableBullet(bwCounter, instance), this);
   private final Updater<WBaseLocation, BaseLocation, UpdatableBaseLocation> baseLocationUpdater = new Updater<>(
       instance -> new UpdatableBaseLocation(bwCounter, instance), this);
-  private final Updater<WBulletType, BulletType, UpdatableBulletType> bulletTypeUpdater = new Updater<>(
-      instance -> new UpdatableBulletType(bwCounter, instance), this);
   private final Updater<WChokePoint, ChokePoint, UpdatableChokePoint> chokePointUpdater = new Updater<>(
       instance -> new UpdatableChokePoint(bwCounter, instance), this);
   private final Updater<WGame, Game, UpdatableGame> gameUpdater = new Updater<>(
@@ -89,42 +83,27 @@ public class UpdateManager extends BWDataFacade<BWCounter> implements IUpdateMan
   private final Updater<WWeaponType, WeaponType, UpdatableWeaponType> weaponTypeUpdater = new Updater<>(
       instance -> new UpdatableWeaponType(bwCounter, instance), this);
 
-
   UpdateManager(BWCounter bwCounter) {
     super(bwCounter);
   }
 
   @Override
-  public boolean update(Bullet bulletToUpdate, UpdateStrategy updateStrategy) {
-    if (bulletToUpdate.shouldBeUpdated(updateStrategy, this, 0)) {
-      update(bulletToUpdate, updateStrategy, 0, bwCounter.getCurrentFrame());
-    }
-    return true;
+  public Optional<Game> wrapGame(bwapi.Game game) {
+    return gameUpdater.getWrappedInstance(WGame.getOrCreateWrapper(game));
   }
 
   @Override
-  public boolean update(BaseLocation baseLocation, UpdateStrategy updateStrategy) {
-    return false;
-  }
-
-  @Override
-  public boolean update(ChokePoint chokePoint, UpdateStrategy updateStrategy) {
-    return false;
-  }
-
-  @Override
-  public boolean update(Position position, UpdateStrategy updateStrategy) {
-    return false;
-  }
-
-  @Override
-  public boolean update(Region region, UpdateStrategy updateStrategy) {
-    return false;
-  }
-
-  @Override
-  public boolean update(TilePosition tilePosition, UpdateStrategy updateStrategy) {
-    return false;
+  public void initializeAllTypes(UpdateStrategy updateStrategy) {
+    Stream.of(WRace.getAllWrappedTypes().map(this::getDataContainer),
+        WTechType.getAllWrappedTypes().map(this::getDataContainer),
+        WUnitType.getAllWrappedTypes().map(this::getDataContainer),
+        WUpgradeType.getAllWrappedTypes().map(this::getDataContainer),
+        WWeaponType.getAllWrappedTypes().map(this::getDataContainer))
+        .flatMap(stream -> stream)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, 0))
+        .forEach(o -> o.update(updateStrategy, this, 0, bwCounter.getCurrentFrame()));
   }
 
   @Override
@@ -132,34 +111,6 @@ public class UpdateManager extends BWDataFacade<BWCounter> implements IUpdateMan
     return bulletUpdater.getDeltaUpdate(bullet, bwCounter.getCurrentFrame());
   }
 
-  @Override
-  public int getDeltaUpdate(BaseLocation baseLocation) {
-    return 0;
-  }
-
-  @Override
-  public int getDeltaUpdate(ChokePoint chokePoint) {
-    return 0;
-  }
-
-  @Override
-  public int getDeltaUpdate(Position position) {
-    return 0;
-  }
-
-  @Override
-  public int getDeltaUpdate(Region region) {
-    return 0;
-  }
-
-  @Override
-  public int getDeltaUpdate(TilePosition tilePosition) {
-    return 0;
-  }
-
-  /**
-   * Update bullet
-   */
   @Override
   public void update(Bullet bulletToUpdate, UpdateStrategy updateStrategy, int depth,
       int currentFrame) {
@@ -170,134 +121,14 @@ public class UpdateManager extends BWDataFacade<BWCounter> implements IUpdateMan
   }
 
   @Override
-  public void update(Position position, UpdateStrategy updateStrategy, int depth,
-      int currentFrame) {
-
-  }
-
-  @Override
-  public void update(TilePosition tilePosition, UpdateStrategy updateStrategy, int depth,
-      int currentFrame) {
-
-  }
-
-  @Override
-  public void update(BaseLocation baseLocation, UpdateStrategy updateStrategy, int depth,
-      int currentFrame) {
-
-  }
-
-  @Override
-  public void update(ChokePoint chokePoint, UpdateStrategy updateStrategy, int depth,
-      int currentFrame) {
-
-  }
-
-  @Override
-  public void update(Game game, UpdateStrategy updateStrategy, int depth, int currentFrame) {
-
-  }
-
-  @Override
-  public int getDeltaUpdate(Game game) {
-    return 0;
-  }
-
-  @Override
-  public void update(Player player, UpdateStrategy updateStrategy, int depth, int currentFrame) {
-
-  }
-
-  @Override
-  public int getDeltaUpdate(Player player) {
-    return 0;
-  }
-
-  @Override
-  public void update(Race race, UpdateStrategy updateStrategy, int depth, int currentFrame) {
-
-  }
-
-  @Override
-  public int getDeltaUpdate(Race race) {
-    return 0;
-  }
-
-  @Override
-  public void update(Region region, UpdateStrategy updateStrategy, int depth, int currentFrame) {
-
-  }
-
-  @Override
-  public int getDeltaUpdate(TechType techType) {
-    return 0;
-  }
-
-  @Override
-  public void update(TechType techType, UpdateStrategy updateStrategy, int depth,
-      int currentFrame) {
-
-  }
-
-  @Override
-  public int getDeltaUpdate(Unit unit) {
-    return 0;
-  }
-
-  @Override
-  public void update(Unit unit, UpdateStrategy updateStrategy, int depth, int currentFrame) {
-
-  }
-
-  @Override
-  public int getDeltaUpdate(UnitType unitType) {
-    return 0;
-  }
-
-  @Override
-  public void update(UnitType unitType, UpdateStrategy updateStrategy, int depth,
-      int currentFrame) {
-
-  }
-
-  @Override
-  public int getDeltaUpdate(WeaponType weaponType) {
-    return 0;
-  }
-
-  @Override
-  public void update(WeaponType weaponType, UpdateStrategy updateStrategy, int depth,
-      int currentFrame) {
-
-  }
-
-  @Override
-  public int getDeltaUpdate(UpgradeType upgradeType) {
-    return 0;
-  }
-
-  @Override
-  public void update(UpgradeType upgradeType, UpdateStrategy updateStrategy, int depth,
-      int currentFrame) {
-
-  }
-
-  @Override
-  public int getDeltaUpdate(BulletType bulletType) {
-    return 0;
-  }
-
-  @Override
-  public void update(BulletType bulletType, UpdateStrategy updateStrategy, int depth,
-      int currentFrame) {
-
-  }
-
-  @Override
   public Stream<? extends AContainer> getAllContainers() {
-    //TODO
-    return Stream.empty();
-//        return Stream.concat(bulletUpdater.getAllContainers(), );
+    return Stream.of(baseLocationUpdater.getAllContainers(), bulletUpdater.getAllContainers(),
+        gameUpdater.getAllContainers(), playerUpdater.getAllContainers(),
+        positionUpdater.getAllContainers(), raceUpdater.getAllContainers(),
+        regionUpdater.getAllContainers(), techTypeUpdater.getAllContainers(),
+        tilePositionUpdater.getAllContainers(), unitUpdater.getAllContainers(),
+        unitTypeUpdater.getAllContainers(), upgradeTypeUpdater.getAllContainers(),
+        weaponTypeUpdater.getAllContainers()).flatMap(stream -> stream);
   }
 
   @Override
@@ -311,142 +142,417 @@ public class UpdateManager extends BWDataFacade<BWCounter> implements IUpdateMan
   }
 
   @Override
+  public boolean update(BaseLocation baseLocation, UpdateStrategy updateStrategy) {
+    if (baseLocation.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(baseLocation, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public boolean update(Bullet bullet, UpdateStrategy updateStrategy) {
+    if (bullet.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(bullet, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public boolean update(ChokePoint chokePoint, UpdateStrategy updateStrategy) {
+    if (chokePoint.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(chokePoint, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public boolean update(Game game, UpdateStrategy updateStrategy) {
+    if (game.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(game, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public boolean update(Player player, UpdateStrategy updateStrategy) {
+    if (player.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(player, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public boolean update(Position position, UpdateStrategy updateStrategy) {
+    if (position.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(position, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public boolean update(Race race, UpdateStrategy updateStrategy) {
+    if (race.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(race, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public boolean update(Region region, UpdateStrategy updateStrategy) {
+    if (region.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(region, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public boolean update(TechType techType, UpdateStrategy updateStrategy) {
+    if (techType.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(techType, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public boolean update(TilePosition tilePosition, UpdateStrategy updateStrategy) {
+    if (tilePosition.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(tilePosition, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public boolean update(Unit unit, UpdateStrategy updateStrategy) {
+    if (unit.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(unit, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public boolean update(UnitType unitType, UpdateStrategy updateStrategy) {
+    if (unitType.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(unitType, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public boolean update(UpgradeType upgradeType, UpdateStrategy updateStrategy) {
+    if (upgradeType.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(upgradeType, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public boolean update(WeaponType weaponType, UpdateStrategy updateStrategy) {
+    if (weaponType.shouldBeUpdated(updateStrategy, this, 0)) {
+      update(weaponType, updateStrategy, 0, bwCounter.getCurrentFrame());
+    }
+    return true;
+  }
+
+  @Override
+  public void update(BaseLocation baseLocation, UpdateStrategy updateStrategy, int depth,
+      int currentFrame) {
+    int newDepth = depth + 1;
+    baseLocationUpdater.update(baseLocation, currentFrame)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, newDepth))
+        .forEach(o -> o.update(updateStrategy, this, newDepth, currentFrame));
+  }
+
+  @Override
+  public void update(ChokePoint chokePoint, UpdateStrategy updateStrategy, int depth,
+      int currentFrame) {
+    int newDepth = depth + 1;
+    chokePointUpdater.update(chokePoint, currentFrame)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, newDepth))
+        .forEach(o -> o.update(updateStrategy, this, newDepth, currentFrame));
+  }
+
+  @Override
+  public void update(Game game, UpdateStrategy updateStrategy, int depth,
+      int currentFrame) {
+    int newDepth = depth + 1;
+    gameUpdater.update(game, currentFrame)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, newDepth))
+        .forEach(o -> o.update(updateStrategy, this, newDepth, currentFrame));
+  }
+
+  @Override
+  public void update(Player player, UpdateStrategy updateStrategy, int depth,
+      int currentFrame) {
+    int newDepth = depth + 1;
+    playerUpdater.update(player, currentFrame)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, newDepth))
+        .forEach(o -> o.update(updateStrategy, this, newDepth, currentFrame));
+  }
+
+  @Override
+  public void update(Position position, UpdateStrategy updateStrategy, int depth,
+      int currentFrame) {
+    int newDepth = depth + 1;
+    positionUpdater.update(position, currentFrame)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, newDepth))
+        .forEach(o -> o.update(updateStrategy, this, newDepth, currentFrame));
+  }
+
+  @Override
+  public void update(Race race, UpdateStrategy updateStrategy, int depth,
+      int currentFrame) {
+    int newDepth = depth + 1;
+    raceUpdater.update(race, currentFrame)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, newDepth))
+        .forEach(o -> o.update(updateStrategy, this, newDepth, currentFrame));
+  }
+
+  @Override
+  public void update(Region region, UpdateStrategy updateStrategy, int depth,
+      int currentFrame) {
+    int newDepth = depth + 1;
+    regionUpdater.update(region, currentFrame)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, newDepth))
+        .forEach(o -> o.update(updateStrategy, this, newDepth, currentFrame));
+  }
+
+  @Override
+  public void update(TechType techType, UpdateStrategy updateStrategy, int depth,
+      int currentFrame) {
+    int newDepth = depth + 1;
+    techTypeUpdater.update(techType, currentFrame)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, newDepth))
+        .forEach(o -> o.update(updateStrategy, this, newDepth, currentFrame));
+  }
+
+  @Override
+  public void update(TilePosition tilePosition, UpdateStrategy updateStrategy, int depth,
+      int currentFrame) {
+    int newDepth = depth + 1;
+    tilePositionUpdater.update(tilePosition, currentFrame)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, newDepth))
+        .forEach(o -> o.update(updateStrategy, this, newDepth, currentFrame));
+  }
+
+  @Override
+  public void update(Unit unit, UpdateStrategy updateStrategy, int depth,
+      int currentFrame) {
+    int newDepth = depth + 1;
+    unitUpdater.update(unit, currentFrame)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, newDepth))
+        .forEach(o -> o.update(updateStrategy, this, newDepth, currentFrame));
+  }
+
+  @Override
+  public void update(UnitType unitType, UpdateStrategy updateStrategy, int depth,
+      int currentFrame) {
+    int newDepth = depth + 1;
+    unitTypeUpdater.update(unitType, currentFrame)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, newDepth))
+        .forEach(o -> o.update(updateStrategy, this, newDepth, currentFrame));
+  }
+
+  @Override
+  public void update(UpgradeType upgradeType, UpdateStrategy updateStrategy, int depth,
+      int currentFrame) {
+    int newDepth = depth + 1;
+    upgradeTypeUpdater.update(upgradeType, currentFrame)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, newDepth))
+        .forEach(o -> o.update(updateStrategy, this, newDepth, currentFrame));
+  }
+
+  @Override
+  public void update(WeaponType weaponType, UpdateStrategy updateStrategy, int depth,
+      int currentFrame) {
+    int newDepth = depth + 1;
+    weaponTypeUpdater.update(weaponType, currentFrame)
+        .filter(o -> o.shouldBeUpdated(updateStrategy, this, newDepth))
+        .forEach(o -> o.update(updateStrategy, this, newDepth, currentFrame));
+  }
+
+  @Override
+  public int getDeltaUpdate(BaseLocation baseLocation) {
+    return baseLocationUpdater.getDeltaUpdate(baseLocation, bwCounter.getCurrentFrame());
+  }
+
+  @Override
+  public int getDeltaUpdate(ChokePoint chokePoint) {
+    return chokePointUpdater.getDeltaUpdate(chokePoint, bwCounter.getCurrentFrame());
+  }
+
+  @Override
+  public int getDeltaUpdate(Game game) {
+    return gameUpdater.getDeltaUpdate(game, bwCounter.getCurrentFrame());
+  }
+
+  @Override
+  public int getDeltaUpdate(Player player) {
+    return playerUpdater.getDeltaUpdate(player, bwCounter.getCurrentFrame());
+  }
+
+  @Override
+  public int getDeltaUpdate(Position position) {
+    return positionUpdater.getDeltaUpdate(position, bwCounter.getCurrentFrame());
+  }
+
+  @Override
+  public int getDeltaUpdate(Race race) {
+    return raceUpdater.getDeltaUpdate(race, bwCounter.getCurrentFrame());
+  }
+
+  @Override
+  public int getDeltaUpdate(Region region) {
+    return regionUpdater.getDeltaUpdate(region, bwCounter.getCurrentFrame());
+  }
+
+  @Override
+  public int getDeltaUpdate(TechType techType) {
+    return techTypeUpdater.getDeltaUpdate(techType, bwCounter.getCurrentFrame());
+  }
+
+  @Override
+  public int getDeltaUpdate(TilePosition tilePosition) {
+    return tilePositionUpdater.getDeltaUpdate(tilePosition, bwCounter.getCurrentFrame());
+  }
+
+  @Override
+  public int getDeltaUpdate(Unit unit) {
+    return unitUpdater.getDeltaUpdate(unit, bwCounter.getCurrentFrame());
+  }
+
+  @Override
+  public int getDeltaUpdate(UnitType unitType) {
+    return unitTypeUpdater.getDeltaUpdate(unitType, bwCounter.getCurrentFrame());
+  }
+
+  @Override
+  public int getDeltaUpdate(UpgradeType upgradeType) {
+    return upgradeTypeUpdater.getDeltaUpdate(upgradeType, bwCounter.getCurrentFrame());
+  }
+
+  @Override
+  public int getDeltaUpdate(WeaponType weaponType) {
+    return weaponTypeUpdater.getDeltaUpdate(weaponType, bwCounter.getCurrentFrame());
+  }
+
+  @Override
   public Optional<BaseLocation> getDataContainer(WBaseLocation baseLocation) {
-    return null;
+    return baseLocationUpdater.getWrappedInstance(baseLocation);
   }
 
   @Override
   public Optional<WBaseLocation> getBWInstance(BaseLocation container) {
-    return null;
-  }
-
-  @Override
-  public Optional<BulletType> getDataContainer(WBulletType bulletType) {
-    return null;
-  }
-
-  @Override
-  public Optional<WBulletType> getBWInstance(BulletType container) {
-    return null;
+    return baseLocationUpdater.getBWInstance(container);
   }
 
   @Override
   public Optional<ChokePoint> getDataContainer(WChokePoint chokePoint) {
-    return null;
+    return chokePointUpdater.getWrappedInstance(chokePoint);
   }
 
   @Override
   public Optional<WChokePoint> getBWInstance(ChokePoint container) {
-    return null;
-  }
-
-  @Override
-  public Optional<Game> getDataContainer(WGame game) {
-    return null;
-  }
-
-  @Override
-  public Optional<WGame> getBWInstance(Game container) {
-    return null;
+    return chokePointUpdater.getBWInstance(container);
   }
 
   @Override
   public Optional<Player> getDataContainer(WPlayer player) {
-    return null;
+    return playerUpdater.getWrappedInstance(player);
   }
 
   @Override
   public Optional<WPlayer> getBWInstance(Player container) {
-    return null;
+    return playerUpdater.getBWInstance(container);
   }
 
   @Override
   public Optional<Position> getDataContainer(WPosition position) {
-    return null;
+    return positionUpdater.getWrappedInstance(position);
   }
 
   @Override
   public Optional<WPosition> getBWInstance(Position container) {
-    return null;
+    return positionUpdater.getBWInstance(container);
   }
 
   @Override
   public Optional<Race> getDataContainer(WRace race) {
-    return null;
+    return raceUpdater.getWrappedInstance(race);
   }
 
   @Override
   public Optional<WRace> getBWInstance(Race container) {
-    return null;
+    return raceUpdater.getBWInstance(container);
   }
 
   @Override
   public Optional<Region> getDataContainer(WRegion region) {
-    return null;
+    return regionUpdater.getWrappedInstance(region);
   }
 
   @Override
   public Optional<WRegion> getBWInstance(Region container) {
-    return null;
+    return regionUpdater.getBWInstance(container);
   }
 
   @Override
   public Optional<TechType> getDataContainer(WTechType techType) {
-    return null;
+    return techTypeUpdater.getWrappedInstance(techType);
   }
 
   @Override
   public Optional<WTechType> getBWInstance(TechType container) {
-    return null;
+    return techTypeUpdater.getBWInstance(container);
   }
 
   @Override
   public Optional<TilePosition> getDataContainer(WTilePosition tilePosition) {
-    return null;
+    return tilePositionUpdater.getWrappedInstance(tilePosition);
   }
 
   @Override
   public Optional<WTilePosition> getBWInstance(TilePosition container) {
-    return null;
+    return tilePositionUpdater.getBWInstance(container);
   }
 
   @Override
   public Optional<Unit> getDataContainer(WUnit unit) {
-    return null;
+    return unitUpdater.getWrappedInstance(unit);
   }
 
   @Override
   public Optional<WUnit> getBWInstance(Unit container) {
-    return null;
+    return unitUpdater.getBWInstance(container);
   }
 
   @Override
   public Optional<UnitType> getDataContainer(WUnitType unitType) {
-    return null;
+    return unitTypeUpdater.getWrappedInstance(unitType);
   }
 
   @Override
   public Optional<WUnitType> getBWInstance(UnitType container) {
-    return null;
+    return unitTypeUpdater.getBWInstance(container);
   }
 
   @Override
   public Optional<UpgradeType> getDataContainer(WUpgradeType upgradeType) {
-    return null;
+    return upgradeTypeUpdater.getWrappedInstance(upgradeType);
   }
 
   @Override
   public Optional<WUpgradeType> getBWInstance(UpgradeType container) {
-    return null;
+    return upgradeTypeUpdater.getBWInstance(container);
   }
 
   @Override
   public Optional<WeaponType> getDataContainer(WWeaponType weaponType) {
-    return null;
+    return weaponTypeUpdater.getWrappedInstance(weaponType);
   }
 
   @Override
   public Optional<WWeaponType> getBWInstance(WeaponType container) {
-    return null;
+    return weaponTypeUpdater.getBWInstance(container);
   }
+
 }
