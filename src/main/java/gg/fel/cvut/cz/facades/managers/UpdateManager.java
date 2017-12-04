@@ -1,6 +1,7 @@
 package gg.fel.cvut.cz.facades.managers;
 
 import gg.fel.cvut.cz.counters.BWCounter;
+import gg.fel.cvut.cz.counters.IBWCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.readonly.BaseLocation;
 import gg.fel.cvut.cz.data.readonly.Bullet;
@@ -48,43 +49,78 @@ import gg.fel.cvut.cz.wrappers.WUpgradeType;
 import gg.fel.cvut.cz.wrappers.WWeaponType;
 import java.util.Optional;
 import java.util.stream.Stream;
+import lombok.Getter;
 
 /**
  * Manages updates
  */
-public class UpdateManager extends BWDataFacade<BWCounter> implements IUpdateManager {
+public class UpdateManager implements IUpdateManager, IBWCounter {
 
-  private final Updater<WBullet, Bullet, UpdatableBullet> bulletUpdater = new Updater<>(
+  @Getter
+  private final BWCounter bwCounter = new BWCounter();
+
+  private final Updater<WBullet, Bullet, UpdatableBullet> bulletUpdater = new Updater<WBullet, Bullet, UpdatableBullet>(
       instance -> new UpdatableBullet(bwCounter, instance), this);
-  private final Updater<WBaseLocation, BaseLocation, UpdatableBaseLocation> baseLocationUpdater = new Updater<>(
+  private final Updater<WBaseLocation, BaseLocation, UpdatableBaseLocation> baseLocationUpdater = new Updater<WBaseLocation, BaseLocation, UpdatableBaseLocation>(
       instance -> new UpdatableBaseLocation(bwCounter, instance), this);
-  private final Updater<WChokePoint, ChokePoint, UpdatableChokePoint> chokePointUpdater = new Updater<>(
+  private final Updater<WChokePoint, ChokePoint, UpdatableChokePoint> chokePointUpdater = new Updater<WChokePoint, ChokePoint, UpdatableChokePoint>(
       instance -> new UpdatableChokePoint(bwCounter, instance), this);
-  private final Updater<WGame, Game, UpdatableGame> gameUpdater = new Updater<>(
+  private final Updater<WGame, Game, UpdatableGame> gameUpdater = new Updater<WGame, Game, UpdatableGame>(
       instance -> new UpdatableGame(bwCounter, instance), this);
-  private final Updater<WPlayer, Player, UpdatablePlayer> playerUpdater = new Updater<>(
+  private final Updater<WPlayer, Player, UpdatablePlayer> playerUpdater = new Updater<WPlayer, Player, UpdatablePlayer>(
       instance -> new UpdatablePlayer(bwCounter, instance), this);
-  private final Updater<WPosition, Position, UpdatablePosition> positionUpdater = new Updater<>(
+  private final Updater<WPosition, Position, UpdatablePosition> positionUpdater = new Updater<WPosition, Position, UpdatablePosition>(
       instance -> new UpdatablePosition(bwCounter, instance), this);
-  private final Updater<WRace, Race, UpdatableRace> raceUpdater = new Updater<>(
+  private final Updater<WRace, Race, UpdatableRace> raceUpdater = new Updater<WRace, Race, UpdatableRace>(
       instance -> new UpdatableRace(bwCounter, instance), this);
-  private final Updater<WRegion, Region, UpdatableRegion> regionUpdater = new Updater<>(
+  private final Updater<WRegion, Region, UpdatableRegion> regionUpdater = new Updater<WRegion, Region, UpdatableRegion>(
       instance -> new UpdatableRegion(bwCounter, instance), this);
-  private final Updater<WTechType, TechType, UpdatableTechType> techTypeUpdater = new Updater<>(
+  private final Updater<WTechType, TechType, UpdatableTechType> techTypeUpdater = new Updater<WTechType, TechType, UpdatableTechType>(
       instance -> new UpdatableTechType(bwCounter, instance), this);
-  private final Updater<WTilePosition, TilePosition, UpdatableTilePosition> tilePositionUpdater = new Updater<>(
+  private final Updater<WTilePosition, TilePosition, UpdatableTilePosition> tilePositionUpdater = new Updater<WTilePosition, TilePosition, UpdatableTilePosition>(
       instance -> new UpdatableTilePosition(bwCounter, instance), this);
-  private final Updater<WUnit, Unit, UpdatableUnit> unitUpdater = new Updater<>(
+  private final Updater<WUnit, Unit, UpdatableUnit> unitUpdater = new Updater<WUnit, Unit, UpdatableUnit>(
       instance -> new UpdatableUnit(bwCounter, instance), this);
-  private final Updater<WUnitType, UnitType, UpdatableUnitType> unitTypeUpdater = new Updater<>(
+  private final Updater<WUnitType, UnitType, UpdatableUnitType> unitTypeUpdater = new Updater<WUnitType, UnitType, UpdatableUnitType>(
       instance -> new UpdatableUnitType(bwCounter, instance), this);
-  private final Updater<WUpgradeType, UpgradeType, UpdatableUpgradeType> upgradeTypeUpdater = new Updater<>(
+  private final Updater<WUpgradeType, UpgradeType, UpdatableUpgradeType> upgradeTypeUpdater = new Updater<WUpgradeType, UpgradeType, UpdatableUpgradeType>(
       instance -> new UpdatableUpgradeType(bwCounter, instance), this);
-  private final Updater<WWeaponType, WeaponType, UpdatableWeaponType> weaponTypeUpdater = new Updater<>(
+  private final Updater<WWeaponType, WeaponType, UpdatableWeaponType> weaponTypeUpdater = new Updater<WWeaponType, WeaponType, UpdatableWeaponType>(
       instance -> new UpdatableWeaponType(bwCounter, instance), this);
 
-  UpdateManager(BWCounter bwCounter) {
-    super(bwCounter);
+  @Override
+  public Stream<Unit> getUnits() {
+    return unitUpdater.getAllContainers().filter(unit -> unit.exists().orElse(false));
+  }
+
+  @Override
+  public Stream<Bullet> getBullets() {
+    return bulletUpdater.getAllContainers().filter(unit -> unit.exists().orElse(false));
+  }
+
+  @Override
+  public Stream<Race> getRaces() {
+    return raceUpdater.getAllContainers();
+  }
+
+  @Override
+  public Stream<TechType> getTechTypes() {
+    return techTypeUpdater.getAllContainers();
+  }
+
+  @Override
+  public Stream<UpgradeType> getUpgradeTypes() {
+    return upgradeTypeUpdater.getAllContainers();
+  }
+
+  @Override
+  public Stream<UnitType> getUnitTypes() {
+    return unitTypeUpdater.getAllContainers();
+  }
+
+  @Override
+  public Stream<WeaponType> getWeaponTypes() {
+    return weaponTypeUpdater.getAllContainers();
   }
 
   @Override
@@ -555,4 +591,13 @@ public class UpdateManager extends BWDataFacade<BWCounter> implements IUpdateMan
     return weaponTypeUpdater.getBWInstance(container);
   }
 
+  @Override
+  public void increaseClocks() {
+    bwCounter.increaseClocks();
+  }
+
+  @Override
+  public int getCurrentFrame() {
+    return bwCounter.getCurrentFrame();
+  }
 }

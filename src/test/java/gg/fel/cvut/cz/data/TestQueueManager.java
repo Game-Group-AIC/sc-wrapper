@@ -1,7 +1,7 @@
 package gg.fel.cvut.cz.data;
 
-import gg.fel.cvut.cz.facades.queue.Command;
 import gg.fel.cvut.cz.facades.queue.CommandType;
+import gg.fel.cvut.cz.facades.queue.CommandWithResponse;
 import gg.fel.cvut.cz.facades.queue.IResponseReceiver;
 import gg.fel.cvut.cz.facades.queue.QueueManager;
 import java.util.List;
@@ -47,7 +47,7 @@ public class TestQueueManager {
     @Override
     public void run() {
       while (true) {
-        queueManager.addCommand(new Command<>(commandType, receiver,
+        queueManager.addCommand(new CommandWithResponse<>(commandType, receiver,
             () -> random.nextInt() + random.nextInt() >= random.nextInt() + random.nextInt()));
         try {
           Thread.sleep(5);

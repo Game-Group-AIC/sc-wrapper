@@ -1,5 +1,7 @@
 package gg.fel.cvut.cz.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gg.fel.cvut.cz.data.readonly.UpgradeType;
 import gg.fel.cvut.cz.enums.UpgradeTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
@@ -8,6 +10,7 @@ import java.util.Optional;
  * The upgrade type represents a passive upgrade that can be obtained with UnitInterface::upgrade.
  * See also UpgradeTypes
  */
+@JsonDeserialize(as = UpgradeType.class)
 public interface IUpgradeType extends InGameInterface, Serializable {
 
   UpgradeTypeEnum getUpgradeType();

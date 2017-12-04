@@ -1,5 +1,7 @@
 package gg.fel.cvut.cz.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gg.fel.cvut.cz.data.readonly.Game;
 import gg.fel.cvut.cz.enums.GameTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
@@ -10,6 +12,7 @@ import java.util.Set;
  * state information from Starcraft Broodwar. IGame state information includes all units, resources,
  * players, forces, bullets, terrain, fog of war, regions, etc.
  */
+@JsonDeserialize(as = Game.class)
 public interface IGame extends InGameInterface, Serializable {
 
   Optional<IPlayer> getSelf();
@@ -81,5 +84,10 @@ public interface IGame extends InGameInterface, Serializable {
    * also mapFileName, mapPathName
    */
   Optional<String> mapName();
+
+  /**
+   * Get map in form of grid
+   */
+  Optional<Set<ITilePosition>> getGrid();
 
 }

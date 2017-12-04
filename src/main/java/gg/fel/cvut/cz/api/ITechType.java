@@ -1,5 +1,7 @@
 package gg.fel.cvut.cz.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gg.fel.cvut.cz.data.readonly.TechType;
 import gg.fel.cvut.cz.enums.OrderEnum;
 import gg.fel.cvut.cz.enums.TechTypeEnum;
 import java.io.Serializable;
@@ -11,6 +13,7 @@ import java.util.Optional;
  * order for a IUnit to use its own specialized ability, it must first be available and researched.
  * See also TechTypes
  */
+@JsonDeserialize(as = TechType.class)
 public interface ITechType extends InGameInterface, Serializable {
 
   TechTypeEnum getTechType();

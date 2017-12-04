@@ -1,5 +1,7 @@
 package gg.fel.cvut.cz.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gg.fel.cvut.cz.data.readonly.WeaponType;
 import gg.fel.cvut.cz.enums.DamageTypeEnum;
 import gg.fel.cvut.cz.enums.ExplosionTypeEnum;
 import gg.fel.cvut.cz.enums.WeaponTypeEnum;
@@ -10,6 +12,7 @@ import java.util.Optional;
  * This object identifies a weapon type used by a unit to attack and deal damage. Some weapon types
  * can be upgraded while others are used for special abilities. See also WeaponTypes
  */
+@JsonDeserialize(as = WeaponType.class)
 public interface IWeaponType extends InGameInterface, Serializable {
 
   WeaponTypeEnum getWeaponType();

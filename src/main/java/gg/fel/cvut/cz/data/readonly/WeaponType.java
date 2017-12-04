@@ -11,6 +11,7 @@ import gg.fel.cvut.cz.enums.DamageTypeEnum;
 import gg.fel.cvut.cz.enums.ExplosionTypeEnum;
 import gg.fel.cvut.cz.enums.WeaponTypeEnum;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -143,6 +144,6 @@ public class WeaponType extends AContainer implements IWeaponType, Serializable 
 
   @Override
   protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
-    return null;
+    return new HashSet<>();
   }
 }

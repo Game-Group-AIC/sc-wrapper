@@ -24,6 +24,20 @@ import java.util.stream.Stream;
  */
 public interface IUpdateManager extends IGameDataWrapper {
 
+  Stream<Unit> getUnits();
+
+  Stream<Bullet> getBullets();
+
+  Stream<Race> getRaces();
+
+  Stream<TechType> getTechTypes();
+
+  Stream<UpgradeType> getUpgradeTypes();
+
+  Stream<UnitType> getUnitTypes();
+
+  Stream<WeaponType> getWeaponTypes();
+
   /**
    * Method to be called preferably at the beginning of the game to init game instance
    */

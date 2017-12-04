@@ -19,6 +19,7 @@ import gg.fel.cvut.cz.facades.queue.CommandWithResponse;
 import gg.fel.cvut.cz.facades.queue.CommandWithoutResponse;
 import gg.fel.cvut.cz.facades.queue.IResponseReceiver;
 import gg.fel.cvut.cz.facades.strategies.UpdateStrategy;
+import java.util.Optional;
 
 //TODO specific interfaces to command units
 
@@ -31,7 +32,7 @@ public interface IGameDataUpdateAdapter extends IGameDataAccessAdapter, BWEventL
   /**
    * Returns current game as replay so it can be serialized
    */
-  ReplayGameFacade getGameAsReplay();
+  Optional<ReplayGameFacade> getGameAsReplay();
 
   void update(Bullet bulletToUpdate, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> updateNotificationReceiver);

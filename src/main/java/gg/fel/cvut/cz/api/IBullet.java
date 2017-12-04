@@ -1,5 +1,7 @@
 package gg.fel.cvut.cz.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gg.fel.cvut.cz.data.readonly.Bullet;
 import gg.fel.cvut.cz.enums.BulletTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
@@ -17,6 +19,7 @@ import java.util.Optional;
  * visible. Otherwise if Flag::CompleteMapInformation is enabled, then all Bullets in the game are
  * accessible. See also IGame::getBullets, BulletInterface::exists
  */
+@JsonDeserialize(as = Bullet.class)
 public interface IBullet extends InGameInterface, Serializable {
 
   /**

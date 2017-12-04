@@ -1,10 +1,16 @@
 package gg.fel.cvut.cz.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gg.fel.cvut.cz.data.readonly.Race;
+import gg.fel.cvut.cz.enums.RaceTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
 
+@JsonDeserialize(as = Race.class)
 public interface IRace extends InGameInterface, Serializable {
+
+  RaceTypeEnum getRaceType();
 
   /**
    * Retrieves the default worker type for this UpdatableRace. Note In Starcraft, workers are the

@@ -1,5 +1,7 @@
 package gg.fel.cvut.cz.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gg.fel.cvut.cz.data.readonly.Unit;
 import gg.fel.cvut.cz.enums.OrderEnum;
 import java.io.Serializable;
 import java.util.Optional;
@@ -25,6 +27,7 @@ import java.util.Set;
  * functions will be available to the AI. However for units that were owned by the player, getPlayer
  * and getType will continue to work for units that have been destroyed.
  */
+@JsonDeserialize(as = Unit.class)
 public interface IUnit extends InGameInterface, Serializable {
 
   /**

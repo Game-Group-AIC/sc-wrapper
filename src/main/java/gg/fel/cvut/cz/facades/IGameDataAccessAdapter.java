@@ -1,8 +1,10 @@
 package gg.fel.cvut.cz.facades;
 
 import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.data.readonly.Bullet;
 import gg.fel.cvut.cz.data.readonly.Race;
 import gg.fel.cvut.cz.data.readonly.TechType;
+import gg.fel.cvut.cz.data.readonly.Unit;
 import gg.fel.cvut.cz.data.readonly.UnitType;
 import gg.fel.cvut.cz.data.readonly.UpgradeType;
 import gg.fel.cvut.cz.data.readonly.WeaponType;
@@ -30,5 +32,9 @@ public interface IGameDataAccessAdapter {
   Optional<UpgradeType> getType(UpgradeTypeEnum techType);
 
   Optional<WeaponType> getType(WeaponTypeEnum unitType);
+
+  Stream<Unit> getUnits();
+
+  Stream<Bullet> getBullets();
 
 }

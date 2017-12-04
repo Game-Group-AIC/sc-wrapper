@@ -12,6 +12,7 @@ import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.UnitSizeTypeEnum;
 import gg.fel.cvut.cz.enums.UnitTypeEnum;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -400,6 +401,6 @@ public class UnitType extends AContainer implements IUnitType, Serializable {
 
   @Override
   protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
-    return null;
+    return new HashSet<>();
   }
 }

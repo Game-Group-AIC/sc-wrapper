@@ -1,5 +1,7 @@
 package gg.fel.cvut.cz.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gg.fel.cvut.cz.data.readonly.Player;
 import gg.fel.cvut.cz.enums.PlayerTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
@@ -11,6 +13,7 @@ import java.util.stream.Stream;
  * her own player instance. There is also a neutral player which owns all the neutral units (such as
  * mineral patches and vespene geysers). See also Playerset, PlayerTypeEnum, IRace
  */
+@JsonDeserialize(as = Player.class)
 public interface IPlayer extends InGameInterface, Serializable {
 
   /**

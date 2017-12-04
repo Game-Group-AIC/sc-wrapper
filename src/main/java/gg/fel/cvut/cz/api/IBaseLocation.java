@@ -1,9 +1,12 @@
 package gg.fel.cvut.cz.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gg.fel.cvut.cz.data.readonly.BaseLocation;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
 
+@JsonDeserialize(as = BaseLocation.class)
 public interface IBaseLocation extends IAbstractPoint, InGameInterface, Serializable {
 
   Optional<Integer> minerals();

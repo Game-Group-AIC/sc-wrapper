@@ -2,6 +2,8 @@ package gg.fel.cvut.cz.api;
 
 import static gg.fel.cvut.cz.api.ITilePosition.SIZE_IN_PIXELS;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gg.fel.cvut.cz.data.readonly.UnitType;
 import gg.fel.cvut.cz.enums.UnitSizeTypeEnum;
 import gg.fel.cvut.cz.enums.UnitTypeEnum;
 import gg.fel.cvut.cz.enums.WeaponTypeEnum;
@@ -15,6 +17,7 @@ import java.util.stream.Stream;
  * The IUnitType is used to get information about a particular type of unit, such as its cost, build
  * time, weapon, hit points, abilities, etc. See also UnitInterface::getType, UnitTypes
  */
+@JsonDeserialize(as = UnitType.class)
 public interface IUnitType extends InGameInterface, Serializable {
 
   /**

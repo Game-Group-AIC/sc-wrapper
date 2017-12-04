@@ -5,11 +5,13 @@ import gg.fel.cvut.cz.api.IChokePoint;
 import gg.fel.cvut.cz.api.IGame;
 import gg.fel.cvut.cz.api.IPlayer;
 import gg.fel.cvut.cz.api.IRegion;
+import gg.fel.cvut.cz.api.ITilePosition;
 import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.GameTypeEnum;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -22,7 +24,7 @@ public class Game extends AContainer implements IGame, Serializable {
 
   @Override
   protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
-    return null;
+    return new HashSet<>();
   }
 
   @Override
@@ -93,6 +95,11 @@ public class Game extends AContainer implements IGame, Serializable {
   @Override
   public Optional<String> mapName() {
     return null;
+  }
+
+  @Override
+  public Optional<Set<ITilePosition>> getGrid() {
+    return Optional.empty();
   }
 
 }

@@ -2,18 +2,22 @@ package gg.fel.cvut.cz.facades.managers;
 
 import bwapi.DefaultBWListener;
 import bwapi.Mirror;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IBaseLocation;
 import gg.fel.cvut.cz.api.IChokePoint;
 import gg.fel.cvut.cz.api.IGame;
 import gg.fel.cvut.cz.api.IPlayer;
 import gg.fel.cvut.cz.api.IRegion;
-import gg.fel.cvut.cz.counters.BWCounter;
+import gg.fel.cvut.cz.api.ITilePosition;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.counters.IBWClock;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.events.UpdatableEventsRegister;
 import gg.fel.cvut.cz.data.events.subscribers.IGameHasEndedNotificationSubscriber;
 import gg.fel.cvut.cz.data.events.subscribers.IGameHasStartedNotificationSubscriber;
 import gg.fel.cvut.cz.data.events.subscribers.INukeDetectedNotificationSubscriber;
+import gg.fel.cvut.cz.data.events.subscribers.IOnFrameNotificationSubscriber;
 import gg.fel.cvut.cz.data.events.subscribers.IPlayerLeftNotificationSubscriber;
 import gg.fel.cvut.cz.data.events.subscribers.IReceiveTextNotificationSubscriber;
 import gg.fel.cvut.cz.data.events.subscribers.ISendTextNotificationSubscriber;
@@ -61,6 +65,8 @@ import gg.fel.cvut.cz.wrappers.WUpgradeType;
 import gg.fel.cvut.cz.wrappers.WWeaponType;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -77,43 +83,52 @@ import lombok.extern.slf4j.Slf4j;
 public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdapter,
     IBWClock, Runnable, IGame, IGameDataAccessAdapter {
 
-  private final BWCounter bwCounter = new BWCounter();
-  private final UpdateManager updateManager = new UpdateManager(bwCounter);
+  private final UpdateManager updateManager = new UpdateManager();
   private final QueueManager queueManager = new QueueManager();
   private final UpdatableEventsRegister eventsRegister = new UpdatableEventsRegister();
+
+  @Builder.Default
   private Optional<Game> game = Optional.empty();
+
+  @Builder.Default
+  private int gameDefaultSpeed = 20;
+
+  @Builder.Default
+  private boolean gameHasEnded = false;
 
   //event notification receivers
   @Builder.Default
-  private final Optional<IUnitNotificationSubscriber> onUnitDiscover = Optional.empty();
+  private Optional<IUnitNotificationSubscriber> onUnitDiscover = Optional.empty();
   @Builder.Default
-  private final Optional<IUnitNotificationSubscriber> onUnitEvade = Optional.empty();
+  private Optional<IUnitNotificationSubscriber> onUnitEvade = Optional.empty();
   @Builder.Default
-  private final Optional<IUnitNotificationSubscriber> onUnitShow = Optional.empty();
+  private Optional<IUnitNotificationSubscriber> onUnitShow = Optional.empty();
   @Builder.Default
-  private final Optional<IUnitNotificationSubscriber> onUnitHide = Optional.empty();
+  private Optional<IUnitNotificationSubscriber> onUnitHide = Optional.empty();
   @Builder.Default
-  private final Optional<IUnitNotificationSubscriber> onUnitCreate = Optional.empty();
+  private Optional<IUnitNotificationSubscriber> onUnitCreate = Optional.empty();
   @Builder.Default
-  private final Optional<IUnitNotificationSubscriber> onUnitDestroy = Optional.empty();
+  private Optional<IUnitNotificationSubscriber> onUnitDestroy = Optional.empty();
   @Builder.Default
-  private final Optional<IUnitNotificationSubscriber> onUnitMorph = Optional.empty();
+  private Optional<IUnitNotificationSubscriber> onUnitMorph = Optional.empty();
   @Builder.Default
-  private final Optional<IUnitNotificationSubscriber> onUnitRenegade = Optional.empty();
+  private Optional<IUnitNotificationSubscriber> onUnitRenegade = Optional.empty();
   @Builder.Default
-  private final Optional<IUnitNotificationSubscriber> onUnitComplete = Optional.empty();
+  private Optional<IUnitNotificationSubscriber> onUnitComplete = Optional.empty();
   @Builder.Default
-  private final Optional<IGameHasEndedNotificationSubscriber> onEnd = Optional.empty();
+  private Optional<IGameHasEndedNotificationSubscriber> onEnd = Optional.empty();
   @Builder.Default
-  private final Optional<IGameHasStartedNotificationSubscriber> onStart = Optional.empty();
+  private Optional<IGameHasStartedNotificationSubscriber> onStart = Optional.empty();
   @Builder.Default
-  private final Optional<INukeDetectedNotificationSubscriber> onNukeDetect = Optional.empty();
+  private Optional<INukeDetectedNotificationSubscriber> onNukeDetect = Optional.empty();
   @Builder.Default
-  private final Optional<IPlayerLeftNotificationSubscriber> onPlayerLeft = Optional.empty();
+  private Optional<IPlayerLeftNotificationSubscriber> onPlayerLeft = Optional.empty();
   @Builder.Default
-  private final Optional<IReceiveTextNotificationSubscriber> onReceiveText = Optional.empty();
+  private Optional<IReceiveTextNotificationSubscriber> onReceiveText = Optional.empty();
   @Builder.Default
-  private final Optional<ISendTextNotificationSubscriber> onSendText = Optional.empty();
+  private Optional<ISendTextNotificationSubscriber> onSendText = Optional.empty();
+  @Builder.Default
+  private Optional<IOnFrameNotificationSubscriber> onFrame = Optional.empty();
 
   //command types
   private static final CommandType BASE_LOCATION_UPDATE = CommandType
@@ -144,29 +159,47 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Getter
   @Setter
-  private long frameExecutionTime;
+  @Builder.Default
+  private long frameExecutionTime = 30;
 
   //game related fields
-  private Mirror mirror = new Mirror();
-
-  public GameFacade(long frameExecutionTime) {
-    this.frameExecutionTime = frameExecutionTime;
-  }
+  @Builder.Default
+  private final Mirror mirror = new Mirror();
 
   @Override
-  public ReplayGameFacade getGameAsReplay() {
-    //TODO
-    return null;
+  public Optional<ReplayGameFacade> getGameAsReplay() {
+    if (!game.isPresent() || !gameHasEnded) {
+      log.error("Trying to make replay from a game which has not started or finished.");
+      return Optional.empty();
+    }
+    return Optional.ofNullable(ReplayGameFacade.builder()
+        .game(game.get())
+        .bwCounter(new BWReplayCounter(updateManager.getCurrentFrame() + 1))
+        .eventsRegister(eventsRegister)
+        .bullets(updateManager.getBullets().collect(Collectors.toCollection(ImmutableSet::of)))
+        .units(updateManager.getUnits().collect(Collectors.toCollection(ImmutableSet::of)))
+        .races(ImmutableMap.copyOf(updateManager.getRaces().collect(Collectors.toMap(
+            Race::getRaceType, Function.identity()))))
+        .techTypes(ImmutableMap.copyOf(updateManager.getTechTypes().collect(Collectors.toMap(
+            TechType::getTechType, Function.identity()))))
+        .upgradeTypes(ImmutableMap.copyOf(updateManager.getUpgradeTypes().collect(Collectors.toMap(
+            UpgradeType::getUpgradeType, Function.identity()))))
+        .unitTypes(ImmutableMap.copyOf(updateManager.getUnitTypes().collect(Collectors.toMap(
+            UnitType::getUnitType, Function.identity()))))
+        .weaponTypes(ImmutableMap.copyOf(updateManager.getWeaponTypes().collect(Collectors.toMap(
+            WeaponType::getWeaponType, Function.identity()))))
+        .build());
   }
 
   @Override
   public void onStart() {
-    Optional<Game> game = updateManager.wrapGame(mirror.getGame());
+    game = updateManager.wrapGame(mirror.getGame());
     if (game.isPresent()) {
-      UpdateStrategy updateAllStrategy = new UpdateStrategy();
+      UpdateStrategy updateAllStrategy = UpdateStrategy.builder().build();
       updateManager.update(game.get(), updateAllStrategy);
       updateManager.initializeAllTypes(updateAllStrategy);
       onStart.ifPresent(IGameHasStartedNotificationSubscriber::notifySubscriber);
+      mirror.getGame().setLocalSpeed(gameDefaultSpeed);
       log.info("Game has started.");
     } else {
       log.error("Failed to start the game.");
@@ -175,6 +208,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public void onEnd(boolean b) {
+    gameHasEnded = true;
     onEnd.ifPresent(subscriber -> {
       subscriber.notifySubscriber(b);
       eventsRegister.onEnd(getCurrentFrame() + 1, b);
@@ -185,7 +219,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   public void onSendText(String s) {
     onSendText.ifPresent(subscriber -> {
       subscriber.notifySubscriber(s);
-      eventsRegister.onSendText(getCurrentFrame() + 1, s);
+      eventsRegister.onSendText(s);
     });
   }
 
@@ -194,7 +228,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Player> p = updateManager.getDataContainer(WPlayer.getOrCreateWrapper(player));
     if (p.isPresent() && onReceiveText.isPresent()) {
       onReceiveText.get().notifySubscriber(p.get(), s);
-      eventsRegister.onReceiveText(getCurrentFrame() + 1, p.get(), s);
+      eventsRegister.onReceiveText(p.get(), s);
     }
   }
 
@@ -203,7 +237,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Player> p = updateManager.getDataContainer(WPlayer.getOrCreateWrapper(player));
     if (p.isPresent() && onPlayerLeft.isPresent()) {
       onPlayerLeft.get().notifySubscriber(p.get());
-      eventsRegister.onPlayerLeft(getCurrentFrame() + 1, p.get());
+      eventsRegister.onPlayerLeft(p.get());
     }
   }
 
@@ -212,7 +246,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Position> p = updateManager.getDataContainer(WPosition.getOrCreateWrapper(position));
     if (p.isPresent() && onNukeDetect.isPresent()) {
       onNukeDetect.get().notifySubscriber(p.get());
-      eventsRegister.onNukeDetect(getCurrentFrame() + 1, p.get());
+      eventsRegister.onNukeDetect(p.get());
     }
   }
 
@@ -221,7 +255,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitDiscover.isPresent()) {
       onUnitDiscover.get().notifySubscriber(u.get());
-      eventsRegister.onUnitDiscover(getCurrentFrame() + 1, u.get());
+      eventsRegister.onUnitDiscover(u.get());
     }
   }
 
@@ -230,7 +264,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitEvade.isPresent()) {
       onUnitEvade.get().notifySubscriber(u.get());
-      eventsRegister.onUnitEvade(getCurrentFrame() + 1, u.get());
+      eventsRegister.onUnitEvade(u.get());
     }
   }
 
@@ -239,7 +273,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitShow.isPresent()) {
       onUnitShow.get().notifySubscriber(u.get());
-      eventsRegister.onUnitShow(getCurrentFrame() + 1, u.get());
+      eventsRegister.onUnitShow(u.get());
     }
   }
 
@@ -248,7 +282,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitHide.isPresent()) {
       onUnitHide.get().notifySubscriber(u.get());
-      eventsRegister.onUnitHide(getCurrentFrame() + 1, u.get());
+      eventsRegister.onUnitHide(u.get());
     }
   }
 
@@ -257,7 +291,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitCreate.isPresent()) {
       onUnitCreate.get().notifySubscriber(u.get());
-      eventsRegister.onUnitCreate(getCurrentFrame() + 1, u.get());
+      eventsRegister.onUnitCreate(u.get());
     }
   }
 
@@ -266,7 +300,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitDestroy.isPresent()) {
       onUnitDestroy.get().notifySubscriber(u.get());
-      eventsRegister.onUnitDestroy(getCurrentFrame() + 1, u.get());
+      eventsRegister.onUnitDestroy(u.get());
     }
   }
 
@@ -275,7 +309,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitMorph.isPresent()) {
       onUnitMorph.get().notifySubscriber(u.get());
-      eventsRegister.onUnitMorph(getCurrentFrame() + 1, u.get());
+      eventsRegister.onUnitMorph(u.get());
     }
   }
 
@@ -284,7 +318,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitRenegade.isPresent()) {
       onUnitRenegade.get().notifySubscriber(u.get());
-      eventsRegister.onUnitRenegade(getCurrentFrame() + 1, u.get());
+      eventsRegister.onUnitRenegade(u.get());
     }
   }
 
@@ -293,7 +327,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitComplete.isPresent()) {
       onUnitComplete.get().notifySubscriber(u.get());
-      eventsRegister.onUnitComplete(getCurrentFrame() + 1, u.get());
+      eventsRegister.onUnitComplete(u.get());
     }
   }
 
@@ -311,6 +345,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public void onFrame() {
+    updateManager.increaseClocks();
+    onFrame.ifPresent(ns -> ns.notifySubscriber(getCurrentFrame()));
     try {
       queueManager.executedCommands(frameExecutionTime);
     } catch (Exception e) {
@@ -318,7 +354,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
       log.error(e.getMessage());
 //      e.printStackTrace();
     }
-    bwCounter.increaseClocks();
+    eventsRegister.saveEvents(getCurrentFrame());
   }
 
   @Override
@@ -351,7 +387,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public int getCurrentFrame() {
-    return bwCounter.getCurrentFrame();
+    return updateManager.getCurrentFrame();
   }
 
   @Override
@@ -571,6 +607,16 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   }
 
   @Override
+  public Stream<Unit> getUnits() {
+    return updateManager.getUnits();
+  }
+
+  @Override
+  public Stream<Bullet> getBullets() {
+    return updateManager.getBullets();
+  }
+
+  @Override
   public Optional<BaseLocation> getDataContainer(WBaseLocation baseLocation) {
     return updateManager.getDataContainer(baseLocation);
   }
@@ -768,5 +814,10 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   @Override
   public Optional<String> mapName() {
     return game.flatMap(Game::mapName);
+  }
+
+  @Override
+  public Optional<Set<ITilePosition>> getGrid() {
+    return game.flatMap(Game::getGrid);
   }
 }

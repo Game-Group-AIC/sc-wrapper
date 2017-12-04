@@ -1,8 +1,11 @@
 package gg.fel.cvut.cz.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gg.fel.cvut.cz.data.readonly.ChokePoint;
 import java.io.Serializable;
 import java.util.Optional;
 
+@JsonDeserialize(as = ChokePoint.class)
 public interface IChokePoint extends IAbstractPoint, InGameInterface, Serializable {
 
   Optional<Tuple<IRegion, IRegion>> getRegions();

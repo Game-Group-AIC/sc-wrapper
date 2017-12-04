@@ -13,6 +13,7 @@ import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.PlayerTypeEnum;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -240,6 +241,6 @@ public class Player extends AContainer implements IPlayer, Serializable {
 
   @Override
   protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
-    return null;
+    return new HashSet<>();
   }
 }

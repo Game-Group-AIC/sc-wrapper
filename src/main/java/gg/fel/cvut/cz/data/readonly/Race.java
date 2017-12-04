@@ -8,7 +8,9 @@ import gg.fel.cvut.cz.api.IWeaponType;
 import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
+import gg.fel.cvut.cz.enums.RaceTypeEnum;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -22,6 +24,11 @@ public class Race extends AContainer implements IRace, Serializable {
 
   @Override
   protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
+    return new HashSet<>();
+  }
+
+  @Override
+  public RaceTypeEnum getRaceType() {
     return null;
   }
 

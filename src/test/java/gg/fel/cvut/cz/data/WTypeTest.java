@@ -1,8 +1,8 @@
 package gg.fel.cvut.cz.data;
 
-import static bwapi.UpgradeType.Terran_Infantry_Armor;
-import static bwapi.WeaponType.Gauss_Rifle;
-import static bwapi.WeaponType.Maelstrom;
+import static gg.fel.cvut.cz.enums.UpgradeTypeEnum.TerranInfantryArmor;
+import static gg.fel.cvut.cz.enums.WeaponTypeEnum.GaussRifle;
+import static gg.fel.cvut.cz.enums.WeaponTypeEnum.Maelstrom;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -14,16 +14,16 @@ public class WTypeTest {
 
   @Test
   public void testWTypeProperty() {
-    WWeaponType gaussRifle = WWeaponType.getOrCreateWrapper(Gauss_Rifle);
+    WWeaponType gaussRifle = WWeaponType.getOrCreateWrapper(GaussRifle);
     WWeaponType maelstrom = WWeaponType.getOrCreateWrapper(Maelstrom);
     assertNotEquals(gaussRifle, maelstrom);
-    assertEquals(gaussRifle, WWeaponType.getOrCreateWrapper(Gauss_Rifle));
+    assertEquals(gaussRifle, WWeaponType.getOrCreateWrapper(GaussRifle));
   }
 
   @Test
   public void testWTypesProperty() {
-    WWeaponType gaussRifle = WWeaponType.getOrCreateWrapper(Gauss_Rifle);
-    WUpgradeType terranInfantryArmor = WUpgradeType.getOrCreateWrapper(Terran_Infantry_Armor);
+    WWeaponType gaussRifle = WWeaponType.getOrCreateWrapper(GaussRifle);
+    WUpgradeType terranInfantryArmor = WUpgradeType.getOrCreateWrapper(TerranInfantryArmor);
     assertNotEquals(gaussRifle, terranInfantryArmor);
   }
 
