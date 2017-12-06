@@ -1,6 +1,5 @@
 package gg.fel.cvut.cz.data.readonly;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IBaseLocation;
 import gg.fel.cvut.cz.api.IPosition;
@@ -9,7 +8,6 @@ import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
 import gg.fel.cvut.cz.data.properties.Property;
-import gg.fel.cvut.cz.data.properties.PropertyMap;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import java.io.Serializable;
 import java.util.Optional;
@@ -34,11 +32,12 @@ public class BaseLocation extends AContainer implements IBaseLocation, Serializa
       Property::new);
   protected final StaticPropertyRegister<Position, Property<Position>> position = new StaticPropertyRegister<Position, Property<Position>>(
       Property::new);
-  protected final StaticPropertyRegister<ImmutableMap<BaseLocation, Double>, PropertyMap<BaseLocation, Double>> groundDistanceToBases = new StaticPropertyRegister<ImmutableMap<BaseLocation, Double>, PropertyMap<BaseLocation, Double>>(
-      PropertyMap::new);
-  protected final StaticPropertyRegister<ImmutableMap<BaseLocation, Double>, PropertyMap<BaseLocation, Double>> airDistanceToBases = new StaticPropertyRegister<ImmutableMap<BaseLocation, Double>, PropertyMap<BaseLocation, Double>>(
-      PropertyMap::new);
-  private final Set<StaticPropertyRegister<?, ?>> toHash = ImmutableSet.of(position);
+  protected final StaticPropertyRegister<Integer, Property<Integer>> x = new StaticPropertyRegister<Integer, Property<Integer>>(
+      Property::new);
+  protected final StaticPropertyRegister<Integer, Property<Integer>> y = new StaticPropertyRegister<Integer, Property<Integer>>(
+      Property::new);
+  //TODO from json
+  protected Set<StaticPropertyRegister<?, ?>> toHash;
 
   public BaseLocation(BWReplayCounter bwCounter) {
     super(bwCounter);
@@ -73,16 +72,6 @@ public class BaseLocation extends AContainer implements IBaseLocation, Serializa
   }
 
   @Override
-  public Optional<Double> getGroundDistance(IBaseLocation other) {
-    return getPropertyOnTimeLineStrategy(groundDistanceToBases, other);
-  }
-
-  @Override
-  public Optional<Double> getAirDistance(IBaseLocation other) {
-    return getPropertyOnTimeLineStrategy(airDistanceToBases, other);
-  }
-
-  @Override
   public Optional<Boolean> isIsland() {
     return getPropertyOnTimeLineStrategy(isIsland);
   }
@@ -97,6 +86,14 @@ public class BaseLocation extends AContainer implements IBaseLocation, Serializa
     return getPropertyOnTimeLineStrategy(position).map(p -> p);
   }
 
+  //TODO compute - move to implementation to cache values?
+  public Optional<Double> getGroundDistance(IBaseLocation other) {
+    return Optional.of(Double.MAX_VALUE);
+  }
+
+  public Optional<Double> getAirDistance(IBaseLocation other) {
+    return Optional.of(Double.MAX_VALUE);
+  }
 
   @Override
   protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {

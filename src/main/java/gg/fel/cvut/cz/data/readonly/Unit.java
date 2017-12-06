@@ -1,5 +1,6 @@
 package gg.fel.cvut.cz.data.readonly;
 
+import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IPlayer;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.ITechType;
@@ -10,6 +11,7 @@ import gg.fel.cvut.cz.api.IUpgradeType;
 import gg.fel.cvut.cz.api.UnitCommand;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.data.properties.Property;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.OrderEnum;
 import java.io.Serializable;
@@ -20,6 +22,10 @@ import java.util.stream.Stream;
 
 //TODO implement
 public class Unit extends AContainer implements IUnit, Serializable {
+
+  protected final StaticPropertyRegister<Integer, Property<Integer>> unitID = new StaticPropertyRegister<Integer, Property<Integer>>(
+      Property::new);
+  private final Set<StaticPropertyRegister<?, ?>> toHash = ImmutableSet.of(unitID);
 
   public Unit(BWReplayCounter bwCounter) {
     super(bwCounter);
@@ -877,6 +883,6 @@ public class Unit extends AContainer implements IUnit, Serializable {
 
   @Override
   protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return new HashSet<>();
+    return toHash;
   }
 }

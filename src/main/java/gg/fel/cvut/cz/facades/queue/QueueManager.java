@@ -16,6 +16,7 @@ import lombok.EqualsAndHashCode;
  * Manages queued items - to order them by type that each type has fair chance that its commands
  * will be executed
  */
+//TODO debug - always execute at least one, do not add same commands
 public class QueueManager implements ICommandExecutor {
 
   private final Map<CommandType, Queue> queues = new HashMap<>();

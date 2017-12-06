@@ -29,6 +29,10 @@ public class StaticPropertyRegister<T extends Serializable, V extends IProperty<
     this.newPropertyCreationStrategy = newPropertyCreationStrategy;
   }
 
+  public boolean propertyHasNotBeenAdded() {
+    return property == null;
+  }
+
   public void addProperty(T propertyValue, int inFrame) {
 
     //changing property

@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Common template class for containers of in-game readonly
  */
-//TODO use concrete implementations in data containers
+//TODO smart way how to init hash sets for equals - from json
 public abstract class AContainer implements IContainer {
 
   protected BWReplayCounter bwCounter;

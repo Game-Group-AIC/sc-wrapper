@@ -19,6 +19,7 @@ public class UpdatableUnit extends Unit implements
   public UpdatableUnit(BWReplayCounter bwCounter, WUnit wrapped) {
     super(bwCounter);
     this.wrapped = wrapped;
+    this.unitID.addProperty(wrapped.getId(), 0);
   }
 
   @Override

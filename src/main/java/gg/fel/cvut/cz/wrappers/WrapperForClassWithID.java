@@ -2,9 +2,11 @@ package gg.fel.cvut.cz.wrappers;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 class WrapperForClassWithID<T> extends Wrapper<T> {
 
+  @Getter
   private final int id;
 
   WrapperForClassWithID(T scInstance, int id) {

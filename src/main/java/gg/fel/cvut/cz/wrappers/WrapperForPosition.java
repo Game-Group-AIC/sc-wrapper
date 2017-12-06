@@ -2,9 +2,11 @@ package gg.fel.cvut.cz.wrappers;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 class WrapperForPosition<T> extends Wrapper<T> {
 
+  @Getter
   private final int x, y;
 
   WrapperForPosition(T scInstance, int x, int y) {

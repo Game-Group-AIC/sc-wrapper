@@ -2,6 +2,7 @@ package gg.fel.cvut.cz.facades.managers;
 
 import bwapi.DefaultBWListener;
 import bwapi.Mirror;
+import bwta.BWTA;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IBaseLocation;
@@ -86,9 +87,6 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   private final UpdatableEventsRegister eventsRegister = new UpdatableEventsRegister();
 
   @Builder.Default
-  private Optional<Game> game = Optional.empty();
-
-  @Builder.Default
   private int gameDefaultSpeed = 20;
 
   @Builder.Default
@@ -166,12 +164,12 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<ReplayGameFacade> getGameAsReplay() {
-    if (!game.isPresent() || !gameHasEnded) {
+    if (!updateManager.getGame().isPresent() || !gameHasEnded) {
       log.error("Trying to make replay from a game which has not started or finished.");
       return Optional.empty();
     }
     return Optional.ofNullable(ReplayGameFacade.builder()
-        .game(game.get())
+        .game(updateManager.getGame().get())
         .bwCounter(updateManager.getBwCounter())
         .eventsRegister(eventsRegister)
         .bullets(ImmutableSet.copyOf(updateManager.getBullets().collect(Collectors.toSet())))
@@ -191,17 +189,21 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public void onStart() {
-    game = updateManager.wrapGame(mirror.getGame());
-    if (game.isPresent()) {
+    updateManager.setGame(mirror.getGame());
+
+    //analyze map
+    BWTA.analyze();
+
+    if (updateManager.getGame().isPresent()) {
       UpdateStrategy updateAllStrategy = UpdateStrategy.builder().build();
-      updateManager.update(game.get(), updateAllStrategy);
+      updateManager.update(updateManager.getGame().get(), updateAllStrategy);
       updateManager.initializeAllTypes(updateAllStrategy);
-      onStart.ifPresent(IGameHasStartedNotificationSubscriber::notifySubscriber);
       mirror.getGame().setLocalSpeed(gameDefaultSpeed);
       log.info("Game has started.");
     } else {
       log.error("Failed to start the game.");
     }
+    onStart.ifPresent(IGameHasStartedNotificationSubscriber::notifySubscriber);
   }
 
   @Override
@@ -344,15 +346,15 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   @Override
   public void onFrame() {
     updateManager.increaseClocks();
-    onFrame.ifPresent(ns -> ns.notifySubscriber(getCurrentFrame()));
     try {
+      onFrame.ifPresent(ns -> ns.notifySubscriber(getCurrentFrame()));
       queueManager.executedCommands(frameExecutionTime);
+      eventsRegister.saveEvents(getCurrentFrame());
     } catch (Exception e) {
       //Catch any exception that occur not to "kill" the bot with one trivial error
       log.error(e.getMessage());
-//      e.printStackTrace();
+      e.printStackTrace();
     }
-    eventsRegister.saveEvents(getCurrentFrame());
   }
 
   @Override
@@ -378,9 +380,9 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public void updateAll(UpdateStrategy updateStrategy) {
-    queueManager.addCommand(new CommandWithoutResponse(UPDATE_ALL,
-        () -> getAllGameInstances()
-            .forEach(o -> o.update(updateStrategy, updateManager, 0, getCurrentFrame()))));
+      queueManager.addCommand(new CommandWithoutResponse(UPDATE_ALL,
+          () -> getAllGameInstances()
+              .forEach(o -> o.update(updateStrategy, updateManager, 0, getCurrentFrame()))));
   }
 
   @Override
@@ -429,16 +431,17 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public void updateGame(UpdateStrategy updateStrategy) {
-    game.ifPresent(game -> queueManager.addCommand(new CommandWithoutResponse(GAME_UPDATE,
-        () -> updateManager.update(game, updateStrategy))));
+    updateManager.getGame()
+        .ifPresent(game -> queueManager.addCommand(new CommandWithoutResponse(GAME_UPDATE,
+            () -> updateManager.update(game, updateStrategy))));
   }
 
   @Override
   public void updateGame(UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
-    if (game.isPresent()) {
+    if (updateManager.getGame().isPresent()) {
       queueManager.addCommand(new CommandWithResponse<>(GAME_UPDATE, responseReceiver,
-          () -> updateManager.update(game.get(), updateStrategy)));
+          () -> updateManager.update(updateManager.getGame().get(), updateStrategy)));
     } else {
       responseReceiver.receiveResponse(false);
     }
@@ -746,76 +749,76 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<IPlayer> getSelf() {
-    return game.flatMap(Game::getSelf);
+    return updateManager.getGame().flatMap(Game::getSelf);
   }
 
   @Override
   public Optional<Stream<IPlayer>> getPlayers() {
-    return game.flatMap(Game::getPlayers);
+    return updateManager.getGame().flatMap(Game::getPlayers);
   }
 
   @Override
   public Optional<GameTypeEnum> getGameType() {
-    return game.flatMap(Game::getGameType);
+    return updateManager.getGame().flatMap(Game::getGameType);
   }
 
   @Override
   public Optional<Integer> getFrameCount() {
-    return game.flatMap(Game::getFrameCount);
+    return updateManager.getGame().flatMap(Game::getFrameCount);
   }
 
   @Override
   public Optional<Integer> getFPS() {
-    return game.flatMap(Game::getFPS);
+    return updateManager.getGame().flatMap(Game::getFPS);
   }
 
   @Override
   public Optional<Double> getAverageFPS() {
-    return game.flatMap(Game::getAverageFPS);
+    return updateManager.getGame().flatMap(Game::getAverageFPS);
   }
 
   @Override
   public Optional<Integer> elapsedTime() {
-    return game.flatMap(Game::elapsedTime);
+    return updateManager.getGame().flatMap(Game::elapsedTime);
   }
 
   @Override
   public Optional<Stream<IRegion>> getRegions() {
-    return game.flatMap(Game::getRegions);
+    return updateManager.getGame().flatMap(Game::getRegions);
   }
 
   @Override
   public Optional<Stream<IChokePoint>> getChokePoints() {
-    return game.flatMap(Game::getChokePoints);
+    return updateManager.getGame().flatMap(Game::getChokePoints);
   }
 
   @Override
   public Optional<Stream<IBaseLocation>> getBaseLocations() {
-    return game.flatMap(Game::getBaseLocations);
+    return updateManager.getGame().flatMap(Game::getBaseLocations);
   }
 
   @Override
   public Optional<Stream<IBaseLocation>> getStartLocations() {
-    return game.flatMap(Game::getStartLocations);
+    return updateManager.getGame().flatMap(Game::getStartLocations);
   }
 
   @Override
   public Optional<Integer> mapWidth() {
-    return game.flatMap(Game::mapWidth);
+    return updateManager.getGame().flatMap(Game::mapWidth);
   }
 
   @Override
   public Optional<Integer> mapHeight() {
-    return game.flatMap(Game::mapHeight);
+    return updateManager.getGame().flatMap(Game::mapHeight);
   }
 
   @Override
   public Optional<String> mapName() {
-    return game.flatMap(Game::mapName);
+    return updateManager.getGame().flatMap(Game::mapName);
   }
 
   @Override
   public Optional<Stream<ITilePosition>> getGrid() {
-    return game.flatMap(Game::getGrid);
+    return updateManager.getGame().flatMap(Game::getGrid);
   }
 }

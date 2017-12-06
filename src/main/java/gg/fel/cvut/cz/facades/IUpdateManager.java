@@ -24,6 +24,8 @@ import java.util.stream.Stream;
  */
 public interface IUpdateManager extends IGameDataWrapper {
 
+  Optional<Game> getGame();
+
   Stream<Unit> getUnits();
 
   Stream<Bullet> getBullets();
@@ -41,7 +43,7 @@ public interface IUpdateManager extends IGameDataWrapper {
   /**
    * Method to be called preferably at the beginning of the game to init game instance
    */
-  Optional<Game> wrapGame(bwapi.Game game);
+  Optional<Game> setGame(bwapi.Game game);
 
   /**
    * Method to be called preferably at the beginning of the game to init all types
