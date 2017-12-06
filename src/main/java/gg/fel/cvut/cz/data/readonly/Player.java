@@ -8,7 +8,7 @@ import gg.fel.cvut.cz.api.IUnit;
 import gg.fel.cvut.cz.api.IUnitType;
 import gg.fel.cvut.cz.api.IUpgradeType;
 import gg.fel.cvut.cz.api.IWeaponType;
-import gg.fel.cvut.cz.counters.BWCounter;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.PlayerTypeEnum;
@@ -16,11 +16,12 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 //TODO implement
 public class Player extends AContainer implements IPlayer, Serializable {
 
-  public Player(BWCounter bwCounter) {
+  public Player(BWReplayCounter bwCounter) {
     super(bwCounter);
   }
 
@@ -35,22 +36,22 @@ public class Player extends AContainer implements IPlayer, Serializable {
   }
 
   @Override
-  public Optional<Set<IUnit>> getAllUnits() {
+  public Optional<Stream<IUnit>> getAllUnits() {
     return null;
   }
 
   @Override
-  public Optional<Set<IBullet>> getAllBullets() {
+  public Optional<Stream<IBullet>> getAllBullets() {
     return null;
   }
 
   @Override
-  public Optional<Set<IPlayer>> getAllies() {
+  public Optional<Stream<IPlayer>> getAllies() {
     return null;
   }
 
   @Override
-  public Optional<Set<IPlayer>> getEnemies() {
+  public Optional<Stream<IPlayer>> getEnemies() {
     return null;
   }
 
@@ -240,7 +241,7 @@ public class Player extends AContainer implements IPlayer, Serializable {
   }
 
   @Override
-  protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
+  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
     return new HashSet<>();
   }
 }

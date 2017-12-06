@@ -8,7 +8,7 @@ import gg.fel.cvut.cz.api.IUnit;
 import gg.fel.cvut.cz.api.IUnitType;
 import gg.fel.cvut.cz.api.IUpgradeType;
 import gg.fel.cvut.cz.api.UnitCommand;
-import gg.fel.cvut.cz.counters.BWCounter;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.OrderEnum;
@@ -16,11 +16,12 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 //TODO implement
 public class Unit extends AContainer implements IUnit, Serializable {
 
-  public Unit(BWCounter bwCounter) {
+  public Unit(BWReplayCounter bwCounter) {
     super(bwCounter);
   }
 
@@ -230,7 +231,7 @@ public class Unit extends AContainer implements IUnit, Serializable {
   }
 
   @Override
-  public Optional<Set<IUnitType>> getTrainingQueue() {
+  public Optional<Stream<IUnitType>> getTrainingQueue() {
     return null;
   }
 
@@ -330,7 +331,7 @@ public class Unit extends AContainer implements IUnit, Serializable {
   }
 
   @Override
-  public Optional<Set<IUnit>> getLoadedUnits() {
+  public Optional<Stream<IUnit>> getLoadedUnits() {
     return null;
   }
 
@@ -345,7 +346,7 @@ public class Unit extends AContainer implements IUnit, Serializable {
   }
 
   @Override
-  public Optional<Set<IUnit>> getInterceptors() {
+  public Optional<Stream<IUnit>> getInterceptors() {
     return null;
   }
 
@@ -355,7 +356,7 @@ public class Unit extends AContainer implements IUnit, Serializable {
   }
 
   @Override
-  public Optional<Set<IUnit>> getLarva() {
+  public Optional<Stream<IUnit>> getLarva() {
     return null;
   }
 
@@ -855,27 +856,27 @@ public class Unit extends AContainer implements IUnit, Serializable {
   }
 
   @Override
-  public Optional<Set<IUnit>> getEnemyUnitsInWeaponRange() {
+  public Optional<Stream<IUnit>> getEnemyUnitsInWeaponRange() {
     return null;
   }
 
   @Override
-  public Optional<Set<IUnit>> getFriendlyUnitsInRadiusOfSight() {
+  public Optional<Stream<IUnit>> getFriendlyUnitsInRadiusOfSight() {
     return null;
   }
 
   @Override
-  public Optional<Set<IUnit>> getResourceUnitsInRadiusOfSight() {
+  public Optional<Stream<IUnit>> getResourceUnitsInRadiusOfSight() {
     return null;
   }
 
   @Override
-  public Optional<Set<IUnit>> getEnemyUnitsInRadiusOfSight() {
+  public Optional<Stream<IUnit>> getEnemyUnitsInRadiusOfSight() {
     return null;
   }
 
   @Override
-  protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
+  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
     return new HashSet<>();
   }
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gg.fel.cvut.cz.data.readonly.Region;
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * IRegion objects are created by Starcraft: Broodwar to contain several tiles with the same
@@ -31,17 +31,17 @@ public interface IRegion extends IAbstractPoint, InGameInterface, Serializable {
    * in which case there is no filter. Returns A Unitset containing all units in this region that
    * have met the requirements of pred. See also UnitFilter
    */
-  Optional<Set<IUnit>> getUnits();
+  Optional<Stream<IUnit>> getUnits();
 
-  Optional<Set<IChokePoint>> getChokePoints();
+  Optional<Stream<IChokePoint>> getChokePoints();
 
-  Optional<Set<IBaseLocation>> getBaseLocations();
+  Optional<Stream<IBaseLocation>> getBaseLocations();
 
   default Optional<Boolean> isReachable(IRegion region) {
-    return getReachableRegions().map(iRegions -> iRegions.contains(region));
+    return getReachableRegions().map(iRegions -> iRegions.anyMatch(region::equals));
   }
 
-  Optional<Set<IRegion>> getReachableRegions();
+  Optional<Stream<IRegion>> getReachableRegions();
 
   @Override
   default Optional<IRegion> getRegion() {

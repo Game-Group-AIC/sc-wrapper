@@ -1,6 +1,5 @@
 package gg.fel.cvut.cz.data.updatable;
 
-import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
@@ -17,7 +16,7 @@ public class UpdatableTilePosition extends TilePosition implements
 
   private transient final WTilePosition wrapped;
 
-  public UpdatableTilePosition(BWCounter bwCounter, WTilePosition wrapped) {
+  public UpdatableTilePosition(BWReplayCounter bwCounter, WTilePosition wrapped) {
     super(bwCounter);
     this.wrapped = wrapped;
   }
@@ -34,12 +33,6 @@ public class UpdatableTilePosition extends TilePosition implements
 
   @Override
   public TilePosition getContainer() {
-    return this;
-  }
-
-  @Override
-  public TilePosition getCopyOfContainer(BWReplayCounter bwReplayCounter) {
-    this.bwCounter = bwReplayCounter;
     return this;
   }
 

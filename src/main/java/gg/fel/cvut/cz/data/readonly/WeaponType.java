@@ -4,8 +4,8 @@ import gg.fel.cvut.cz.api.ITechType;
 import gg.fel.cvut.cz.api.IUnitType;
 import gg.fel.cvut.cz.api.IUpgradeType;
 import gg.fel.cvut.cz.api.IWeaponType;
-import gg.fel.cvut.cz.counters.BWCounter;
-import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
+import gg.fel.cvut.cz.data.AContainerForType;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.DamageTypeEnum;
 import gg.fel.cvut.cz.enums.ExplosionTypeEnum;
@@ -16,15 +16,16 @@ import java.util.Optional;
 import java.util.Set;
 
 //TODO implement
-public class WeaponType extends AContainer implements IWeaponType, Serializable {
+public class WeaponType extends AContainerForType<bwapi.WeaponType, WeaponTypeEnum> implements
+    IWeaponType, Serializable {
 
-  public WeaponType(BWCounter bwCounter) {
-    super(bwCounter);
+  public WeaponType(BWReplayCounter bwCounter, WeaponTypeEnum weaponType) {
+    super(bwCounter, weaponType);
   }
 
   @Override
   public WeaponTypeEnum getWeaponType() {
-    return null;
+    return type;
   }
 
   @Override
@@ -143,7 +144,7 @@ public class WeaponType extends AContainer implements IWeaponType, Serializable 
   }
 
   @Override
-  protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
+  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
     return new HashSet<>();
   }
 }

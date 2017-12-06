@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gg.fel.cvut.cz.data.readonly.BaseLocation;
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Stream;
 
 @JsonDeserialize(as = BaseLocation.class)
 public interface IBaseLocation extends IAbstractPoint, InGameInterface, Serializable {
@@ -13,11 +13,11 @@ public interface IBaseLocation extends IAbstractPoint, InGameInterface, Serializ
 
   Optional<Integer> gas();
 
-  Optional<Set<IUnit>> getMinerals();
+  Optional<Stream<IUnit>> getMinerals();
 
-  Optional<Set<IUnit>> getStaticMinerals();
+  Optional<Stream<IUnit>> getStaticMinerals();
 
-  Optional<Set<IUnit>> getGeysers();
+  Optional<Stream<IUnit>> getGeysers();
 
   Optional<Double> getGroundDistance(IBaseLocation other);
 
@@ -26,7 +26,7 @@ public interface IBaseLocation extends IAbstractPoint, InGameInterface, Serializ
   Optional<Boolean> isIsland();
 
   default Optional<Boolean> isMineralOnly() {
-    return getGeysers().map(Set::isEmpty);
+    return getGeysers().map(iUnitStream -> iUnitStream.count() == 0);
   }
 
   Optional<Boolean> isStartLocation();

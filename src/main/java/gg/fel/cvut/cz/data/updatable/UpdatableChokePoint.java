@@ -1,6 +1,5 @@
 package gg.fel.cvut.cz.data.updatable;
 
-import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
@@ -17,7 +16,7 @@ public class UpdatableChokePoint extends ChokePoint implements
 
   private final transient WChokePoint wrapped;
 
-  public UpdatableChokePoint(BWCounter bwCounter, WChokePoint wrapped) {
+  public UpdatableChokePoint(BWReplayCounter bwCounter, WChokePoint wrapped) {
     super(bwCounter);
     this.wrapped = wrapped;
   }
@@ -34,12 +33,6 @@ public class UpdatableChokePoint extends ChokePoint implements
 
   @Override
   public ChokePoint getContainer() {
-    return this;
-  }
-
-  @Override
-  public ChokePoint getCopyOfContainer(BWReplayCounter bwReplayCounter) {
-    this.bwCounter = bwReplayCounter;
     return this;
   }
 

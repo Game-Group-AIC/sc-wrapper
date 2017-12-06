@@ -1,7 +1,6 @@
 package gg.fel.cvut.cz.data;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
@@ -24,6 +23,7 @@ public class GameParsingTest {
         mapper.getSerializationConfig().
             getDefaultVisibilityChecker().
             withFieldVisibility(JsonAutoDetect.Visibility.ANY).
+            withIsGetterVisibility(JsonAutoDetect.Visibility.NONE).
             withGetterVisibility(JsonAutoDetect.Visibility.NONE));
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
   }
@@ -56,6 +56,8 @@ public class GameParsingTest {
         Optional<ReplayGameFacade> replay = gameFacade.getGameAsReplay();
         if (replay.isPresent()) {
           log.info(mapper.writeValueAsString(replay.get()));
+          ReplayGameFacade replayGameFacade = mapper
+              .readValue(mapper.writeValueAsString(replay.get()), ReplayGameFacade.class);
           log.info("DONE");
         }
       } catch (Exception e) {

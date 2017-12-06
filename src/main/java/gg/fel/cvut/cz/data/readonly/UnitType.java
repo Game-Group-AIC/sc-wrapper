@@ -6,22 +6,24 @@ import gg.fel.cvut.cz.api.IUnitType;
 import gg.fel.cvut.cz.api.IUpgradeType;
 import gg.fel.cvut.cz.api.IWeaponType;
 import gg.fel.cvut.cz.api.Tuple;
-import gg.fel.cvut.cz.counters.BWCounter;
-import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
+import gg.fel.cvut.cz.data.AContainerForType;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.UnitSizeTypeEnum;
 import gg.fel.cvut.cz.enums.UnitTypeEnum;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 //TODO implement
-public class UnitType extends AContainer implements IUnitType, Serializable {
+public class UnitType extends AContainerForType<bwapi.UnitType, UnitTypeEnum> implements IUnitType,
+    Serializable {
 
-  public UnitType(BWCounter bwCounter) {
-    super(bwCounter);
+  public UnitType(BWReplayCounter bwCounter, UnitTypeEnum unitType) {
+    super(bwCounter, unitType);
   }
 
   @Override
@@ -31,7 +33,7 @@ public class UnitType extends AContainer implements IUnitType, Serializable {
 
   @Override
   public UnitTypeEnum getUnitType() {
-    return null;
+    return type;
   }
 
   @Override
@@ -40,7 +42,7 @@ public class UnitType extends AContainer implements IUnitType, Serializable {
   }
 
   @Override
-  public Optional<Map<IUnitType, Integer>> requiredUnits() {
+  public Optional<Stream<Entry<IUnitType, Integer>>> requiredUnits() {
     return null;
   }
 
@@ -55,12 +57,12 @@ public class UnitType extends AContainer implements IUnitType, Serializable {
   }
 
   @Override
-  public Optional<Set<ITechType>> abilities() {
+  public Optional<Stream<ITechType>> abilities() {
     return null;
   }
 
   @Override
-  public Optional<Set<IUpgradeType>> upgrades() {
+  public Optional<Stream<IUpgradeType>> upgrades() {
     return null;
   }
 
@@ -390,17 +392,17 @@ public class UnitType extends AContainer implements IUnitType, Serializable {
   }
 
   @Override
-  public Optional<Set<ITechType>> researchesWhat() {
+  public Optional<Stream<ITechType>> researchesWhat() {
     return null;
   }
 
   @Override
-  public Optional<Set<IUpgradeType>> upgradesWhat() {
+  public Optional<Stream<IUpgradeType>> upgradesWhat() {
     return null;
   }
 
   @Override
-  protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
+  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
     return new HashSet<>();
   }
 }

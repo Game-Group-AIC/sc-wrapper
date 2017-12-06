@@ -6,6 +6,7 @@ import gg.fel.cvut.cz.enums.PlayerTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -39,9 +40,11 @@ public interface IPlayer extends InGameInterface, Serializable {
    * myUnits.end(); ++u ) { // Do something with your units }
    */
   default Optional<Stream<IUnit>> getUnits() {
-    return getAllUnits().map(iUnits -> iUnits.stream()
+    return getAllUnits().map(iUnits -> iUnits
         .filter(iUnit -> iUnit.getPlayer().map(iPlayer -> iPlayer.equals(this)).orElse(false)));
   }
+
+  //TODO needs to be filtered for replays
 
   /**
    * Retrieves the set of all accessible units. If Flag::CompleteMapInformation is enabled, then the
@@ -49,7 +52,7 @@ public interface IPlayer extends InGameInterface, Serializable {
    * refineries are not included in this set. Returns Unitset containing all known units in the
    * game.
    */
-  Optional<Set<IUnit>> getAllUnits();
+  Optional<Stream<IUnit>> getAllUnits();
 
   /**
    * Retrieves the set of all accessible enemy units. If Flag::CompleteMapInformation is enabled,
@@ -61,34 +64,34 @@ public interface IPlayer extends InGameInterface, Serializable {
     if (!getEnemies().isPresent()) {
       return Optional.empty();
     }
-    Set<IPlayer> enemies = getEnemies().get();
+    Set<IPlayer> enemies = getEnemies().get().collect(Collectors.toSet());
     if (enemies.isEmpty()) {
       return Optional.of(Stream.empty());
     }
-    return getAllUnits().map(iUnits -> iUnits.stream()
-        .filter(iUnit -> iUnit.getPlayer().map(enemies::contains).orElse(false)));
+    return getAllUnits().map(
+        iUnits -> iUnits.filter(iUnit -> iUnit.getPlayer().map(enemies::contains).orElse(false)));
   }
 
   /**
    * Retrieves the set of all accessible bullets. Returns Bulletset containing all accessible
    * IBullet objects.
    */
-  Optional<Set<IBullet>> getAllBullets();
+  Optional<Stream<IBullet>> getAllBullets();
 
   default Optional<Stream<IBullet>> getEnemyBullets() {
     if (!getEnemies().isPresent()) {
       return Optional.empty();
     }
-    Set<IPlayer> enemies = getEnemies().get();
+    Set<IPlayer> enemies = getEnemies().get().collect(Collectors.toSet());
     if (enemies.isEmpty()) {
       return Optional.of(Stream.empty());
     }
-    return getAllBullets().map(iUnits -> iUnits.stream()
-        .filter(iUnit -> iUnit.getPlayer().map(enemies::contains).orElse(false)));
+    return getAllBullets().map(
+        iUnits -> iUnits.filter(iUnit -> iUnit.getPlayer().map(enemies::contains).orElse(false)));
   }
 
   default Optional<Stream<IBullet>> getBullets() {
-    return getAllBullets().map(iUnits -> iUnits.stream()
+    return getAllBullets().map(iUnits -> iUnits
         .filter(iUnit -> iUnit.getPlayer().map(iPlayer -> iPlayer.equals(this)).orElse(false)));
   }
 
@@ -96,11 +99,11 @@ public interface IPlayer extends InGameInterface, Serializable {
     if (!getAllies().isPresent()) {
       return Optional.empty();
     }
-    Set<IPlayer> allies = getAllies().get();
+    Set<IPlayer> allies = getAllies().get().collect(Collectors.toSet());
     if (allies.isEmpty()) {
       return Optional.of(Stream.empty());
     }
-    return getAllBullets().map(iUnits -> iUnits.stream()
+    return getAllBullets().map(iUnits -> iUnits
         .filter(iUnit -> iUnit.getPlayer().map(allies::contains).orElse(false)));
   }
 
@@ -114,17 +117,17 @@ public interface IPlayer extends InGameInterface, Serializable {
     if (!getAllies().isPresent()) {
       return Optional.empty();
     }
-    Set<IPlayer> allies = getAllies().get();
+    Set<IPlayer> allies = getAllies().get().collect(Collectors.toSet());
     if (allies.isEmpty()) {
       return Optional.of(Stream.empty());
     }
-    return getAllUnits().map(iUnits -> iUnits.stream()
+    return getAllUnits().map(iUnits -> iUnits
         .filter(iUnit -> iUnit.getPlayer().map(allies::contains).orElse(false)));
   }
 
-  Optional<Set<IPlayer>> getAllies();
+  Optional<Stream<IPlayer>> getAllies();
 
-  Optional<Set<IPlayer>> getEnemies();
+  Optional<Stream<IPlayer>> getEnemies();
 
   /**
    * Retrieves the race of the player. This allows you to change strategies against different races,
@@ -152,7 +155,7 @@ public interface IPlayer extends InGameInterface, Serializable {
    * or an observer, or if player is neutral or an observer. See also isEnemy
    */
   default Optional<Boolean> isAlly(IPlayer player) {
-    return getAllies().map(iPlayers -> iPlayers.contains(player));
+    return getAllies().map(iPlayers -> iPlayers.anyMatch(iPlayer -> iPlayer.equals(player)));
   }
 
   /**
@@ -162,7 +165,7 @@ public interface IPlayer extends InGameInterface, Serializable {
    * neutral or an observer, or if player is neutral or an observer. See also isAlly
    */
   default Optional<Boolean> isEnemy(IPlayer player) {
-    return getEnemies().map(iPlayers -> iPlayers.contains(player));
+    return getEnemies().map(iPlayers -> iPlayers.anyMatch(iPlayer -> iPlayer.equals(player)));
   }
 
   /**

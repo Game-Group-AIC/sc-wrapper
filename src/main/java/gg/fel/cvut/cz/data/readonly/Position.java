@@ -4,8 +4,9 @@ import com.google.common.collect.ImmutableList;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IRegion;
 import gg.fel.cvut.cz.api.ITilePosition;
-import gg.fel.cvut.cz.counters.BWCounter;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.data.properties.Property;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -15,13 +16,17 @@ import java.util.Set;
 
 public class Position extends AContainer implements IPosition, Serializable {
 
-  protected final StaticPropertyRegister<ITilePosition> tilePosition = new StaticPropertyRegister<>();
-  protected final StaticPropertyRegister<Integer> x = new StaticPropertyRegister<>();
-  protected final StaticPropertyRegister<Integer> y = new StaticPropertyRegister<>();
-  protected final StaticPropertyRegister<IRegion> region = new StaticPropertyRegister<>();
-  private final List<StaticPropertyRegister<?>> toHash = ImmutableList.of(x, y);
+  protected final StaticPropertyRegister<ITilePosition, Property<ITilePosition>> tilePosition = new StaticPropertyRegister<ITilePosition, Property<ITilePosition>>(
+      Property::new);
+  protected final StaticPropertyRegister<Integer, Property<Integer>> x = new StaticPropertyRegister<Integer, Property<Integer>>(
+      Property::new);
+  protected final StaticPropertyRegister<Integer, Property<Integer>> y = new StaticPropertyRegister<Integer, Property<Integer>>(
+      Property::new);
+  protected final StaticPropertyRegister<IRegion, Property<IRegion>> region = new StaticPropertyRegister<IRegion, Property<IRegion>>(
+      Property::new);
+  private final List<StaticPropertyRegister<?, ?>> toHash = ImmutableList.of(x, y);
 
-  public Position(BWCounter bwCounter) {
+  public Position(BWReplayCounter bwCounter) {
     super(bwCounter);
   }
 
@@ -46,7 +51,7 @@ public class Position extends AContainer implements IPosition, Serializable {
   }
 
   @Override
-  protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
+  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
     return new HashSet<>(toHash);
   }
 }

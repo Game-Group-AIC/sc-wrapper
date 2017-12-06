@@ -6,9 +6,11 @@ import gg.fel.cvut.cz.api.IBullet;
 import gg.fel.cvut.cz.api.IPlayer;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IUnit;
-import gg.fel.cvut.cz.counters.BWCounter;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
+import gg.fel.cvut.cz.data.properties.Property;
+import gg.fel.cvut.cz.data.properties.PropertyMap;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.BulletTypeEnum;
 import java.io.Serializable;
@@ -17,22 +19,35 @@ import java.util.Set;
 
 public class Bullet extends AContainer implements IBullet, Serializable {
 
-  protected final DynamicPropertyRegister<Boolean> exists = new DynamicPropertyRegister<>();
-  protected final StaticPropertyRegister<Integer> id = new StaticPropertyRegister<>();
-  protected final DynamicPropertyRegister<IPlayer> player = new DynamicPropertyRegister<>();
-  protected final DynamicPropertyRegister<BulletTypeEnum> type = new DynamicPropertyRegister<>();
-  protected final StaticPropertyRegister<IUnit> source = new StaticPropertyRegister<>();
-  protected final DynamicPropertyRegister<IPosition> position = new DynamicPropertyRegister<>();
-  protected final DynamicPropertyRegister<Double> angle = new DynamicPropertyRegister<>();
-  protected final DynamicPropertyRegister<Double> velocityX = new DynamicPropertyRegister<>();
-  protected final DynamicPropertyRegister<Double> velocityY = new DynamicPropertyRegister<>();
-  protected final DynamicPropertyRegister<IUnit> target = new DynamicPropertyRegister<>();
-  protected final DynamicPropertyRegister<IPosition> targetPosition = new DynamicPropertyRegister<>();
-  protected final DynamicPropertyRegister<Integer> removeTimer = new DynamicPropertyRegister<>();
-  protected final DynamicPropertyRegister<ImmutableMap<IPlayer, Boolean>> isVisible = new DynamicPropertyRegister<>();
-  private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(id);
+  protected final DynamicPropertyRegister<Boolean, Property<Boolean>> exists = new DynamicPropertyRegister<Boolean, Property<Boolean>>(
+      Property::new);
+  protected final StaticPropertyRegister<Integer, Property<Integer>> id = new StaticPropertyRegister<Integer, Property<Integer>>(
+      Property::new);
+  protected final DynamicPropertyRegister<IPlayer, Property<IPlayer>> player = new DynamicPropertyRegister<IPlayer, Property<IPlayer>>(
+      Property::new);
+  protected final DynamicPropertyRegister<BulletTypeEnum, Property<BulletTypeEnum>> type = new DynamicPropertyRegister<BulletTypeEnum, Property<BulletTypeEnum>>(
+      Property::new);
+  protected final StaticPropertyRegister<IUnit, Property<IUnit>> source = new StaticPropertyRegister<IUnit, Property<IUnit>>(
+      Property::new);
+  protected final DynamicPropertyRegister<IPosition, Property<IPosition>> position = new DynamicPropertyRegister<IPosition, Property<IPosition>>(
+      Property::new);
+  protected final DynamicPropertyRegister<Double, Property<Double>> angle = new DynamicPropertyRegister<Double, Property<Double>>(
+      Property::new);
+  protected final DynamicPropertyRegister<Double, Property<Double>> velocityX = new DynamicPropertyRegister<Double, Property<Double>>(
+      Property::new);
+  protected final DynamicPropertyRegister<Double, Property<Double>> velocityY = new DynamicPropertyRegister<Double, Property<Double>>(
+      Property::new);
+  protected final DynamicPropertyRegister<IUnit, Property<IUnit>> target = new DynamicPropertyRegister<IUnit, Property<IUnit>>(
+      Property::new);
+  protected final DynamicPropertyRegister<IPosition, Property<IPosition>> targetPosition = new DynamicPropertyRegister<IPosition, Property<IPosition>>(
+      Property::new);
+  protected final DynamicPropertyRegister<Integer, Property<Integer>> removeTimer = new DynamicPropertyRegister<Integer, Property<Integer>>(
+      Property::new);
+  protected final DynamicPropertyRegister<ImmutableMap<IPlayer, Boolean>, PropertyMap<IPlayer, Boolean>> isVisible = new DynamicPropertyRegister<ImmutableMap<IPlayer, Boolean>, PropertyMap<IPlayer, Boolean>>(
+      PropertyMap::new);
+  private final Set<StaticPropertyRegister<?, ?>> toHash = ImmutableSet.of(id);
 
-  public Bullet(BWCounter bwCounter) {
+  public Bullet(BWReplayCounter bwCounter) {
     super(bwCounter);
   }
 
@@ -102,7 +117,7 @@ public class Bullet extends AContainer implements IBullet, Serializable {
   }
 
   @Override
-  protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
+  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
     return toHash;
   }
 }

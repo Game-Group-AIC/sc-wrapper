@@ -5,7 +5,7 @@ import gg.fel.cvut.cz.data.readonly.Unit;
 import gg.fel.cvut.cz.enums.OrderEnum;
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * The IUnit class is used to get information about individual units as well as issue orders to
@@ -340,7 +340,7 @@ public interface IUnit extends InGameInterface, Serializable {
    * Retrieves the Set of units queued up to be trained. Returns a IUnitType::set containing all the
    * types that are in this facades's training queue. See also train, cancelTrain, isTraining
    */
-  Optional<Set<IUnitType>> getTrainingQueue();
+  Optional<Stream<IUnitType>> getTrainingQueue();
 
   /**
    * Retrieves the technology that this unit is currently researching. Returns ITechType indicating
@@ -503,7 +503,7 @@ public interface IUnit extends InGameInterface, Serializable {
    * Shuttle, Overlord ). Returns A Unitset object containing all of the units that are loaded
    * inside of the current unit.
    */
-  Optional<Set<IUnit>> getLoadedUnits();
+  Optional<Stream<IUnit>> getLoadedUnits();
 
   /**
    * Retrieves the remaining unit-space available for Bunkers and Transports(Dropships, Shuttles,
@@ -522,7 +522,7 @@ public interface IUnit extends InGameInterface, Serializable {
    * Retrieves the set of Interceptors controlled by this unit. This is intended for Carriers.
    * Returns Unitset containing Interceptor units owned by this one.
    */
-  Optional<Set<IUnit>> getInterceptors();
+  Optional<Stream<IUnit>> getInterceptors();
 
   /**
    * Retrieves the parent Hatchery, Lair, or Hive that owns this particular unit. This is intended
@@ -537,7 +537,7 @@ public interface IUnit extends InGameInterface, Serializable {
    * selection of Larvae. Returns Unitset containing Larva units owned by this unit. The set will be
    * empty if there are none.
    */
-  Optional<Set<IUnit>> getLarva();
+  Optional<Stream<IUnit>> getLarva();
 
   /**
    * Checks if the current unit is housing a Nuke. This is only available for Nuclear Silos. Returns
@@ -933,7 +933,7 @@ public interface IUnit extends InGameInterface, Serializable {
   Optional<Boolean> isUpgrading();
 
   default Optional<Boolean> isVisible(IPlayer player) {
-    return player.getAllUnits().map(iUnits -> iUnits.contains(this));
+    return player.getAllUnits().map(iUnits -> iUnits.anyMatch(iUnit -> iUnit.equals(this)));
   }
 
   /**
@@ -1306,12 +1306,12 @@ public interface IUnit extends InGameInterface, Serializable {
     return Optional.of(isStartingAttack().isPresent() && isStartingAttack().get());
   }
 
-  Optional<Set<IUnit>> getEnemyUnitsInWeaponRange();
+  Optional<Stream<IUnit>> getEnemyUnitsInWeaponRange();
 
-  Optional<Set<IUnit>> getFriendlyUnitsInRadiusOfSight();
+  Optional<Stream<IUnit>> getFriendlyUnitsInRadiusOfSight();
 
-  Optional<Set<IUnit>> getResourceUnitsInRadiusOfSight();
+  Optional<Stream<IUnit>> getResourceUnitsInRadiusOfSight();
 
-  Optional<Set<IUnit>> getEnemyUnitsInRadiusOfSight();
+  Optional<Stream<IUnit>> getEnemyUnitsInRadiusOfSight();
 
 }

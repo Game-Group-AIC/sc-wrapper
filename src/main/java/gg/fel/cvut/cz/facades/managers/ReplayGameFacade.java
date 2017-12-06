@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IBaseLocation;
 import gg.fel.cvut.cz.api.IChokePoint;
-import gg.fel.cvut.cz.api.IGame;
+import gg.fel.cvut.cz.api.IGameFacade;
 import gg.fel.cvut.cz.api.IPlayer;
 import gg.fel.cvut.cz.api.IRegion;
 import gg.fel.cvut.cz.api.ITilePosition;
@@ -36,7 +36,6 @@ import gg.fel.cvut.cz.enums.WeaponTypeEnum;
 import gg.fel.cvut.cz.facades.IGameDataAccessAdapter;
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,13 +49,13 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Builder
 public class ReplayGameFacade implements
-    IGameDataAccessAdapter, Serializable, IBWReplayCounter, IGame {
+    IGameDataAccessAdapter, Serializable, IBWReplayCounter, IGameFacade {
 
   private final BWReplayCounter bwCounter;
-  private final EventsRegister eventsRegister;
-  private final Game game;
 
   //parsed data
+  private final EventsRegister eventsRegister;
+  private final Game game;
   private final ImmutableSet<Bullet> bullets;
   private final ImmutableSet<Unit> units;
   private final ImmutableMap<RaceTypeEnum, Race> races;
@@ -113,11 +112,11 @@ public class ReplayGameFacade implements
   private transient Optional<IOnFrameNotificationSubscriber> onFrame = Optional.empty();
 
   public Stream<Unit> getUnits() {
-    return units.stream().filter(unit -> unit.exists().orElse(false));
+    return units.stream();
   }
 
   public Stream<Bullet> getBullets() {
-    return bullets.stream().filter(unit -> unit.exists().orElse(false));
+    return bullets.stream();
   }
 
   @Override
@@ -126,7 +125,7 @@ public class ReplayGameFacade implements
   }
 
   @Override
-  public Optional<Set<IPlayer>> getPlayers() {
+  public Optional<Stream<IPlayer>> getPlayers() {
     return game.getPlayers();
   }
 
@@ -156,22 +155,22 @@ public class ReplayGameFacade implements
   }
 
   @Override
-  public Optional<Set<IRegion>> getRegions() {
+  public Optional<Stream<IRegion>> getRegions() {
     return game.getRegions();
   }
 
   @Override
-  public Optional<Set<IChokePoint>> getChokePoints() {
+  public Optional<Stream<IChokePoint>> getChokePoints() {
     return game.getChokePoints();
   }
 
   @Override
-  public Optional<Set<IBaseLocation>> getBaseLocations() {
+  public Optional<Stream<IBaseLocation>> getBaseLocations() {
     return game.getBaseLocations();
   }
 
   @Override
-  public Optional<Set<IBaseLocation>> getStartLocations() {
+  public Optional<Stream<IBaseLocation>> getStartLocations() {
     return game.getStartLocations();
   }
 
@@ -191,7 +190,7 @@ public class ReplayGameFacade implements
   }
 
   @Override
-  public Optional<Set<ITilePosition>> getGrid() {
+  public Optional<Stream<ITilePosition>> getGrid() {
     return game.getGrid();
   }
 

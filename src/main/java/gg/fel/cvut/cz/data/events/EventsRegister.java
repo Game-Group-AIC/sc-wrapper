@@ -8,6 +8,7 @@ import gg.fel.cvut.cz.data.events.subscribers.IReceiveTextNotificationSubscriber
 import gg.fel.cvut.cz.data.events.subscribers.ISendTextNotificationSubscriber;
 import gg.fel.cvut.cz.data.events.subscribers.IUnitNotificationSubscriber;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
+import gg.fel.cvut.cz.data.properties.Property;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.data.readonly.Player;
 import gg.fel.cvut.cz.data.readonly.Position;
@@ -21,20 +22,34 @@ import lombok.EqualsAndHashCode;
  */
 public class EventsRegister implements Serializable {
 
-  StaticPropertyRegister<Boolean> onEnd = new StaticPropertyRegister<>();
-  DynamicPropertyRegister<ImmutableSet<String>> onSendText = new DynamicPropertyRegister<>();
-  DynamicPropertyRegister<ImmutableSet<ReceiveTextContainer>> onReceiveText = new DynamicPropertyRegister<>();
-  DynamicPropertyRegister<ImmutableSet<Player>> onPlayerLeft = new DynamicPropertyRegister<>();
-  DynamicPropertyRegister<ImmutableSet<Position>> onNukeDetect = new DynamicPropertyRegister<>();
-  DynamicPropertyRegister<ImmutableSet<Unit>> onUnitDiscover = new DynamicPropertyRegister<>();
-  DynamicPropertyRegister<ImmutableSet<Unit>> onUnitEvade = new DynamicPropertyRegister<>();
-  DynamicPropertyRegister<ImmutableSet<Unit>> onUnitShow = new DynamicPropertyRegister<>();
-  DynamicPropertyRegister<ImmutableSet<Unit>> onUnitHide = new DynamicPropertyRegister<>();
-  DynamicPropertyRegister<ImmutableSet<Unit>> onUnitCreate = new DynamicPropertyRegister<>();
-  DynamicPropertyRegister<ImmutableSet<Unit>> onUnitDestroy = new DynamicPropertyRegister<>();
-  DynamicPropertyRegister<ImmutableSet<Unit>> onUnitMorph = new DynamicPropertyRegister<>();
-  DynamicPropertyRegister<ImmutableSet<Unit>> onUnitRenegade = new DynamicPropertyRegister<>();
-  DynamicPropertyRegister<ImmutableSet<Unit>> onUnitComplete = new DynamicPropertyRegister<>();
+  final StaticPropertyRegister<Boolean, Property<Boolean>> onEnd = new StaticPropertyRegister<Boolean, Property<Boolean>>(
+      Property::new);
+  final DynamicPropertyRegister<ImmutableSet<String>, Property<ImmutableSet<String>>> onSendText = new DynamicPropertyRegister<ImmutableSet<String>, Property<ImmutableSet<String>>>(
+      Property::new);
+  final DynamicPropertyRegister<ImmutableSet<ReceiveTextContainer>, Property<ImmutableSet<ReceiveTextContainer>>> onReceiveText = new DynamicPropertyRegister<ImmutableSet<ReceiveTextContainer>, Property<ImmutableSet<ReceiveTextContainer>>>(
+      Property::new);
+  final DynamicPropertyRegister<ImmutableSet<Player>, Property<ImmutableSet<Player>>> onPlayerLeft = new DynamicPropertyRegister<ImmutableSet<Player>, Property<ImmutableSet<Player>>>(
+      Property::new);
+  final DynamicPropertyRegister<ImmutableSet<Position>, Property<ImmutableSet<Position>>> onNukeDetect = new DynamicPropertyRegister<ImmutableSet<Position>, Property<ImmutableSet<Position>>>(
+      Property::new);
+  final DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> onUnitDiscover = new DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
+      Property::new);
+  final DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> onUnitEvade = new DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
+      Property::new);
+  final DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> onUnitShow = new DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
+      Property::new);
+  final DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> onUnitHide = new DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
+      Property::new);
+  final DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> onUnitCreate = new DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
+      Property::new);
+  final DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> onUnitDestroy = new DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
+      Property::new);
+  final DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> onUnitMorph = new DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
+      Property::new);
+  final DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> onUnitRenegade = new DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
+      Property::new);
+  final DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> onUnitComplete = new DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
+      Property::new);
 
   public void onEnd(int currentFrame, IGameHasEndedNotificationSubscriber subscriber) {
     onEnd.getValueInFrame(currentFrame).ifPresent(subscriber::notifySubscriber);

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BWCounter implements IBWCounter, Serializable {
 
-  private int currentFrame = 0;
+  private transient int currentFrame = 0;
   private transient final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
   public void increaseClocks() {

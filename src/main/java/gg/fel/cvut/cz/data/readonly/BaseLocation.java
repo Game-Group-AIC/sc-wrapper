@@ -5,29 +5,42 @@ import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IBaseLocation;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IUnit;
-import gg.fel.cvut.cz.counters.BWCounter;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
+import gg.fel.cvut.cz.data.properties.Property;
+import gg.fel.cvut.cz.data.properties.PropertyMap;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class BaseLocation extends AContainer implements IBaseLocation, Serializable {
 
-  protected final DynamicPropertyRegister<Integer> minerals = new DynamicPropertyRegister<>();
-  protected final DynamicPropertyRegister<Integer> gas = new DynamicPropertyRegister<>();
-  protected final DynamicPropertyRegister<ImmutableSet<IUnit>> mineralsAsUnits = new DynamicPropertyRegister<>();
-  protected final StaticPropertyRegister<ImmutableSet<IUnit>> staticMineralsAsUnits = new StaticPropertyRegister<>();
-  protected final StaticPropertyRegister<ImmutableSet<IUnit>> geysers = new StaticPropertyRegister<>();
-  protected final StaticPropertyRegister<Boolean> isIsland = new StaticPropertyRegister<>();
-  protected final StaticPropertyRegister<Boolean> isStartLocation = new StaticPropertyRegister<>();
-  protected final StaticPropertyRegister<IPosition> position = new StaticPropertyRegister<>();
-  protected final StaticPropertyRegister<ImmutableMap<IBaseLocation, Double>> groundDistanceToBases = new StaticPropertyRegister<>();
-  protected final StaticPropertyRegister<ImmutableMap<IBaseLocation, Double>> airDistanceToBases = new StaticPropertyRegister<>();
-  private final Set<StaticPropertyRegister<?>> toHash = ImmutableSet.of(position);
+  protected final DynamicPropertyRegister<Integer, Property<Integer>> minerals = new DynamicPropertyRegister<Integer, Property<Integer>>(
+      Property::new);
+  protected final DynamicPropertyRegister<Integer, Property<Integer>> gas = new DynamicPropertyRegister<Integer, Property<Integer>>(
+      Property::new);
+  protected final DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> mineralsAsUnits = new DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
+      Property::new);
+  protected final StaticPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> staticMineralsAsUnits = new StaticPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
+      Property::new);
+  protected final StaticPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> geysers = new StaticPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
+      Property::new);
+  protected final StaticPropertyRegister<Boolean, Property<Boolean>> isIsland = new StaticPropertyRegister<Boolean, Property<Boolean>>(
+      Property::new);
+  protected final StaticPropertyRegister<Boolean, Property<Boolean>> isStartLocation = new StaticPropertyRegister<Boolean, Property<Boolean>>(
+      Property::new);
+  protected final StaticPropertyRegister<Position, Property<Position>> position = new StaticPropertyRegister<Position, Property<Position>>(
+      Property::new);
+  protected final StaticPropertyRegister<ImmutableMap<BaseLocation, Double>, PropertyMap<BaseLocation, Double>> groundDistanceToBases = new StaticPropertyRegister<ImmutableMap<BaseLocation, Double>, PropertyMap<BaseLocation, Double>>(
+      PropertyMap::new);
+  protected final StaticPropertyRegister<ImmutableMap<BaseLocation, Double>, PropertyMap<BaseLocation, Double>> airDistanceToBases = new StaticPropertyRegister<ImmutableMap<BaseLocation, Double>, PropertyMap<BaseLocation, Double>>(
+      PropertyMap::new);
+  private final Set<StaticPropertyRegister<?, ?>> toHash = ImmutableSet.of(position);
 
-  public BaseLocation(BWCounter bwCounter) {
+  public BaseLocation(BWReplayCounter bwCounter) {
     super(bwCounter);
   }
 
@@ -42,18 +55,21 @@ public class BaseLocation extends AContainer implements IBaseLocation, Serializa
   }
 
   @Override
-  public Optional<Set<IUnit>> getMinerals() {
-    return getPropertyOnTimeLineStrategyOnSet(mineralsAsUnits);
+  public Optional<Stream<IUnit>> getMinerals() {
+    return getPropertyOnTimeLineStrategyOnSet(mineralsAsUnits)
+        .map(units -> units.stream().map(unit -> unit));
   }
 
   @Override
-  public Optional<Set<IUnit>> getStaticMinerals() {
-    return getPropertyOnTimeLineStrategyOnSet(staticMineralsAsUnits);
+  public Optional<Stream<IUnit>> getStaticMinerals() {
+    return getPropertyOnTimeLineStrategyOnSet(staticMineralsAsUnits)
+        .map(units -> units.stream().map(unit -> unit));
   }
 
   @Override
-  public Optional<Set<IUnit>> getGeysers() {
-    return getPropertyOnTimeLineStrategyOnSet(geysers);
+  public Optional<Stream<IUnit>> getGeysers() {
+    return getPropertyOnTimeLineStrategyOnSet(geysers)
+        .map(units -> units.stream().map(unit -> unit));
   }
 
   @Override
@@ -78,12 +94,12 @@ public class BaseLocation extends AContainer implements IBaseLocation, Serializa
 
   @Override
   public Optional<IPosition> getPosition() {
-    return getPropertyOnTimeLineStrategy(position);
+    return getPropertyOnTimeLineStrategy(position).map(p -> p);
   }
 
 
   @Override
-  protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
+  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
     return toHash;
   }
 }

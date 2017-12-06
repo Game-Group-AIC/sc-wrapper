@@ -16,7 +16,6 @@ import gg.fel.cvut.cz.data.readonly.UpgradeType;
 import gg.fel.cvut.cz.data.readonly.WeaponType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NoArgsConstructor;
 
 /**
  * Update strategy contains strategies for all containers checking if container should be updated

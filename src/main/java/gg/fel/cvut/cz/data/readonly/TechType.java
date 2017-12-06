@@ -4,8 +4,8 @@ import gg.fel.cvut.cz.api.IRace;
 import gg.fel.cvut.cz.api.ITechType;
 import gg.fel.cvut.cz.api.IUnitType;
 import gg.fel.cvut.cz.api.IWeaponType;
-import gg.fel.cvut.cz.counters.BWCounter;
-import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
+import gg.fel.cvut.cz.data.AContainerForType;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.OrderEnum;
 import gg.fel.cvut.cz.enums.TechTypeEnum;
@@ -15,15 +15,16 @@ import java.util.Optional;
 import java.util.Set;
 
 //TODO implement
-public class TechType extends AContainer implements ITechType, Serializable {
+public class TechType extends AContainerForType<bwapi.TechType, TechTypeEnum> implements ITechType,
+    Serializable {
 
-  public TechType(BWCounter bwCounter) {
-    super(bwCounter);
+  public TechType(BWReplayCounter bwCounter, TechTypeEnum techType) {
+    super(bwCounter, techType);
   }
 
   @Override
   public TechTypeEnum getTechType() {
-    return null;
+    return type;
   }
 
   @Override
@@ -77,7 +78,7 @@ public class TechType extends AContainer implements ITechType, Serializable {
   }
 
   @Override
-  protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
+  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
     return new HashSet<>();
   }
 }

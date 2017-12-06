@@ -1,6 +1,5 @@
 package gg.fel.cvut.cz.data.updatable;
 
-import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
@@ -17,7 +16,7 @@ public class UpdatableUnit extends Unit implements
 
   private final transient WUnit wrapped;
 
-  public UpdatableUnit(BWCounter bwCounter, WUnit wrapped) {
+  public UpdatableUnit(BWReplayCounter bwCounter, WUnit wrapped) {
     super(bwCounter);
     this.wrapped = wrapped;
   }
@@ -34,12 +33,6 @@ public class UpdatableUnit extends Unit implements
 
   @Override
   public Unit getContainer() {
-    return this;
-  }
-
-  @Override
-  public Unit getCopyOfContainer(BWReplayCounter bwReplayCounter) {
-    this.bwCounter = bwReplayCounter;
     return this;
   }
 

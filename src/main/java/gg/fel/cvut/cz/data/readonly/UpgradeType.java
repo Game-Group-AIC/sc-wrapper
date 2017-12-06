@@ -3,8 +3,8 @@ package gg.fel.cvut.cz.data.readonly;
 import gg.fel.cvut.cz.api.IRace;
 import gg.fel.cvut.cz.api.IUnitType;
 import gg.fel.cvut.cz.api.IUpgradeType;
-import gg.fel.cvut.cz.counters.BWCounter;
-import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
+import gg.fel.cvut.cz.data.AContainerForType;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.UpgradeTypeEnum;
 import java.io.Serializable;
@@ -13,15 +13,16 @@ import java.util.Optional;
 import java.util.Set;
 
 //TODO implement
-public class UpgradeType extends AContainer implements IUpgradeType, Serializable {
+public class UpgradeType extends AContainerForType<bwapi.UpgradeType, UpgradeTypeEnum> implements
+    IUpgradeType, Serializable {
 
-  public UpgradeType(BWCounter bwCounter) {
-    super(bwCounter);
+  public UpgradeType(BWReplayCounter bwCounter, UpgradeTypeEnum upgradeType) {
+    super(bwCounter, upgradeType);
   }
 
   @Override
   public UpgradeTypeEnum getUpgradeType() {
-    return null;
+    return type;
   }
 
   @Override
@@ -90,7 +91,7 @@ public class UpgradeType extends AContainer implements IUpgradeType, Serializabl
   }
 
   @Override
-  protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
+  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
     return new HashSet<>();
   }
 }

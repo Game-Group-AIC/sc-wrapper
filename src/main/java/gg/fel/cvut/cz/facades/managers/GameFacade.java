@@ -10,7 +10,6 @@ import gg.fel.cvut.cz.api.IGame;
 import gg.fel.cvut.cz.api.IPlayer;
 import gg.fel.cvut.cz.api.IRegion;
 import gg.fel.cvut.cz.api.ITilePosition;
-import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.counters.IBWClock;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.events.UpdatableEventsRegister;
@@ -64,7 +63,6 @@ import gg.fel.cvut.cz.wrappers.WUnitType;
 import gg.fel.cvut.cz.wrappers.WUpgradeType;
 import gg.fel.cvut.cz.wrappers.WWeaponType;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -174,10 +172,10 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     }
     return Optional.ofNullable(ReplayGameFacade.builder()
         .game(game.get())
-        .bwCounter(new BWReplayCounter(updateManager.getCurrentFrame() + 1))
+        .bwCounter(updateManager.getBwCounter())
         .eventsRegister(eventsRegister)
-        .bullets(updateManager.getBullets().collect(Collectors.toCollection(ImmutableSet::of)))
-        .units(updateManager.getUnits().collect(Collectors.toCollection(ImmutableSet::of)))
+        .bullets(ImmutableSet.copyOf(updateManager.getBullets().collect(Collectors.toSet())))
+        .units(ImmutableSet.copyOf(updateManager.getUnits().collect(Collectors.toSet())))
         .races(ImmutableMap.copyOf(updateManager.getRaces().collect(Collectors.toMap(
             Race::getRaceType, Function.identity()))))
         .techTypes(ImmutableMap.copyOf(updateManager.getTechTypes().collect(Collectors.toMap(
@@ -208,10 +206,10 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public void onEnd(boolean b) {
+    eventsRegister.onEnd(getCurrentFrame() + 1, b);
     gameHasEnded = true;
     onEnd.ifPresent(subscriber -> {
       subscriber.notifySubscriber(b);
-      eventsRegister.onEnd(getCurrentFrame() + 1, b);
     });
   }
 
@@ -219,8 +217,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   public void onSendText(String s) {
     onSendText.ifPresent(subscriber -> {
       subscriber.notifySubscriber(s);
-      eventsRegister.onSendText(s);
     });
+    eventsRegister.onSendText(s);
   }
 
   @Override
@@ -228,8 +226,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Player> p = updateManager.getDataContainer(WPlayer.getOrCreateWrapper(player));
     if (p.isPresent() && onReceiveText.isPresent()) {
       onReceiveText.get().notifySubscriber(p.get(), s);
-      eventsRegister.onReceiveText(p.get(), s);
     }
+    eventsRegister.onReceiveText(p.get(), s);
   }
 
   @Override
@@ -237,8 +235,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Player> p = updateManager.getDataContainer(WPlayer.getOrCreateWrapper(player));
     if (p.isPresent() && onPlayerLeft.isPresent()) {
       onPlayerLeft.get().notifySubscriber(p.get());
-      eventsRegister.onPlayerLeft(p.get());
     }
+    eventsRegister.onPlayerLeft(p.get());
   }
 
   @Override
@@ -246,8 +244,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Position> p = updateManager.getDataContainer(WPosition.getOrCreateWrapper(position));
     if (p.isPresent() && onNukeDetect.isPresent()) {
       onNukeDetect.get().notifySubscriber(p.get());
-      eventsRegister.onNukeDetect(p.get());
     }
+    eventsRegister.onNukeDetect(p.get());
   }
 
   @Override
@@ -255,8 +253,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitDiscover.isPresent()) {
       onUnitDiscover.get().notifySubscriber(u.get());
-      eventsRegister.onUnitDiscover(u.get());
     }
+    eventsRegister.onUnitDiscover(u.get());
   }
 
   @Override
@@ -264,8 +262,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitEvade.isPresent()) {
       onUnitEvade.get().notifySubscriber(u.get());
-      eventsRegister.onUnitEvade(u.get());
     }
+    eventsRegister.onUnitEvade(u.get());
   }
 
   @Override
@@ -273,8 +271,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitShow.isPresent()) {
       onUnitShow.get().notifySubscriber(u.get());
-      eventsRegister.onUnitShow(u.get());
     }
+    eventsRegister.onUnitShow(u.get());
   }
 
   @Override
@@ -282,8 +280,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitHide.isPresent()) {
       onUnitHide.get().notifySubscriber(u.get());
-      eventsRegister.onUnitHide(u.get());
     }
+    eventsRegister.onUnitHide(u.get());
   }
 
   @Override
@@ -291,8 +289,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitCreate.isPresent()) {
       onUnitCreate.get().notifySubscriber(u.get());
-      eventsRegister.onUnitCreate(u.get());
     }
+    eventsRegister.onUnitCreate(u.get());
   }
 
   @Override
@@ -300,8 +298,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitDestroy.isPresent()) {
       onUnitDestroy.get().notifySubscriber(u.get());
-      eventsRegister.onUnitDestroy(u.get());
     }
+    eventsRegister.onUnitDestroy(u.get());
   }
 
   @Override
@@ -309,8 +307,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitMorph.isPresent()) {
       onUnitMorph.get().notifySubscriber(u.get());
-      eventsRegister.onUnitMorph(u.get());
     }
+    eventsRegister.onUnitMorph(u.get());
   }
 
   @Override
@@ -318,8 +316,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitRenegade.isPresent()) {
       onUnitRenegade.get().notifySubscriber(u.get());
-      eventsRegister.onUnitRenegade(u.get());
     }
+    eventsRegister.onUnitRenegade(u.get());
   }
 
   @Override
@@ -327,8 +325,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     Optional<Unit> u = updateManager.getDataContainer(WUnit.getOrCreateWrapper(unit));
     if (u.isPresent() && onUnitComplete.isPresent()) {
       onUnitComplete.get().notifySubscriber(u.get());
-      eventsRegister.onUnitComplete(u.get());
     }
+    eventsRegister.onUnitComplete(u.get());
   }
 
   @Override
@@ -752,7 +750,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   }
 
   @Override
-  public Optional<Set<IPlayer>> getPlayers() {
+  public Optional<Stream<IPlayer>> getPlayers() {
     return game.flatMap(Game::getPlayers);
   }
 
@@ -782,22 +780,22 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   }
 
   @Override
-  public Optional<Set<IRegion>> getRegions() {
+  public Optional<Stream<IRegion>> getRegions() {
     return game.flatMap(Game::getRegions);
   }
 
   @Override
-  public Optional<Set<IChokePoint>> getChokePoints() {
+  public Optional<Stream<IChokePoint>> getChokePoints() {
     return game.flatMap(Game::getChokePoints);
   }
 
   @Override
-  public Optional<Set<IBaseLocation>> getBaseLocations() {
+  public Optional<Stream<IBaseLocation>> getBaseLocations() {
     return game.flatMap(Game::getBaseLocations);
   }
 
   @Override
-  public Optional<Set<IBaseLocation>> getStartLocations() {
+  public Optional<Stream<IBaseLocation>> getStartLocations() {
     return game.flatMap(Game::getStartLocations);
   }
 
@@ -817,7 +815,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   }
 
   @Override
-  public Optional<Set<ITilePosition>> getGrid() {
+  public Optional<Stream<ITilePosition>> getGrid() {
     return game.flatMap(Game::getGrid);
   }
 }

@@ -1,6 +1,5 @@
 package gg.fel.cvut.cz.data.updatable;
 
-import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
@@ -17,8 +16,8 @@ public class UpdatableBaseLocation extends BaseLocation implements
 
   private final transient WBaseLocation wrapped;
 
-  public UpdatableBaseLocation(BWCounter bwCounter, WBaseLocation wrapped) {
-    super(bwCounter);
+  public UpdatableBaseLocation(BWReplayCounter bwReplayCounter, WBaseLocation wrapped) {
+    super(bwReplayCounter);
     this.wrapped = wrapped;
   }
 
@@ -34,12 +33,6 @@ public class UpdatableBaseLocation extends BaseLocation implements
 
   @Override
   public BaseLocation getContainer() {
-    return this;
-  }
-
-  @Override
-  public BaseLocation getCopyOfContainer(BWReplayCounter bwReplayCounter) {
-    this.bwCounter = bwReplayCounter;
     return this;
   }
 

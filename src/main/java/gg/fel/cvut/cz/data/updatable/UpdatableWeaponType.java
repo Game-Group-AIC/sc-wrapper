@@ -1,6 +1,5 @@
 package gg.fel.cvut.cz.data.updatable;
 
-import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
@@ -17,8 +16,8 @@ public class UpdatableWeaponType extends WeaponType implements
 
   private final transient WWeaponType wrapped;
 
-  public UpdatableWeaponType(BWCounter bwCounter, WWeaponType wrapped) {
-    super(bwCounter);
+  public UpdatableWeaponType(BWReplayCounter bwCounter, WWeaponType wrapped) {
+    super(bwCounter, wrapped.getType());
     this.wrapped = wrapped;
   }
 
@@ -34,12 +33,6 @@ public class UpdatableWeaponType extends WeaponType implements
 
   @Override
   public WeaponType getContainer() {
-    return this;
-  }
-
-  @Override
-  public WeaponType getCopyOfContainer(BWReplayCounter bwReplayCounter) {
-    this.bwCounter = bwReplayCounter;
     return this;
   }
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gg.fel.cvut.cz.data.readonly.TilePosition;
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Build Tiles - each build tile is a 4x4 square of walk tiles, or a 32x32 square of pixels. These
@@ -39,7 +39,7 @@ public interface ITilePosition extends IAbstractPoint, InGameInterface, Serializ
 
   Optional<Integer> getGroundHeight();
 
-  Optional<Set<IUnit>> getUnitsOnTile();
+  Optional<Stream<IUnit>> getUnitsOnTile();
 
   Optional<IPosition> getPosition();
 
@@ -50,5 +50,5 @@ public interface ITilePosition extends IAbstractPoint, InGameInterface, Serializ
   /**
    * Returns grid
    */
-  Optional<Set<ITilePosition>> getNeighbours();
+  Optional<Stream<ITilePosition>> getNeighbours();
 }

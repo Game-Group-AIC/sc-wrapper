@@ -1,10 +1,10 @@
 package gg.fel.cvut.cz.data;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import gg.fel.cvut.cz.counters.BWCounter;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -15,10 +15,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 //TODO use concrete implementations in data containers
 public abstract class AContainer implements IContainer {
 
-  protected BWCounter bwCounter;
+  protected BWReplayCounter bwCounter;
   protected transient final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
-  public AContainer(BWCounter bwCounter) {
+  protected AContainer(BWReplayCounter bwCounter) {
     this.bwCounter = bwCounter;
   }
 
@@ -57,7 +57,7 @@ public abstract class AContainer implements IContainer {
   /**
    * Strategy to select property on timeline given the counter
    */
-  protected <V extends Serializable, K extends Serializable, T extends ImmutableMap<V, K> & Serializable> Optional<K> getPropertyOnTimeLineStrategy(
+  protected <V extends Serializable, K extends Serializable, T extends Map<? extends V, K> & Serializable> Optional<K> getPropertyOnTimeLineStrategy(
       IPropertyRegister<T> register, V key) {
     try {
       lock.readLock().lock();
@@ -70,7 +70,7 @@ public abstract class AContainer implements IContainer {
     }
   }
 
-  private Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCodeWithLock() {
+  private Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCodeWithLock() {
     try {
       lock.readLock().lock();
       return staticPropertiesForEqualsAndHashCode();
@@ -82,7 +82,7 @@ public abstract class AContainer implements IContainer {
   /**
    * Properties used for equals and hash code
    */
-  protected abstract Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode();
+  protected abstract Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode();
 
   @Override
   public boolean equals(Object o) {

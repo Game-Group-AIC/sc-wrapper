@@ -1,6 +1,5 @@
 package gg.fel.cvut.cz.data.updatable;
 
-import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
@@ -17,8 +16,8 @@ public class UpdatableTechType extends TechType implements
 
   private final transient WTechType wrapped;
 
-  public UpdatableTechType(BWCounter bwCounter, WTechType wrapped) {
-    super(bwCounter);
+  public UpdatableTechType(BWReplayCounter bwCounter, WTechType wrapped) {
+    super(bwCounter, wrapped.getType());
     this.wrapped = wrapped;
   }
 
@@ -34,12 +33,6 @@ public class UpdatableTechType extends TechType implements
 
   @Override
   public TechType getContainer() {
-    return this;
-  }
-
-  @Override
-  public TechType getCopyOfContainer(BWReplayCounter bwReplayCounter) {
-    this.bwCounter = bwReplayCounter;
     return this;
   }
 

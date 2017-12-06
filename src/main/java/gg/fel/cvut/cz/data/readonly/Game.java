@@ -6,7 +6,7 @@ import gg.fel.cvut.cz.api.IGame;
 import gg.fel.cvut.cz.api.IPlayer;
 import gg.fel.cvut.cz.api.IRegion;
 import gg.fel.cvut.cz.api.ITilePosition;
-import gg.fel.cvut.cz.counters.BWCounter;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.GameTypeEnum;
@@ -14,16 +14,17 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 //TODO implement
 public class Game extends AContainer implements IGame, Serializable {
 
-  public Game(BWCounter bwCounter) {
+  public Game(BWReplayCounter bwCounter) {
     super(bwCounter);
   }
 
   @Override
-  protected Set<StaticPropertyRegister<?>> staticPropertiesForEqualsAndHashCode() {
+  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
     return new HashSet<>();
   }
 
@@ -33,7 +34,7 @@ public class Game extends AContainer implements IGame, Serializable {
   }
 
   @Override
-  public Optional<Set<IPlayer>> getPlayers() {
+  public Optional<Stream<IPlayer>> getPlayers() {
     return null;
   }
 
@@ -63,22 +64,22 @@ public class Game extends AContainer implements IGame, Serializable {
   }
 
   @Override
-  public Optional<Set<IRegion>> getRegions() {
+  public Optional<Stream<IRegion>> getRegions() {
     return null;
   }
 
   @Override
-  public Optional<Set<IChokePoint>> getChokePoints() {
+  public Optional<Stream<IChokePoint>> getChokePoints() {
     return null;
   }
 
   @Override
-  public Optional<Set<IBaseLocation>> getBaseLocations() {
+  public Optional<Stream<IBaseLocation>> getBaseLocations() {
     return null;
   }
 
   @Override
-  public Optional<Set<IBaseLocation>> getStartLocations() {
+  public Optional<Stream<IBaseLocation>> getStartLocations() {
     return null;
   }
 
@@ -98,7 +99,7 @@ public class Game extends AContainer implements IGame, Serializable {
   }
 
   @Override
-  public Optional<Set<ITilePosition>> getGrid() {
+  public Optional<Stream<ITilePosition>> getGrid() {
     return Optional.empty();
   }
 

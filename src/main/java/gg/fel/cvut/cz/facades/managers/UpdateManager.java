@@ -1,6 +1,6 @@
 package gg.fel.cvut.cz.facades.managers;
 
-import gg.fel.cvut.cz.counters.BWCounter;
+import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.counters.IBWCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.readonly.BaseLocation;
@@ -57,7 +57,7 @@ import lombok.Getter;
 public class UpdateManager implements IUpdateManager, IBWCounter {
 
   @Getter
-  private final BWCounter bwCounter = new BWCounter();
+  private final BWReplayCounter bwCounter = new BWReplayCounter();
 
   private final Updater<WBullet, Bullet, UpdatableBullet> bulletUpdater = new Updater<WBullet, Bullet, UpdatableBullet>(
       instance -> new UpdatableBullet(bwCounter, instance), this);
@@ -90,12 +90,12 @@ public class UpdateManager implements IUpdateManager, IBWCounter {
 
   @Override
   public Stream<Unit> getUnits() {
-    return unitUpdater.getAllContainers().filter(unit -> unit.exists().orElse(false));
+    return unitUpdater.getAllContainers();
   }
 
   @Override
   public Stream<Bullet> getBullets() {
-    return bulletUpdater.getAllContainers().filter(unit -> unit.exists().orElse(false));
+    return bulletUpdater.getAllContainers();
   }
 
   @Override

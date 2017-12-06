@@ -2,6 +2,7 @@ package gg.fel.cvut.cz.data.events;
 
 import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
+import gg.fel.cvut.cz.data.properties.Property;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ public class EventTypeRegister<T> {
    * Persist batch of events in frame to register
    */
   public void batchEventsInFrameToRegister(int currentFrame,
-      DynamicPropertyRegister<ImmutableSet<T>> propertyRegister) {
+      DynamicPropertyRegister<ImmutableSet<T>, Property<ImmutableSet<T>>> propertyRegister) {
     if (!registeredEvents.isEmpty()) {
       propertyRegister.addProperty(ImmutableSet.copyOf(registeredEvents), currentFrame);
       registeredEvents.clear();

@@ -5,7 +5,7 @@ import gg.fel.cvut.cz.data.readonly.Race;
 import gg.fel.cvut.cz.enums.RaceTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Stream;
 
 @JsonDeserialize(as = Race.class)
 public interface IRace extends InGameInterface, Serializable {
@@ -50,12 +50,12 @@ public interface IRace extends InGameInterface, Serializable {
    */
   Optional<IUnitType> getSupplyProvider();
 
-  Optional<Set<IUnitType>> getAllUnitTypesOfThisRace();
+  Optional<Stream<IUnitType>> getAllUnitTypesOfThisRace();
 
-  Optional<Set<ITechType>> getAllTechTypesOfThisRace();
+  Optional<Stream<ITechType>> getAllTechTypesOfThisRace();
 
-  Optional<Set<IUpgradeType>> getAllUpgradeTypesOfThisRace();
+  Optional<Stream<IUpgradeType>> getAllUpgradeTypesOfThisRace();
 
-  Optional<Set<IWeaponType>> getAllWeaponTypesOfThisRace();
+  Optional<Stream<IWeaponType>> getAllWeaponTypesOfThisRace();
 
 }

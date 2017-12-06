@@ -1,6 +1,5 @@
 package gg.fel.cvut.cz.data.updatable;
 
-import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
@@ -17,8 +16,8 @@ public class UpdatableUpgradeType extends UpgradeType implements
 
   private final transient WUpgradeType wrapped;
 
-  public UpdatableUpgradeType(BWCounter bwCounter, WUpgradeType wrapped) {
-    super(bwCounter);
+  public UpdatableUpgradeType(BWReplayCounter bwCounter, WUpgradeType wrapped) {
+    super(bwCounter, wrapped.getType());
     this.wrapped = wrapped;
   }
 
@@ -34,12 +33,6 @@ public class UpdatableUpgradeType extends UpgradeType implements
 
   @Override
   public UpgradeType getContainer() {
-    return this;
-  }
-
-  @Override
-  public UpgradeType getCopyOfContainer(BWReplayCounter bwReplayCounter) {
-    this.bwCounter = bwReplayCounter;
     return this;
   }
 

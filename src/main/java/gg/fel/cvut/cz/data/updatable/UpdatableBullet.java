@@ -1,6 +1,5 @@
 package gg.fel.cvut.cz.data.updatable;
 
-import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
@@ -16,8 +15,8 @@ public class UpdatableBullet extends Bullet implements IUpdatableContainer<WBull
 
   private final transient WBullet wrapped;
 
-  public UpdatableBullet(BWCounter bwCounter, WBullet wrapped) {
-    super(bwCounter);
+  public UpdatableBullet(BWReplayCounter bwReplayCounter, WBullet wrapped) {
+    super(bwReplayCounter);
     this.wrapped = wrapped;
   }
 
@@ -33,12 +32,6 @@ public class UpdatableBullet extends Bullet implements IUpdatableContainer<WBull
 
   @Override
   public Bullet getContainer() {
-    return this;
-  }
-
-  @Override
-  public Bullet getCopyOfContainer(BWReplayCounter bwReplayCounter) {
-    this.bwCounter = bwReplayCounter;
     return this;
   }
 

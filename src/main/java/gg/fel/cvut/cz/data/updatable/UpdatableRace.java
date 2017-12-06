@@ -1,6 +1,5 @@
 package gg.fel.cvut.cz.data.updatable;
 
-import gg.fel.cvut.cz.counters.BWCounter;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
@@ -17,8 +16,8 @@ public class UpdatableRace extends Race implements
 
   private final transient WRace wrapped;
 
-  public UpdatableRace(BWCounter bwCounter, WRace wrapped) {
-    super(bwCounter);
+  public UpdatableRace(BWReplayCounter bwCounter, WRace wrapped) {
+    super(bwCounter, wrapped.getType());
     this.wrapped = wrapped;
   }
 
@@ -35,12 +34,6 @@ public class UpdatableRace extends Race implements
 
   @Override
   public Race getContainer() {
-    return this;
-  }
-
-  @Override
-  public Race getCopyOfContainer(BWReplayCounter bwReplayCounter) {
-    this.bwCounter = bwReplayCounter;
     return this;
   }
 

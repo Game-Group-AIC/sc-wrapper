@@ -1,6 +1,5 @@
 package gg.fel.cvut.cz.data;
 
-import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.facades.managers.UpdateManager;
 import gg.fel.cvut.cz.wrappers.Wrapper;
 import java.util.stream.Stream;
@@ -26,11 +25,6 @@ public interface IUpdatableContainer<T extends Wrapper<?>, L extends AContainer>
    * Get as data access container
    */
   L getContainer();
-
-  /**
-   * Get as data access container and set replay counter to it
-   */
-  L getCopyOfContainer(BWReplayCounter bwReplayCounter);
 
 }
 

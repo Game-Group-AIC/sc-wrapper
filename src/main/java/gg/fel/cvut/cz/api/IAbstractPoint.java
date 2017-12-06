@@ -39,14 +39,14 @@ public interface IAbstractPoint extends InGameInterface, Serializable {
 
   default Optional<IChokePoint> getNearestChokePoint() {
     return getRegion()
-        .flatMap(iRegion -> iRegion.getChokePoints().flatMap(iChokePoints -> iChokePoints.stream()
+        .flatMap(iRegion -> iRegion.getChokePoints().flatMap(iChokePoints -> iChokePoints
             .min(Comparator
                 .comparingDouble(o -> o.getApproxDistance(this).orElse(Double.MAX_VALUE)))));
   }
 
   default Optional<IBaseLocation> getNearestBaseLocation() {
     return getRegion().flatMap(
-        iRegion -> iRegion.getBaseLocations().flatMap(iBaseLocations -> iBaseLocations.stream()
+        iRegion -> iRegion.getBaseLocations().flatMap(iBaseLocations -> iBaseLocations
             .min(Comparator
                 .comparingDouble(o -> o.getApproxDistance(this).orElse(Double.MAX_VALUE)))));
   }

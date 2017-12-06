@@ -8,9 +8,8 @@ import gg.fel.cvut.cz.enums.UnitSizeTypeEnum;
 import gg.fel.cvut.cz.enums.UnitTypeEnum;
 import gg.fel.cvut.cz.enums.WeaponTypeEnum;
 import java.io.Serializable;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -42,7 +41,7 @@ public interface IUnitType extends InGameInterface, Serializable {
    * Retrieves the immediate technology tree requirements to make this unit type. Returns std::map
    * containing a IUnitType to number mapping of UnitTypes required.
    */
-  Optional<Map<IUnitType, Integer>> requiredUnits();
+  Optional<Stream<Entry<IUnitType, Integer>>> requiredUnits();
 
   /**
    * Identifies the required ITechType in order to create certain units. Note The only unit that
@@ -63,13 +62,13 @@ public interface IUnitType extends InGameInterface, Serializable {
    * Retrieves the set of abilities that this unit can use, provided it is available to you in the
    * game. Returns Set of TechTypes containing ability information.
    */
-  Optional<Set<ITechType>> abilities();
+  Optional<Stream<ITechType>> abilities();
 
   /**
    * Retrieves the set of upgrades that this unit can use to enhance its fighting ability. Returns
    * Set of UpgradeTypes containing upgrade types that will impact this unit type.
    */
-  Optional<Set<IUpgradeType>> upgrades();
+  Optional<Stream<IUpgradeType>> upgrades();
 
   /**
    * Retrieves the upgrade type used to increase the armor of this unit type. For each upgrade, this
@@ -556,7 +555,7 @@ public interface IUnitType extends InGameInterface, Serializable {
    * Returns ITechType::set containing the technology types that can be researched. See also
    * PlayerInterface::isResearchAvailable Since 4.1.2
    */
-  Optional<Set<ITechType>> researchesWhat();
+  Optional<Stream<ITechType>> researchesWhat();
 
   /**
    * Retrieves the set of upgrades that this unit type is capable of upgrading. Note Some maps have
@@ -564,7 +563,7 @@ public interface IUnitType extends InGameInterface, Serializable {
    * available. Returns IUpgradeType::set containing the upgrade types that can be upgraded. See
    * also PlayerInterface::getMaxUpgradeLevel Since 4.1.2
    */
-  Optional<Set<IUpgradeType>> upgradesWhat();
+  Optional<Stream<IUpgradeType>> upgradesWhat();
 
   /**
    * Returns max shoot range (in build tiles) of this unit against land targets.
