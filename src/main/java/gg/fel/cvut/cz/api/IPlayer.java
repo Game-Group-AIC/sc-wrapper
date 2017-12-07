@@ -33,17 +33,23 @@ public interface IPlayer extends InGameInterface, Serializable {
   Optional<String> getName();
 
   /**
-   * Retrieves the Stream of units from: - the current player, - allies - and opponents,
-   *
+   * Retrieves the Stream of units from:
+   * - the current player,
+   * - allies
+   * - and opponents,
    * that MAY OR MAY NOT be visible (due to fog of war).
    *
-   * This MAY OR MAY NOT include units that are loaded into - transports, - Bunkers, - Refineries, -
-   * Assimilators, or - Extractors.
+   * This MAY OR MAY NOT include units that are loaded into
+   * - transports,
+   * - Bunkers,
+   * - Refineries,
+   * - Assimilators, or
+   * - Extractors.
    *
    * IT DEPENDS on whether it is called using - replay parsing OR - running the game
    *
-   * Basically, this method is encapsulating both modes, and you should not use it - use othet
-   * get.*Units methods.
+   * Basically, this method is encapsulating both modes,
+   * and you should not use it - use other * get.*Units methods.
    *
    * @return Stream containing units in the game.
    */
@@ -53,11 +59,9 @@ public interface IPlayer extends InGameInterface, Serializable {
    * Retrieves the set of all units that the player owns.
    *
    * This also includes incomplete units.
-   *
-   * Returns Reference to a Unitset containing the units.
    */
   default Optional<Stream<IUnit>> getUnits() {
-    return getAllVisibleUnits()
+    return getAllUnits()
         .map(iUnits -> iUnits
             .filter(iUnit -> iUnit.getPlayer()
                 .map(iPlayer -> iPlayer.equals(this))
@@ -65,45 +69,48 @@ public interface IPlayer extends InGameInterface, Serializable {
             )
         );
   }
-
   //TODO needs to be filtered for replays
 
+  default Stream<IUnit> getAllVisibleUnits() {
+    Stream<IUnit> playerOrAlliedUnits = getPlayerOrAlliedUnits().orElse(Stream.empty());
+    Stream<IUnit> visibleEnemyUnits = getEnemyUnits().orElse(Stream.empty());
 
-  // todo: finish
-  default Optional<Stream<IUnit>> getAllVisibleUnits() {
-    return null;
-  }
-//  {
-//    getUnits()
-//    visibleenemy = (myUnits + alliedUnits).getEnemyUnitsInRadiusOfSight
-//
-//    return visibleenemy + myUnits + alliedUnits
-//  }
-
-
-  /**
-   * Retrieves the set of all accessible enemy units. If Flag::CompleteMapInformation is enabled,
-   * then the set also includes units that are not visible to the player. Note Units that are inside
-   * refineries are not included in this set. Returns Unitset containing all known units in the
-   * game.
-   */
-  default Optional<Stream<IUnit>> getEnemyUnits() {
-    if (!getEnemies().isPresent()) {
-      return Optional.empty();
-    }
-
-    Set<IPlayer> enemies = getEnemies().get().collect(Collectors.toSet());
-    if (enemies.isEmpty()) {
-      return Optional.of(Stream.empty());
-    }
-
-    return getAllVisibleUnits().map(iUnits -> iUnits
-        .filter(iUnit -> iUnit.getPlayer()
-            .map(enemies::contains)
-            .orElse(false)
-        )
+    return Stream.concat(
+        playerOrAlliedUnits,
+        visibleEnemyUnits
     );
   }
+
+  default Stream<IPlayer> getPlayerOrAllies() {
+    return Stream.concat(
+        getAllies().orElse(Stream.empty()),
+        Stream.of(this)
+    );
+  }
+
+  default Optional<Stream<IUnit>> getPlayerOrAlliedUnits() {
+    Set<IPlayer> playerOrAllies = getPlayerOrAllies()
+        .collect(Collectors.toSet());
+
+    return getAllUnits()
+        .map(iUnits -> iUnits
+            .filter(iUnit -> iUnit.getPlayer()
+                .map(playerOrAllies::contains)
+                .orElse(false)
+            )
+        );
+  }
+
+  default Optional<Stream<IUnit>> getEnemyUnits() {
+    return getPlayerOrAlliedUnits()
+        .map(stream -> stream
+            .map(IUnit::getEnemyUnitsInRadiusOfSight)
+            .filter(Optional::isPresent)
+            .flatMap(Optional::get)
+            .distinct()
+        );
+  }
+
 
   /**
    * Retrieves the set of all accessible bullets. Returns Bulletset containing all accessible
@@ -140,24 +147,6 @@ public interface IPlayer extends InGameInterface, Serializable {
       return Optional.of(Stream.empty());
     }
     return getAllBullets().map(iUnits -> iUnits
-        .filter(iUnit -> iUnit.getPlayer().map(allies::contains).orElse(false)));
-  }
-
-  /**
-   * Retrieves the set of all accessible friendly units. If Flag::CompleteMapInformation is enabled,
-   * then the set also includes units that are not visible to the player. Note Units that are inside
-   * refineries are not included in this set. Returns Unitset containing all known units in the
-   * game.
-   */
-  default Optional<Stream<IUnit>> getFriendlyUnits() {
-    if (!getAllies().isPresent()) {
-      return Optional.empty();
-    }
-    Set<IPlayer> allies = getAllies().get().collect(Collectors.toSet());
-    if (allies.isEmpty()) {
-      return Optional.of(Stream.empty());
-    }
-    return getAllVisibleUnits().map(iUnits -> iUnits
         .filter(iUnit -> iUnit.getPlayer().map(allies::contains).orElse(false)));
   }
 
@@ -314,7 +303,7 @@ public interface IPlayer extends InGameInterface, Serializable {
    * Construct pylons, supply depots, or overlords } See also supplyUsed
    */
   default Optional<Integer> supplyTotal() {
-    return getFriendlyUnits().map(iUnitStream -> iUnitStream.map(IUnit::getType)
+    return this.getPlayerOrAlliedUnits().map(iUnitStream -> iUnitStream.map(IUnit::getType)
         .filter(Optional::isPresent)
         .map(Optional::get)
         .filter(IUnitType::isSupplyUnit)
@@ -329,7 +318,7 @@ public interface IPlayer extends InGameInterface, Serializable {
    * race. See also supplyTotal
    */
   default Optional<Integer> supplyUsed() {
-    return getFriendlyUnits().map(iUnitStream -> iUnitStream.map(IUnit::getType)
+    return this.getPlayerOrAlliedUnits().map(iUnitStream -> iUnitStream.map(IUnit::getType)
         .filter(Optional::isPresent)
         .map(Optional::get)
         .mapToInt(value -> value.supplyRequired().orElse(0))
@@ -344,11 +333,11 @@ public interface IPlayer extends InGameInterface, Serializable {
    * type that the player owns. See also visibleUnitCount, completedUnitCount, incompleteUnitCount
    */
   default Optional<Integer> allUnitCount() {
-    return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream.count());
+    return this.getPlayerOrAlliedUnits().map(iUnitStream -> (int) iUnitStream.count());
   }
 
   default Optional<Integer> allUnitCount(IUnitType unitType) {
-    return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream
+    return this.getPlayerOrAlliedUnits().map(iUnitStream -> (int) iUnitStream
         .filter(iUnit -> iUnit.getType().map(iUnitType -> iUnitType.equals(unitType)).orElse(false))
         .count()
     );
@@ -360,7 +349,8 @@ public interface IPlayer extends InGameInterface, Serializable {
    * Parameters unit (optional) The unit type to query. IUnitType macros are accepted. If this
    * parameter is omitted, then it will use UnitTypes::AllUnits by default. Returns The number of
    * completed units of the given type that the player owns. Example usage: bool
-   * obtainNextUpgrade(BWAPI::IUpgradeType upgType) { BWAPI::IPlayer self = BWAPI::Broodwar->self();
+   * obtainNextUpgrade(BWAPI::IUpgradeType upgType) { BWAPI::IPlayer self =
+   * BWAPI::Broodwar->self();
    * int maxLvl = self->getMaxUpgradeLevel(upgType); int currentLvl =
    * self->getUpgradeLevel(upgType); if ( !self->isUpgrading(upgType) && currentLvl < maxLvl &&
    * self->completedUnitCount(upgType.whatsRequired(currentLvl+1)) > 0 &&
@@ -368,13 +358,13 @@ public interface IPlayer extends InGameInterface, Serializable {
    * return false; } See also allUnitCount, visibleUnitCount, incompleteUnitCount
    */
   default Optional<Integer> completedUnitCount() {
-    return getFriendlyUnits().map(
+    return this.getPlayerOrAlliedUnits().map(
         iUnitStream -> (int) iUnitStream.filter(iUnit -> iUnit.isCompleted().orElse(false))
             .count());
   }
 
   default Optional<Integer> completedUnitCount(IUnitType unitType) {
-    return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream
+    return this.getPlayerOrAlliedUnits().map(iUnitStream -> (int) iUnitStream
         .filter(iUnit -> iUnit.getType().map(iUnitType -> iUnitType.equals(unitType)).orElse(false))
         .filter(iUnit -> iUnit.isCompleted().orElse(false)).count());
   }
@@ -388,13 +378,13 @@ public interface IPlayer extends InGameInterface, Serializable {
    * given type that the player owns. See also allUnitCount, visibleUnitCount, completedUnitCount
    */
   default Optional<Integer> incompleteUnitCount() {
-    return getFriendlyUnits().map(
+    return this.getPlayerOrAlliedUnits().map(
         iUnitStream -> (int) iUnitStream.filter(iUnit -> !(iUnit.isCompleted().orElse(true)))
             .count());
   }
 
   default Optional<Integer> incompleteUnitCount(IUnitType unitType) {
-    return getFriendlyUnits().map(iUnitStream -> (int) iUnitStream
+    return this.getPlayerOrAlliedUnits().map(iUnitStream -> (int) iUnitStream
         .filter(iUnit -> iUnit.getType().map(iUnitType -> iUnitType.equals(unitType)).orElse(false))
         .filter(iUnit -> !(iUnit.isCompleted().orElse(true))).count());
   }
@@ -421,7 +411,8 @@ public interface IPlayer extends InGameInterface, Serializable {
 
   /**
    * Retrieves the current upgrade level that the player has attained for a given upgrade type.
-   * Parameters upgrade The IUpgradeType to query. Returns The number of levels that the upgrade has
+   * Parameters upgrade The IUpgradeType to query. Returns The number of levels that the upgrade
+   * has
    * been upgraded for this player. Example usage: bool obtainNextUpgrade(BWAPI::IUpgradeType
    * upgType) { BWAPI::IPlayer self = BWAPI::Broodwar->self(); int maxLvl =
    * self->getMaxUpgradeLevel(upgType); int currentLvl = self->getUpgradeLevel(upgType); if (
