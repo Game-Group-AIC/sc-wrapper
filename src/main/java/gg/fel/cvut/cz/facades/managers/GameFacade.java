@@ -83,11 +83,14 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     IBWClock, Runnable, IGame, IGameDataAccessAdapter {
 
   private final UpdateManager updateManager = new UpdateManager();
-  private final QueueManager queueManager = new QueueManager();
+  private QueueManager queueManager;
   private final UpdatableEventsRegister eventsRegister = new UpdatableEventsRegister();
 
   @Builder.Default
   private int gameDefaultSpeed = 20;
+
+  @Builder.Default
+  private boolean isForReplay = false;
 
   @Builder.Default
   private boolean gameHasEnded = false;
@@ -334,12 +337,26 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   @Override
   public void run() {
     try {
+
+      //setup queue manager
+      if (isForReplay) {
+        UpdateStrategy updateStrategy = UpdateStrategy.builder().build();
+        queueManager = new QueueManager(timeResources -> {
+          getAllGameInstances()
+              .forEach(o -> o.update(updateStrategy, updateManager, 0, getCurrentFrame()));
+        });
+      } else {
+        queueManager = new QueueManager();
+      }
+
       mirror.getModule().setEventListener(this);
       mirror.startGame();
     } catch (Exception e) {
       //Catch any exception that occur not to "kill" the bot with one trivial error
       log.error(e.getMessage());
-//      e.printStackTrace();
+
+      //TODO remove
+      e.printStackTrace();
     }
   }
 
@@ -380,9 +397,9 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public void updateAll(UpdateStrategy updateStrategy) {
-      queueManager.addCommand(new CommandWithoutResponse(UPDATE_ALL,
-          () -> getAllGameInstances()
-              .forEach(o -> o.update(updateStrategy, updateManager, 0, getCurrentFrame()))));
+    queueManager.addCommand(new CommandWithoutResponse(UPDATE_ALL,
+        () -> getAllGameInstances()
+            .forEach(o -> o.update(updateStrategy, updateManager, 0, getCurrentFrame()))));
   }
 
   @Override

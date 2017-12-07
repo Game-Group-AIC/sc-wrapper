@@ -40,6 +40,7 @@ public class GameParsingTest {
       .frameExecutionTime(10)
       .onStart(Optional.of(new GameHasStartedNotificationSubscriber()))
       .gameDefaultSpeed(0)
+      .isForReplay(true)
       .onEnd(Optional.of(new GameHasEndedNotificationSubscriber()))
       .build();
 
@@ -100,7 +101,6 @@ public class GameParsingTest {
       if (currentFrame % 100 == 0) {
         log.info(currentFrame + "");
       }
-      gameFacade.updateAll(UpdateStrategy.builder().build());
     }
   }
 

@@ -91,10 +91,6 @@ public class BaseLocation extends AContainer implements IBaseLocation, Serializa
     return Optional.of(Double.MAX_VALUE);
   }
 
-  public Optional<Double> getAirDistance(IBaseLocation other) {
-    return Optional.of(Double.MAX_VALUE);
-  }
-
   @Override
   protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
     return toHash;

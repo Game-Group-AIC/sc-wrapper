@@ -21,7 +21,9 @@ public interface IBaseLocation extends IAbstractPoint, InGameInterface, Serializ
 
   Optional<Double> getGroundDistance(IBaseLocation other);
 
-  Optional<Double> getAirDistance(IBaseLocation other);
+  default Optional<Double> getAirDistance(IBaseLocation other) {
+    return getApproxDistance(other);
+  }
 
   Optional<Boolean> isIsland();
 
