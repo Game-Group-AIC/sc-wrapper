@@ -33,26 +33,53 @@ public interface IPlayer extends InGameInterface, Serializable {
   Optional<String> getName();
 
   /**
-   * Retrieves the set of all units that the player owns. This also includes incomplete units.
-   * Returns Reference to a Unitset containing the units. Note This does not include units that are
-   * loaded into transports, Bunkers, Refineries, Assimilators, or Extractors. Example usage:
-   * Unitset myUnits = BWAPI::Broodwar->self()->getUnits(); for ( auto u = myUnits.begin(); u !=
-   * myUnits.end(); ++u ) { // Do something with your units }
+   * Retrieves the Stream of units from: - the current player, - allies - and opponents,
+   *
+   * that MAY OR MAY NOT be visible (due to fog of war).
+   *
+   * This MAY OR MAY NOT include units that are loaded into - transports, - Bunkers, - Refineries, -
+   * Assimilators, or - Extractors.
+   *
+   * IT DEPENDS on whether it is called using - replay parsing OR - running the game
+   *
+   * Basically, this method is encapsulating both modes, and you should not use it - use othet
+   * get.*Units methods.
+   *
+   * @return Stream containing units in the game.
+   */
+  Optional<Stream<IUnit>> getAllUnits();
+
+  /**
+   * Retrieves the set of all units that the player owns.
+   *
+   * This also includes incomplete units.
+   *
+   * Returns Reference to a Unitset containing the units.
    */
   default Optional<Stream<IUnit>> getUnits() {
-    return getAllUnits().map(iUnits -> iUnits
-        .filter(iUnit -> iUnit.getPlayer().map(iPlayer -> iPlayer.equals(this)).orElse(false)));
+    return getAllVisibleUnits()
+        .map(iUnits -> iUnits
+            .filter(iUnit -> iUnit.getPlayer()
+                .map(iPlayer -> iPlayer.equals(this))
+                .orElse(false)
+            )
+        );
   }
 
   //TODO needs to be filtered for replays
 
-  /**
-   * Retrieves the set of all accessible units. If Flag::CompleteMapInformation is enabled, then the
-   * set also includes units that are not visible to the player. Note Units that are inside
-   * refineries are not included in this set. Returns Unitset containing all known units in the
-   * game.
-   */
-  Optional<Stream<IUnit>> getAllUnits();
+
+  // todo: finish
+  default Optional<Stream<IUnit>> getAllVisibleUnits() {
+    return null;
+  }
+//  {
+//    getUnits()
+//    visibleenemy = (myUnits + alliedUnits).getEnemyUnitsInRadiusOfSight
+//
+//    return visibleenemy + myUnits + alliedUnits
+//  }
+
 
   /**
    * Retrieves the set of all accessible enemy units. If Flag::CompleteMapInformation is enabled,
@@ -64,12 +91,18 @@ public interface IPlayer extends InGameInterface, Serializable {
     if (!getEnemies().isPresent()) {
       return Optional.empty();
     }
+
     Set<IPlayer> enemies = getEnemies().get().collect(Collectors.toSet());
     if (enemies.isEmpty()) {
       return Optional.of(Stream.empty());
     }
-    return getAllUnits().map(
-        iUnits -> iUnits.filter(iUnit -> iUnit.getPlayer().map(enemies::contains).orElse(false)));
+
+    return getAllVisibleUnits().map(iUnits -> iUnits
+        .filter(iUnit -> iUnit.getPlayer()
+            .map(enemies::contains)
+            .orElse(false)
+        )
+    );
   }
 
   /**
@@ -91,8 +124,11 @@ public interface IPlayer extends InGameInterface, Serializable {
   }
 
   default Optional<Stream<IBullet>> getBullets() {
-    return getAllBullets().map(iUnits -> iUnits
-        .filter(iUnit -> iUnit.getPlayer().map(iPlayer -> iPlayer.equals(this)).orElse(false)));
+    return getAllBullets().map(
+        iUnits -> iUnits.filter(
+            iUnit -> iUnit.getPlayer().map(
+                iPlayer -> iPlayer.equals(this)
+            ).orElse(false)));
   }
 
   default Optional<Stream<IBullet>> getFriendlyBullets() {
@@ -121,7 +157,7 @@ public interface IPlayer extends InGameInterface, Serializable {
     if (allies.isEmpty()) {
       return Optional.of(Stream.empty());
     }
-    return getAllUnits().map(iUnits -> iUnits
+    return getAllVisibleUnits().map(iUnits -> iUnits
         .filter(iUnit -> iUnit.getPlayer().map(allies::contains).orElse(false)));
   }
 

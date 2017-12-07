@@ -933,7 +933,10 @@ public interface IUnit extends InGameInterface, Serializable {
   Optional<Boolean> isUpgrading();
 
   default Optional<Boolean> isVisible(IPlayer player) {
-    return player.getAllUnits().map(iUnits -> iUnits.anyMatch(iUnit -> iUnit.equals(this)));
+    return player.getAllVisibleUnits()
+        .map(iUnits -> iUnits
+            .anyMatch(iUnit -> iUnit.equals(this))
+        );
   }
 
   /**
