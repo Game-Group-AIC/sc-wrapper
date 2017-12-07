@@ -195,7 +195,9 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     updateManager.setGame(mirror.getGame());
 
     //analyze map
+    log.info("Analyzing map...");
     BWTA.analyze();
+    log.info("Finished: Analyzing map.");
 
     if (updateManager.getGame().isPresent()) {
       UpdateStrategy updateAllStrategy = UpdateStrategy.builder().build();
@@ -764,9 +766,8 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
     return updateManager.getBWInstance(container);
   }
 
-  @Override
   public Optional<IPlayer> getSelf() {
-    return updateManager.getGame().flatMap(Game::getSelf);
+    return updateManager.getSelf().map(player -> player);
   }
 
   @Override

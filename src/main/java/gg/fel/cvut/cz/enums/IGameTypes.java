@@ -14,12 +14,13 @@ import bwapi.UnitType;
 import bwapi.UpgradeType;
 import bwapi.WeaponType;
 import com.google.common.collect.ImmutableList;
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Common interface for all types in game with lists of those types
  */
-public interface IGameTypes<T, V extends IGameTypes<T, V>> {
+public interface IGameTypes<T, V extends IGameTypes<T, V>> extends Serializable {
 
   List<Order> ORDERS = ImmutableList
       .of(Order.Die, Order.Stop, Order.Guard, Order.PlayerGuard, Order.TurretGuard,

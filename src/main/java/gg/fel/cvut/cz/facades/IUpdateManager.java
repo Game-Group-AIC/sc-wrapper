@@ -16,6 +16,7 @@ import gg.fel.cvut.cz.data.readonly.UnitType;
 import gg.fel.cvut.cz.data.readonly.UpgradeType;
 import gg.fel.cvut.cz.data.readonly.WeaponType;
 import gg.fel.cvut.cz.facades.strategies.UpdateStrategy;
+import gg.fel.cvut.cz.wrappers.WGame;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -23,6 +24,8 @@ import java.util.stream.Stream;
  * Contract of UpdateManager (updatable methods)
  */
 public interface IUpdateManager extends IGameDataWrapper {
+
+  Optional<WGame> getWrappedGame();
 
   Optional<Game> getGame();
 

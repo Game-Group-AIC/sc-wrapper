@@ -10,6 +10,7 @@ import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
 import gg.fel.cvut.cz.data.properties.Property;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -36,8 +37,9 @@ public class BaseLocation extends AContainer implements IBaseLocation, Serializa
       Property::new);
   protected final StaticPropertyRegister<Integer, Property<Integer>> y = new StaticPropertyRegister<Integer, Property<Integer>>(
       Property::new);
-  //TODO from json
-  protected Set<StaticPropertyRegister<?, ?>> toHash;
+
+  //TODO from json + creator
+  protected Set<StaticPropertyRegister<?, ?>> toHash = new HashSet<>();
 
   public BaseLocation(BWReplayCounter bwCounter) {
     super(bwCounter);

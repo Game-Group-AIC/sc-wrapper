@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//TODO implement
 public class UpdatableBaseLocation extends BaseLocation implements
     IUpdatableContainer<WBaseLocation, BaseLocation> {
 
@@ -81,10 +80,14 @@ public class UpdatableBaseLocation extends BaseLocation implements
         position.ifPresent(p -> this.position.addProperty(p, 0));
       }
 
+      //updated in frame
+      updatedInFrame = currentFrame;
+
       //collect containers
       return Stream.of(mineralsAsUnits.getValueInFrame(currentFrame),
           staticMineralsAsUnits.getValueInFrame(currentFrame),
-          geysers.getValueInFrame(currentFrame))
+          geysers.getValueInFrame(currentFrame),
+          position.getValueInFrame(currentFrame).map(ImmutableSet::of))
           .filter(Optional::isPresent)
           .map(Optional::get)
           .flatMap(Collection::stream);

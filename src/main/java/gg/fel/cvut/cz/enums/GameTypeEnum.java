@@ -24,7 +24,6 @@ public enum GameTypeEnum implements IGameTypes<GameType, GameTypeEnum> {
   None,
   Unknown;
 
-
   @Override
   public List<GameType> getTypes() {
     return GAME_TYPES;

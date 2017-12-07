@@ -17,6 +17,7 @@ public abstract class AContainer implements IContainer {
 
   protected BWReplayCounter bwCounter;
   protected transient final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
+  protected int updatedInFrame = -1;
 
   protected AContainer(BWReplayCounter bwCounter) {
     this.bwCounter = bwCounter;
@@ -33,6 +34,16 @@ public abstract class AContainer implements IContainer {
         return register.getLatestValue();
       }
       return register.getValueInFrame(bwCounter.getCurrentFrame());
+    } finally {
+      lock.readLock().unlock();
+    }
+  }
+
+  @Override
+  public int updatedInFrame() {
+    try {
+      lock.readLock().lock();
+      return updatedInFrame;
     } finally {
       lock.readLock().unlock();
     }

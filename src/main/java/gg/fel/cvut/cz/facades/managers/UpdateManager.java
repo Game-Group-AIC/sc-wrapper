@@ -60,6 +60,10 @@ public class UpdateManager implements IUpdateManager, IBWCounter {
   private final BWReplayCounter bwCounter = new BWReplayCounter();
   @Getter
   private Optional<Game> game = Optional.empty();
+  @Getter
+  private Optional<Player> self = Optional.empty();
+  @Getter
+  private Optional<WGame> wrappedGame = Optional.empty();
 
   private final Updater<WBullet, Bullet, UpdatableBullet> bulletUpdater = new Updater<WBullet, Bullet, UpdatableBullet>(
       instance -> new UpdatableBullet(bwCounter, instance), this);
@@ -127,7 +131,9 @@ public class UpdateManager implements IUpdateManager, IBWCounter {
 
   @Override
   public Optional<Game> setGame(bwapi.Game game) {
+    this.wrappedGame = Optional.of(WGame.getOrCreateWrapper(game));
     this.game = gameUpdater.getWrappedInstance(WGame.getOrCreateWrapper(game));
+    this.self = playerUpdater.getWrappedInstance(WPlayer.getOrCreateWrapper(game.self()));
     return this.game;
   }
 

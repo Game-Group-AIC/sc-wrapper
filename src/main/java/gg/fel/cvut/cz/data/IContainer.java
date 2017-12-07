@@ -26,4 +26,9 @@ public interface IContainer extends InGameInterface, Serializable {
     //EMPTY
   }
 
+  /**
+   * Returns number of frame when container was last updated. If container was never updated, returns -1
+   */
+  int updatedInFrame();
+
 }

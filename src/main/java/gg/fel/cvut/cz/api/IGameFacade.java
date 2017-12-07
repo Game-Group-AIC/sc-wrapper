@@ -10,8 +10,6 @@ import java.util.stream.Stream;
  */
 public interface IGameFacade extends Serializable {
 
-  Optional<IPlayer> getSelf();
-
   /**
    * Retrieves the set of all players in the match. This includes the neutral player, which owns all
    * the resources and critters by default. Returns Playerset containing all players in the game.

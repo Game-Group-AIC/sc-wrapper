@@ -120,11 +120,6 @@ public class ReplayGameFacade implements
   }
 
   @Override
-  public Optional<IPlayer> getSelf() {
-    return game.getSelf();
-  }
-
-  @Override
   public Optional<Stream<IPlayer>> getPlayers() {
     return game.getPlayers();
   }

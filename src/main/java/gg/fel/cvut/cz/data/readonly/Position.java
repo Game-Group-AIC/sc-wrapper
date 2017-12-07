@@ -26,6 +26,7 @@ public class Position extends AContainer implements IPosition, Serializable {
       Property::new);
   private final List<StaticPropertyRegister<?, ?>> toHash = ImmutableList.of(x, y);
 
+
   public Position(BWReplayCounter bwCounter) {
     super(bwCounter);
   }
