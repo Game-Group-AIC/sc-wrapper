@@ -2,9 +2,11 @@ package gg.fel.cvut.cz.api;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gg.fel.cvut.cz.data.readonly.TilePosition;
+import gg.fel.cvut.cz.utils.pathfinding.astar.INodeWithHeuristic;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -19,7 +21,9 @@ import java.util.stream.Stream;
  * For example, a Command Center occupies an area of 4x3 build tiles.
  */
 @JsonDeserialize(as = TilePosition.class)
-public interface ITilePosition extends IAbstractPoint, InGameInterface, Serializable {
+public interface ITilePosition extends IAbstractPoint, InGameInterface, INodeWithHeuristic, Serializable {
+  int MAX_TILES_X = 256;
+  int MAX_TILES_Y = 256;
   int SIZE_IN_PIXELS = 32;
   int SIZE_IN_WALK_TILES = 4;
 
@@ -127,29 +131,7 @@ public interface ITilePosition extends IAbstractPoint, InGameInterface, Serializ
   Optional<Boolean> canBuildHere(IPlayer player, IUnitType type);
   // todo: ^
 
-//  Optional<Boolean> isAccessible(IUnitType type);
-  // todo ^
-  // Some condititions:
-  // - fly / ground units
-  // - building prevention (wallin)
-  // - if every other tile is not accessible
-
-//  Optional<List<ITilePosition>> findPath(ITilePosition destinationTile);
-  // todo ^
-  // A* algo with air distance heuristic?
-  // it could be cool to plan various paths (e.g. one maximizing enemy avoidance, one considering walls,...)
-
-//  Optional<List<ITilePosition>> findPathAvoidTiles(ITilePosition destinationTile, List<ITilePosition> avoidTiles);
-  // todo ^
-  // one day, find path with list of excluded tiles
-
-//  Optional<List<ITilePosition>> findPathThroughCheckpoints(List<ITilePosition> checkpointTiles);
-  // todo ^
-  // last tile is destination
-
   Optional<Stream<ITilePosition>> getNeighbours();
-  // todo ^
-
 
   Optional<Integer> getGroundHeight();
 
@@ -159,5 +141,22 @@ public interface ITilePosition extends IAbstractPoint, InGameInterface, Serializ
 
   default Optional<ITilePosition> getTilePosition() {
     return Optional.of(this);
+  }
+
+  default int getNodeId() {
+    return getX().get() * MAX_TILES_X + getY().get();
+  }
+  default double getNodeDistance(INodeWithHeuristic another) {
+    return getApproxDistance((ITilePosition) another).get();
+  }
+
+  default List<INodeWithHeuristic> getNodeNeighbours() {
+    return getNeighbours().get().collect(Collectors.toList());
+  }
+
+  default boolean isNodeNeighbourAcessible(INodeWithHeuristic another, IUnitType byUnitType) {
+    // check they are really neighbours!
+    // todo:
+    return false;
   }
 }
