@@ -1,9 +1,11 @@
 package gg.fel.cvut.cz.data.readonly;
 
 import com.google.common.collect.ImmutableSet;
+import gg.fel.cvut.cz.api.IPlayer;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.ITilePosition;
 import gg.fel.cvut.cz.api.IUnit;
+import gg.fel.cvut.cz.api.IUnitType;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
@@ -44,6 +46,30 @@ public class TilePosition extends AContainer implements ITilePosition, Serializa
   @Override
   public Optional<IPosition> getPosition() {
     return getPropertyOnTimeLineStrategy(position);
+  }
+
+  @Override
+  public boolean hasCreep() {
+    // todo:
+    return false;
+  }
+
+  @Override
+  public Optional<Boolean> hasPower(IPlayer currentPlayer) {
+    // todo:
+    return null;
+  }
+
+  @Override
+  public Optional<Boolean> canBuildHere(IUnitType type) {
+    // todo:
+    return null;
+  }
+
+  @Override
+  public Optional<Boolean> canBuildHere(IPlayer player, IUnitType type) {
+    // todo:
+    return null;
   }
 
   @Override

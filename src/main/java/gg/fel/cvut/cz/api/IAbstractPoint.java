@@ -18,8 +18,11 @@ public interface IAbstractPoint extends InGameInterface, Serializable {
   }
 
   default Optional<Double> getApproxDistance(IAbstractPoint other) {
-    if (!getX().isPresent() || !getY().isPresent() || !other.getX().isPresent() || !other.getY()
-        .isPresent()) {
+    if (!getX().isPresent()
+        || !getY().isPresent()
+        || !other.getX().isPresent()
+        || !other.getY().isPresent()) {
+
       return Optional.empty();
     }
     double dx = other.getX().get() - getX().get();

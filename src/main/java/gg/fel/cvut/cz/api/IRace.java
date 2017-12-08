@@ -58,4 +58,5 @@ public interface IRace extends InGameInterface, Serializable {
 
   Optional<Stream<IWeaponType>> getAllWeaponTypesOfThisRace();
 
+  // todo: static list of stuff into RaceTypeEnum
 }

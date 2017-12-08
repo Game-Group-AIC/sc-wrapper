@@ -71,14 +71,18 @@ public interface IPlayer extends InGameInterface, Serializable {
   }
   //TODO needs to be filtered for replays
 
-  default Stream<IUnit> getAllVisibleUnits() {
-    Stream<IUnit> playerOrAlliedUnits = getPlayerOrAlliedUnits().orElse(Stream.empty());
-    Stream<IUnit> visibleEnemyUnits = getEnemyUnits().orElse(Stream.empty());
+  default Optional<Stream<IUnit>> getAllVisibleUnits() {
+    Optional<Stream<IUnit>> playerOrAlliedUnits = getPlayerOrAlliedUnits();
+    Optional<Stream<IUnit>> visibleEnemyUnits = getEnemyUnits();
 
-    return Stream.concat(
-        playerOrAlliedUnits,
-        visibleEnemyUnits
-    );
+    if(!playerOrAlliedUnits.isPresent() && !visibleEnemyUnits.isPresent()) {
+      return Optional.empty();
+    }
+
+    return Optional.of(Stream.concat(
+        playerOrAlliedUnits.orElseGet(Stream::empty),
+        visibleEnemyUnits.orElseGet(Stream::empty)
+    ));
   }
 
   default Stream<IPlayer> getPlayerOrAllies() {

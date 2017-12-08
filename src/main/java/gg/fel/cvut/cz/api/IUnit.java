@@ -1317,4 +1317,12 @@ public interface IUnit extends InGameInterface, Serializable {
 
   Optional<Stream<IUnit>> getEnemyUnitsInRadiusOfSight();
 
+  default Optional<Integer> getSightRange() {
+    return isBlind().flatMap(blindness -> blindness
+        // if blind unit can see only one tile ahead
+        ? Optional.of(ITilePosition.SIZE_IN_PIXELS)
+        // if not blind, return usual sight range
+        : getType().flatMap(IUnitType::sightRange)
+    );
+  }
 }

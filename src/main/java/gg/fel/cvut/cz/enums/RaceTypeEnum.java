@@ -20,4 +20,6 @@ public enum RaceTypeEnum implements IGameTypes<Race, RaceTypeEnum> {
   public RaceTypeEnum[] getValues() {
     return RaceTypeEnum.values();
   }
+
+  // todo: static set of tech possibilities here from IRace
 }
