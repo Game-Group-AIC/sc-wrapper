@@ -155,8 +155,40 @@ public interface ITilePosition extends IAbstractPoint, InGameInterface, INodeWit
   }
 
   default boolean isNodeNeighbourAcessible(INodeWithHeuristic another, IUnitType byUnitType) {
+    // check identity early
+    if (this == another) {
+      return true;
+    }
+
     // check they are really neighbours!
-    // todo:
+    ITilePosition neighbour = (ITilePosition) another;
+    int x_diff = neighbour.getX().get() - this.getX().get();
+    int y_diff = neighbour.getY().get() - this.getY().get();
+
+    if(!(Math.abs(x_diff) <= 1 && Math.abs(y_diff) <= 1)) {
+      throw new RuntimeException("Checking accessibility of node that is not a neighbour!");
+      // or maybe return false?
+    }
+
+    // always accessible for flying units
+    if(byUnitType.isFlyer().get()) {
+      return true;
+    }
+
+    // check that it is at the same height
+    // todo exception on ramps
+    // todo: use walk tiles
+    int height_diff = getGroundHeight().get() - neighbour.getGroundHeight().get();
+    if(height_diff != 0) {
+      return true;
+    }
+
+    // if there are no units on tile, it's accessible
+    // todo: this is too naive
+    if(!getUnitsOnTile().get().findFirst().isPresent()) {
+      return true;
+    }
+
     return false;
   }
 }
