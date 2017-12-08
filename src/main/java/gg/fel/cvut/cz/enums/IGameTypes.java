@@ -14,13 +14,21 @@ import bwapi.UnitType;
 import bwapi.UpgradeType;
 import bwapi.WeaponType;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Common interface for all types in game with lists of those types
  */
 public interface IGameTypes<T, V extends IGameTypes<T, V>> extends Serializable {
+
+  // IMPORTANT:
+  // order of items in ImmutableLists is important!
+  // that's why it is list, not a set, right Honza?
 
   List<Order> ORDERS = ImmutableList
       .of(Order.Die, Order.Stop, Order.Guard, Order.PlayerGuard, Order.TurretGuard,
@@ -282,6 +290,226 @@ public interface IGameTypes<T, V extends IGameTypes<T, V>> extends Serializable 
           TechType.Disruption_Web, TechType.Mind_Control, TechType.Dark_Archon_Meld,
           TechType.Feedback, TechType.Maelstrom, TechType.None, TechType.Unknown);
 
+  Map<RaceTypeEnum, UnitTypeEnum> RACE_WORKERS = new ImmutableMap
+      .Builder<RaceTypeEnum, UnitTypeEnum>()
+      .put(RaceTypeEnum.Zerg, UnitTypeEnum.ZergDrone)
+      .put(RaceTypeEnum.Terran, UnitTypeEnum.TerranSCV)
+      .put(RaceTypeEnum.Protoss, UnitTypeEnum.ProtossProbe)
+      .build();
+
+  Map<RaceTypeEnum, UnitTypeEnum> RACE_RESOURCE_CENTER = new ImmutableMap
+      .Builder<RaceTypeEnum, UnitTypeEnum>()
+      .put(RaceTypeEnum.Zerg, UnitTypeEnum.ZergHatchery)
+      .put(RaceTypeEnum.Terran, UnitTypeEnum.TerranCommandCenter)
+      .put(RaceTypeEnum.Protoss, UnitTypeEnum.ProtossNexus)
+      .build();
+
+  Map<RaceTypeEnum, UnitTypeEnum> RACE_REFINERY = new ImmutableMap
+      .Builder<RaceTypeEnum, UnitTypeEnum>()
+      .put(RaceTypeEnum.Zerg, UnitTypeEnum.ZergExtractor)
+      .put(RaceTypeEnum.Terran, UnitTypeEnum.TerranRefinery)
+      .put(RaceTypeEnum.Protoss, UnitTypeEnum.ProtossAssimilator)
+      .build();
+
+  Map<RaceTypeEnum, UnitTypeEnum> RACE_TRANSPORTS = new ImmutableMap
+      .Builder<RaceTypeEnum, UnitTypeEnum>()
+      .put(RaceTypeEnum.Zerg, UnitTypeEnum.ZergExtractor)
+      .put(RaceTypeEnum.Terran, UnitTypeEnum.TerranRefinery)
+      .put(RaceTypeEnum.Protoss, UnitTypeEnum.ProtossAssimilator)
+      .build();
+
+  Map<RaceTypeEnum,
+      UnitTypeEnum> RACE_SUPPLY_PROVIDER = new ImmutableMap
+      .Builder<RaceTypeEnum, UnitTypeEnum>()
+      .put(RaceTypeEnum.Zerg, UnitTypeEnum.ZergOverlord)
+      .put(RaceTypeEnum.Terran, UnitTypeEnum.TerranSupplyDepot)
+      .put(RaceTypeEnum.Protoss, UnitTypeEnum.ProtossPylon)
+      .build();
+
+  Map<RaceTypeEnum, Set<UnitTypeEnum>> RACE_UNIT_TYPES = new ImmutableMap
+      .Builder<RaceTypeEnum, Set<UnitTypeEnum>>()
+      .put(RaceTypeEnum.Zerg, ImmutableSet.of(
+          UnitTypeEnum.ZergBroodling, UnitTypeEnum.ZergCocoon, UnitTypeEnum.ZergCreepColony,
+          UnitTypeEnum.ZergDefiler, UnitTypeEnum.ZergDefilerMound, UnitTypeEnum.ZergDevourer,
+          UnitTypeEnum.ZergDrone, UnitTypeEnum.ZergEgg, UnitTypeEnum.ZergEvolutionChamber,
+          UnitTypeEnum.ZergExtractor, UnitTypeEnum.ZergGreaterSpire, UnitTypeEnum.ZergGuardian,
+          UnitTypeEnum.ZergHatchery, UnitTypeEnum.ZergHive, UnitTypeEnum.ZergHydralisk,
+          UnitTypeEnum.ZergHydraliskDen, UnitTypeEnum.ZergInfestedCommandCenter,
+          UnitTypeEnum.ZergInfestedTerran, UnitTypeEnum.ZergLair, UnitTypeEnum.ZergLarva,
+          UnitTypeEnum.ZergLurker, UnitTypeEnum.ZergLurkerEgg, UnitTypeEnum.ZergMutalisk,
+          UnitTypeEnum.ZergNydusCanal, UnitTypeEnum.ZergOverlord, UnitTypeEnum.ZergQueen,
+          UnitTypeEnum.ZergQueensNest, UnitTypeEnum.ZergScourge, UnitTypeEnum.ZergSpawningPool,
+          UnitTypeEnum.ZergSpire, UnitTypeEnum.ZergSporeColony, UnitTypeEnum.ZergSunkenColony,
+          UnitTypeEnum.ZergUltralisk, UnitTypeEnum.ZergUltraliskCavern, UnitTypeEnum.ZergZergling
+      ))
+      .put(RaceTypeEnum.Terran, ImmutableSet.of(
+          UnitTypeEnum.TerranAcademy, UnitTypeEnum.TerranArmory, UnitTypeEnum.TerranBarracks,
+          UnitTypeEnum.TerranBattlecruiser, UnitTypeEnum.TerranBunker, UnitTypeEnum.TerranCivilian,
+          UnitTypeEnum.TerranCommandCenter, UnitTypeEnum.TerranComsatStation,
+          UnitTypeEnum.TerranControlTower, UnitTypeEnum.TerranCovertOps,
+          UnitTypeEnum.TerranDropship, UnitTypeEnum.TerranEngineeringBay,
+          UnitTypeEnum.TerranFactory, UnitTypeEnum.TerranFirebat, UnitTypeEnum.TerranGhost,
+          UnitTypeEnum.TerranGoliath, UnitTypeEnum.TerranMachineShop, UnitTypeEnum.TerranMarine,
+          UnitTypeEnum.TerranMedic, UnitTypeEnum.TerranMissileTurret,
+          UnitTypeEnum.TerranNuclearMissile, UnitTypeEnum.TerranNuclearSilo,
+          UnitTypeEnum.TerranPhysicsLab, UnitTypeEnum.TerranRefinery,
+          UnitTypeEnum.TerranScienceFacility, UnitTypeEnum.TerranScienceVessel,
+          UnitTypeEnum.TerranSCV, UnitTypeEnum.TerranSiegeTankSiegeMode,
+          UnitTypeEnum.TerranSiegeTankTankMode, UnitTypeEnum.TerranStarport,
+          UnitTypeEnum.TerranSupplyDepot, UnitTypeEnum.TerranValkyrie, UnitTypeEnum.TerranVulture,
+          UnitTypeEnum.TerranVultureSpiderMine, UnitTypeEnum.TerranWraith
+      ))
+      .put(RaceTypeEnum.Protoss, ImmutableSet.of(
+          UnitTypeEnum.ProtossArbiter, UnitTypeEnum.ProtossArbiterTribunal,
+          UnitTypeEnum.ProtossArchon, UnitTypeEnum.ProtossAssimilator, UnitTypeEnum.ProtossCarrier,
+          UnitTypeEnum.ProtossCitadelofAdun, UnitTypeEnum.ProtossCorsair,
+          UnitTypeEnum.ProtossCyberneticsCore, UnitTypeEnum.ProtossDarkArchon,
+          UnitTypeEnum.ProtossDarkTemplar, UnitTypeEnum.ProtossDragoon,
+          UnitTypeEnum.ProtossFleetBeacon, UnitTypeEnum.ProtossForge, UnitTypeEnum.ProtossGateway,
+          UnitTypeEnum.ProtossHighTemplar, UnitTypeEnum.ProtossInterceptor,
+          UnitTypeEnum.ProtossNexus, UnitTypeEnum.ProtossObservatory, UnitTypeEnum.ProtossObserver,
+          UnitTypeEnum.ProtossPhotonCannon, UnitTypeEnum.ProtossProbe, UnitTypeEnum.ProtossPylon,
+          UnitTypeEnum.ProtossReaver, UnitTypeEnum.ProtossRoboticsFacility,
+          UnitTypeEnum.ProtossRoboticsSupportBay, UnitTypeEnum.ProtossScarab,
+          UnitTypeEnum.ProtossScout, UnitTypeEnum.ProtossShieldBattery, UnitTypeEnum.ProtossShuttle,
+          UnitTypeEnum.ProtossStargate, UnitTypeEnum.ProtossTemplarArchives,
+          UnitTypeEnum.ProtossZealot
+      ))
+      .build();
+
+  Map<RaceTypeEnum, Set<TechTypeEnum>> RACE_TECH_TYPES = new ImmutableMap
+      .Builder<RaceTypeEnum, Set<TechTypeEnum>>()
+      .put(RaceTypeEnum.Zerg, ImmutableSet.of(
+          TechTypeEnum.Burrowing, TechTypeEnum.Infestation, TechTypeEnum.SpawnBroodlings,
+          TechTypeEnum.DarkSwarm, TechTypeEnum.Plague, TechTypeEnum.Consume, TechTypeEnum.Ensnare,
+          TechTypeEnum.Parasite, TechTypeEnum.LurkerAspect
+      ))
+      .put(RaceTypeEnum.Terran, ImmutableSet.of(
+          TechTypeEnum.StimPacks, TechTypeEnum.Lockdown, TechTypeEnum.EMPShockwave,
+          TechTypeEnum.SpiderMines, TechTypeEnum.ScannerSweep, TechTypeEnum.TankSiegeMode,
+          TechTypeEnum.DefensiveMatrix, TechTypeEnum.Irradiate, TechTypeEnum.YamatoGun,
+          TechTypeEnum.CloakingField, TechTypeEnum.PersonnelCloaking, TechTypeEnum.Restoration,
+          TechTypeEnum.OpticalFlare, TechTypeEnum.Healing, TechTypeEnum.NuclearStrike
+      ))
+      .put(RaceTypeEnum.Protoss, ImmutableSet.of(
+          TechTypeEnum.PsionicStorm, TechTypeEnum.Hallucination, TechTypeEnum.Recall,
+          TechTypeEnum.StasisField, TechTypeEnum.ArchonWarp, TechTypeEnum.DisruptionWeb,
+          TechTypeEnum.MindControl, TechTypeEnum.DarkArchonMeld, TechTypeEnum.Feedback,
+          TechTypeEnum.Maelstrom
+      ))
+      .build();
+
+  Map<RaceTypeEnum, Set<UpgradeTypeEnum>> RACE_UPGRADE_TYPES = new ImmutableMap
+      .Builder<RaceTypeEnum, Set<UpgradeTypeEnum>>()
+      .put(RaceTypeEnum.Terran, ImmutableSet.of(
+          UpgradeTypeEnum.TerranInfantryArmor, UpgradeTypeEnum.TerranVehiclePlating,
+          UpgradeTypeEnum.TerranShipPlating, UpgradeTypeEnum.TerranInfantryWeapons,
+          UpgradeTypeEnum.TerranVehicleWeapons, UpgradeTypeEnum.TerranShipWeapons,
+          UpgradeTypeEnum.U238Shells, UpgradeTypeEnum.IonThrusters, UpgradeTypeEnum.TitanReactor,
+          UpgradeTypeEnum.OcularImplants, UpgradeTypeEnum.MoebiusReactor,
+          UpgradeTypeEnum.ApolloReactor, UpgradeTypeEnum.ColossusReactor,
+          UpgradeTypeEnum.CaduceusReactor, UpgradeTypeEnum.CharonBoosters
+      ))
+      .put(RaceTypeEnum.Protoss, ImmutableSet.of(
+          UpgradeTypeEnum.ProtossGroundArmor, UpgradeTypeEnum.ProtossAirArmor,
+          UpgradeTypeEnum.ProtossGroundWeapons, UpgradeTypeEnum.ProtossAirWeapons,
+          UpgradeTypeEnum.ProtossPlasmaShields, UpgradeTypeEnum.SingularityCharge,
+          UpgradeTypeEnum.LegEnhancements, UpgradeTypeEnum.ScarabDamage,
+          UpgradeTypeEnum.ReaverCapacity, UpgradeTypeEnum.GraviticDrive,
+          UpgradeTypeEnum.SensorArray, UpgradeTypeEnum.GraviticBoosters,
+          UpgradeTypeEnum.KhaydarinAmulet, UpgradeTypeEnum.ApialSensors,
+          UpgradeTypeEnum.GraviticThrusters, UpgradeTypeEnum.CarrierCapacity,
+          UpgradeTypeEnum.KhaydarinCore, UpgradeTypeEnum.ArgusJewel, UpgradeTypeEnum.ArgusTalisman
+      ))
+      .put(RaceTypeEnum.Zerg, ImmutableSet.of(
+          UpgradeTypeEnum.ZergCarapace, UpgradeTypeEnum.ZergFlyerCarapace,
+          UpgradeTypeEnum.ZergMeleeAttacks, UpgradeTypeEnum.ZergMissileAttacks,
+          UpgradeTypeEnum.ZergFlyerAttacks, UpgradeTypeEnum.VentralSacs, UpgradeTypeEnum.Antennae,
+          UpgradeTypeEnum.PneumatizedCarapace, UpgradeTypeEnum.MetabolicBoost,
+          UpgradeTypeEnum.AdrenalGlands, UpgradeTypeEnum.MuscularAugments,
+          UpgradeTypeEnum.GroovedSpines, UpgradeTypeEnum.GameteMeiosis,
+          UpgradeTypeEnum.MetasynapticNode, UpgradeTypeEnum.ChitinousPlating,
+          UpgradeTypeEnum.AnabolicSynthesis
+      ))
+      .build();
+
+  Map<RaceTypeEnum, Set<WeaponTypeEnum>> RACE_WEAPON_TYPES = new ImmutableMap
+      .Builder<RaceTypeEnum, Set<WeaponTypeEnum>>()
+      .put(RaceTypeEnum.Zerg, ImmutableSet.of(
+          WeaponTypeEnum.AcidSpore, WeaponTypeEnum.AcidSporeKukulza,
+          WeaponTypeEnum.C10CanisterRifleInfestedDuran, WeaponTypeEnum.Claws,
+          WeaponTypeEnum.ClawsDevouringOne, WeaponTypeEnum.ClawsInfestedKerrigan,
+          WeaponTypeEnum.Consume, WeaponTypeEnum.CorrosiveAcid, WeaponTypeEnum.DarkSwarm,
+          WeaponTypeEnum.Ensnare, WeaponTypeEnum.GlaveWurm, WeaponTypeEnum.GlaveWurmKukulza,
+          WeaponTypeEnum.KaiserBlades, WeaponTypeEnum.KaiserBladesTorrasque,
+          WeaponTypeEnum.NeedleSpines, WeaponTypeEnum.NeedleSpinesHunterKiller,
+          WeaponTypeEnum.Parasite, WeaponTypeEnum.Plague, WeaponTypeEnum.SeekerSpores,
+          WeaponTypeEnum.SpawnBroodlings, WeaponTypeEnum.Spines, WeaponTypeEnum.SubterraneanSpines,
+          WeaponTypeEnum.SubterraneanTentacle, WeaponTypeEnum.SuicideInfestedTerran,
+          WeaponTypeEnum.SuicideScourge, WeaponTypeEnum.ToxicSpores
+      ))
+      .put(RaceTypeEnum.Terran, ImmutableSet.of(
+          WeaponTypeEnum.ArcliteCannon, WeaponTypeEnum.ArcliteCannonEdmundDuke,
+          WeaponTypeEnum.ArcliteShockCannon, WeaponTypeEnum.ArcliteShockCannonEdmundDuke,
+          WeaponTypeEnum.ATALaserBattery, WeaponTypeEnum.ATALaserBatteryHero,
+          WeaponTypeEnum.ATALaserBatteryHyperion, WeaponTypeEnum.ATSLaserBattery,
+          WeaponTypeEnum.ATSLaserBatteryHero, WeaponTypeEnum.ATSLaserBatteryHyperion,
+          WeaponTypeEnum.BurstLasers, WeaponTypeEnum.BurstLasersTomKazansky,
+          WeaponTypeEnum.C10CanisterRifle, WeaponTypeEnum.C10CanisterRifleAlexeiStukov,
+          WeaponTypeEnum.C10CanisterRifleSamirDuran, WeaponTypeEnum.C10CanisterRifleSarahKerrigan,
+          WeaponTypeEnum.EMPShockwave, WeaponTypeEnum.FlameThrower,
+          WeaponTypeEnum.FlameThrowerGuiMontag, WeaponTypeEnum.FragmentationGrenade,
+          WeaponTypeEnum.FragmentationGrenadeJimRaynor, WeaponTypeEnum.FusionCutter,
+          WeaponTypeEnum.GaussRifle, WeaponTypeEnum.GaussRifleJimRaynor,
+          WeaponTypeEnum.GeminiMissiles, WeaponTypeEnum.GeminiMissilesTomKazansky,
+          WeaponTypeEnum.HaloRockets, WeaponTypeEnum.HellfireMissilePack,
+          WeaponTypeEnum.HellfireMissilePackAlanSchezar, WeaponTypeEnum.Irradiate,
+          WeaponTypeEnum.Lockdown, WeaponTypeEnum.LongboltMissile, WeaponTypeEnum.NuclearStrike,
+          WeaponTypeEnum.OpticalFlare, WeaponTypeEnum.Restoration, WeaponTypeEnum.SpiderMines,
+          WeaponTypeEnum.TwinAutocannons, WeaponTypeEnum.TwinAutocannonsAlanSchezar,
+          WeaponTypeEnum.YamatoGun
+      ))
+      .put(RaceTypeEnum.Protoss, ImmutableSet.of(
+          WeaponTypeEnum.AntiMatterMissiles, WeaponTypeEnum.AntiMatterMissilesArtanis,
+          WeaponTypeEnum.AntiMatterMissilesMojo, WeaponTypeEnum.DisruptionWeb,
+          WeaponTypeEnum.DualPhotonBlasters, WeaponTypeEnum.DualPhotonBlastersArtanis,
+          WeaponTypeEnum.DualPhotonBlastersMojo, WeaponTypeEnum.Feedback, WeaponTypeEnum.Maelstrom,
+          WeaponTypeEnum.MindControl, WeaponTypeEnum.NeutronFlare, WeaponTypeEnum.ParticleBeam,
+          WeaponTypeEnum.PhaseDisruptor, WeaponTypeEnum.PhaseDisruptorCannon,
+          WeaponTypeEnum.PhaseDisruptorCannonDanimoth, WeaponTypeEnum.PhaseDisruptorFenix,
+          WeaponTypeEnum.PsiAssault, WeaponTypeEnum.PsiBlades, WeaponTypeEnum.PsiBladesFenix,
+          WeaponTypeEnum.PsionicShockwave, WeaponTypeEnum.PsionicShockwaveTZArchon,
+          WeaponTypeEnum.PsionicStorm, WeaponTypeEnum.PulseCannon, WeaponTypeEnum.Scarab,
+          WeaponTypeEnum.STAPhotonCannon, WeaponTypeEnum.StasisField,
+          WeaponTypeEnum.STSPhotonCannon, WeaponTypeEnum.WarpBlades, WeaponTypeEnum.WarpBladesHero,
+          WeaponTypeEnum.WarpBladesZeratul
+      ))
+      .put(RaceTypeEnum.None, ImmutableSet.of(
+          WeaponTypeEnum.FlameThrowerWallTrap, WeaponTypeEnum.HellfireMissilePackFloorTrap,
+          WeaponTypeEnum.HellfireMissilePackWallTrap, WeaponTypeEnum.IndependantLaserBattery,
+          WeaponTypeEnum.None, WeaponTypeEnum.TwinAutocannonsFloorTrap
+      ))
+      .put(RaceTypeEnum.Unknown, ImmutableSet.of(
+          WeaponTypeEnum.Unknown
+      ))
+      .build();
+
+
+  /**
+   * Hack - for types there are static readonly - to use some meaningful ID for wrappers of those
+   * readonly,
+   * their order in list is used
+   */
+  static <V> int getIndexInList(List<V> listWithInstances,
+      V instance) {
+    for (int i = 0; i < listWithInstances.size(); i++) {
+      if (listWithInstances.get(i) == instance) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   int ordinal();
 
   default T getBWType() {
@@ -296,20 +524,8 @@ public interface IGameTypes<T, V extends IGameTypes<T, V>> extends Serializable 
    * Get corresponding type to bwapi type
    */
   default V getOurType(T scType) {
-    return getValues()[getIndexInList(getTypes(), scType)];
-  }
-
-  /**
-   * Hack - for types there are static readonly - to use some meaningful ID for wrappers of those
-   * readonly, their order in list is used
-   */
-  static <V> int getIndexInList(List<V> listWithInstances, V instance) {
-    for (int i = 0; i < listWithInstances.size(); i++) {
-      if (listWithInstances.get(i) == instance) {
-        return i;
-      }
-    }
-    return -1;
+    return getValues()[getIndexInList(getTypes(),
+        scType)];
   }
 
 }
