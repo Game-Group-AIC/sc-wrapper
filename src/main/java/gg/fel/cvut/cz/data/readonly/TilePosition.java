@@ -3,6 +3,8 @@ package gg.fel.cvut.cz.data.readonly;
 import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.ITilePosition;
+import gg.fel.cvut.cz.api.IUnit;
+import gg.fel.cvut.cz.api.IUnitType;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainerForPosition;
 import gg.fel.cvut.cz.data.properties.Property;
@@ -11,6 +13,7 @@ import java.io.Serializable;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+//TODO
 public class TilePosition extends AContainerForPosition implements ITilePosition, Serializable {
 
   protected final StaticPropertyRegister<Integer, Property<Integer>> groundHeight = new StaticPropertyRegister<Integer, Property<Integer>>(
@@ -25,7 +28,22 @@ public class TilePosition extends AContainerForPosition implements ITilePosition
   }
 
   @Override
+  public Optional<Boolean> hasCreep() {
+    return Optional.empty();
+  }
+
+  @Override
+  public Optional<Boolean> canBuildHere(IUnitType type) {
+    return Optional.empty();
+  }
+
+  @Override
   public Optional<Integer> getGroundHeight() {
+    return Optional.empty();
+  }
+
+  @Override
+  public Optional<Stream<IUnit>> getUnitsOnTile() {
     return Optional.empty();
   }
 
@@ -34,9 +52,15 @@ public class TilePosition extends AContainerForPosition implements ITilePosition
     return Optional.empty();
   }
 
+  //TODO cyclic reference when serializing
   @Override
   public Optional<Stream<ITilePosition>> getNeighbours() {
     return getPropertyOnTimeLineStrategyOnSet(neighbours)
         .map(set -> set.stream().map(o -> o));
+  }
+
+  @Override
+  public Optional<Stream<WalkPosition>> getWalkPositions() {
+    return Optional.empty();
   }
 }

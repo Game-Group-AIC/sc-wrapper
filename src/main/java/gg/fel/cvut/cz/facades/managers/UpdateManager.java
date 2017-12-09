@@ -17,6 +17,7 @@ import gg.fel.cvut.cz.data.readonly.TilePosition;
 import gg.fel.cvut.cz.data.readonly.Unit;
 import gg.fel.cvut.cz.data.readonly.UnitType;
 import gg.fel.cvut.cz.data.readonly.UpgradeType;
+import gg.fel.cvut.cz.data.readonly.WalkPosition;
 import gg.fel.cvut.cz.data.readonly.WeaponType;
 import gg.fel.cvut.cz.data.updatable.UpdatableBaseLocation;
 import gg.fel.cvut.cz.data.updatable.UpdatableBullet;
@@ -31,6 +32,7 @@ import gg.fel.cvut.cz.data.updatable.UpdatableTilePosition;
 import gg.fel.cvut.cz.data.updatable.UpdatableUnit;
 import gg.fel.cvut.cz.data.updatable.UpdatableUnitType;
 import gg.fel.cvut.cz.data.updatable.UpdatableUpgradeType;
+import gg.fel.cvut.cz.data.updatable.UpdatableWalkPosition;
 import gg.fel.cvut.cz.data.updatable.UpdatableWeaponType;
 import gg.fel.cvut.cz.facades.IUpdateManager;
 import gg.fel.cvut.cz.facades.data.UpdateTreeExecutor;
@@ -48,6 +50,7 @@ import gg.fel.cvut.cz.wrappers.WTilePosition;
 import gg.fel.cvut.cz.wrappers.WUnit;
 import gg.fel.cvut.cz.wrappers.WUnitType;
 import gg.fel.cvut.cz.wrappers.WUpgradeType;
+import gg.fel.cvut.cz.wrappers.WWalkPosition;
 import gg.fel.cvut.cz.wrappers.WWeaponType;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -93,6 +96,8 @@ public class UpdateManager implements IUpdateManager, IBWCounter {
       instance -> new UpdatableUpgradeType(bwCounter, instance));
   private final ContainerRegister<WWeaponType, WeaponType, UpdatableWeaponType> weaponTypeUpdater = new ContainerRegister<WWeaponType, WeaponType, UpdatableWeaponType>(
       instance -> new UpdatableWeaponType(bwCounter, instance));
+  private final ContainerRegister<WWalkPosition, WalkPosition, UpdatableWalkPosition> walkPositionUpdater = new ContainerRegister<WWalkPosition, WalkPosition, UpdatableWalkPosition>(
+      instance -> new UpdatableWalkPosition(bwCounter, instance));
 
   @Override
   public Stream<Unit> getUnits() {
@@ -161,11 +166,12 @@ public class UpdateManager implements IUpdateManager, IBWCounter {
   public Stream<? extends AContainer> getAllContainers() {
     return Stream.of(baseLocationUpdater.getAllContainers(), bulletUpdater.getAllContainers(),
         gameUpdater.getAllContainers(), playerUpdater.getAllContainers(),
-        positionUpdater.getAllContainers(), raceUpdater.getAllContainers(),
-        regionUpdater.getAllContainers(), techTypeUpdater.getAllContainers(),
-        tilePositionUpdater.getAllContainers(), unitUpdater.getAllContainers(),
-        unitTypeUpdater.getAllContainers(), upgradeTypeUpdater.getAllContainers(),
-        weaponTypeUpdater.getAllContainers()).flatMap(stream -> stream);
+        walkPositionUpdater.getAllContainers(), positionUpdater.getAllContainers(),
+        raceUpdater.getAllContainers(), regionUpdater.getAllContainers(),
+        techTypeUpdater.getAllContainers(), tilePositionUpdater.getAllContainers(),
+        unitUpdater.getAllContainers(), unitTypeUpdater.getAllContainers(),
+        upgradeTypeUpdater.getAllContainers(), weaponTypeUpdater.getAllContainers())
+        .flatMap(stream -> stream);
   }
 
   @Override
@@ -250,6 +256,13 @@ public class UpdateManager implements IUpdateManager, IBWCounter {
   }
 
   @Override
+  public boolean update(UpdatableWalkPosition walkPosition, UpdateStrategy updateStrategy) {
+    UpdateTreeExecutor
+        .executeUpdate(walkPosition, updateStrategy, bwCounter.getCurrentFrame(), this);
+    return true;
+  }
+
+  @Override
   public Optional<Bullet> getDataContainer(WBullet bullet) {
     return bulletUpdater.getWrappedInstance(bullet).map(o -> o);
   }
@@ -312,6 +325,11 @@ public class UpdateManager implements IUpdateManager, IBWCounter {
   @Override
   public Optional<WeaponType> getDataContainer(WWeaponType weaponType) {
     return weaponTypeUpdater.getWrappedInstance(weaponType).map(o -> o);
+  }
+
+  @Override
+  public Optional<WalkPosition> getDataContainer(WWalkPosition walkPosition) {
+    return walkPositionUpdater.getWrappedInstance(walkPosition).map(o -> o);
   }
 
   @Override

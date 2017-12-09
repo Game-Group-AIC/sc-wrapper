@@ -10,8 +10,6 @@ import gg.fel.cvut.cz.api.IUpgradeType;
 import gg.fel.cvut.cz.api.UnitCommand;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainerWithID;
-import gg.fel.cvut.cz.data.properties.Property;
-import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.OrderEnum;
 import java.io.Serializable;
 import java.util.Optional;
@@ -19,9 +17,6 @@ import java.util.stream.Stream;
 
 //TODO implement
 public class Unit extends AContainerWithID implements IUnit, Serializable {
-
-  protected final StaticPropertyRegister<Integer, Property<Integer>> unitID = new StaticPropertyRegister<Integer, Property<Integer>>(
-      Property::new);
 
   public Unit(BWReplayCounter bwCounter, int id) {
     super(bwCounter, id);
@@ -620,6 +615,11 @@ public class Unit extends AContainerWithID implements IUnit, Serializable {
   @Override
   public Optional<Boolean> isUpgrading() {
     return null;
+  }
+
+  @Override
+  public Optional<Boolean> isVisible(IPlayer player) {
+    return Optional.empty();
   }
 
   @Override

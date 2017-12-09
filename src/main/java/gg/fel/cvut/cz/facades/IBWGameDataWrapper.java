@@ -12,6 +12,7 @@ import gg.fel.cvut.cz.data.readonly.TilePosition;
 import gg.fel.cvut.cz.data.readonly.Unit;
 import gg.fel.cvut.cz.data.readonly.UnitType;
 import gg.fel.cvut.cz.data.readonly.UpgradeType;
+import gg.fel.cvut.cz.data.readonly.WalkPosition;
 import gg.fel.cvut.cz.data.readonly.WeaponType;
 import gg.fel.cvut.cz.wrappers.WBaseLocation;
 import gg.fel.cvut.cz.wrappers.WBullet;
@@ -25,6 +26,7 @@ import gg.fel.cvut.cz.wrappers.WTilePosition;
 import gg.fel.cvut.cz.wrappers.WUnit;
 import gg.fel.cvut.cz.wrappers.WUnitType;
 import gg.fel.cvut.cz.wrappers.WUpgradeType;
+import gg.fel.cvut.cz.wrappers.WWalkPosition;
 import gg.fel.cvut.cz.wrappers.WWeaponType;
 import java.util.Optional;
 
@@ -58,5 +60,7 @@ public interface IBWGameDataWrapper {
   Optional<WUnitType> getBWInstance(UnitType container);
 
   Optional<WUpgradeType> getBWInstance(UpgradeType container);
+
+  Optional<WWalkPosition> getBWInstance(WalkPosition container);
 
 }

@@ -20,8 +20,9 @@ public class UpdatableTilePosition extends TilePosition implements
 
   private transient final WTilePosition wrapped;
   private static transient final int[][] neighboursDiffs = {{0, 1}, {1, 1}, {1, 0}, {-1, 0},
-      {-1, -1},
-      {0, -1}, {1, -1}, {-1, 1}};
+      {-1, -1}, {0, -1}, {1, -1}, {-1, 1}};
+
+  //TODO walkable position, 4x4. 2x + i, 2y + j
 
   public UpdatableTilePosition(BWReplayCounter bwCounter, WTilePosition wrapped) {
     super(bwCounter, wrapped.getX(), wrapped.getY());

@@ -36,6 +36,7 @@ import gg.fel.cvut.cz.data.readonly.TilePosition;
 import gg.fel.cvut.cz.data.readonly.Unit;
 import gg.fel.cvut.cz.data.readonly.UnitType;
 import gg.fel.cvut.cz.data.readonly.UpgradeType;
+import gg.fel.cvut.cz.data.readonly.WalkPosition;
 import gg.fel.cvut.cz.data.readonly.WeaponType;
 import gg.fel.cvut.cz.data.updatable.UpdatableBaseLocation;
 import gg.fel.cvut.cz.data.updatable.UpdatableBullet;
@@ -49,6 +50,7 @@ import gg.fel.cvut.cz.data.updatable.UpdatableTilePosition;
 import gg.fel.cvut.cz.data.updatable.UpdatableUnit;
 import gg.fel.cvut.cz.data.updatable.UpdatableUnitType;
 import gg.fel.cvut.cz.data.updatable.UpdatableUpgradeType;
+import gg.fel.cvut.cz.data.updatable.UpdatableWalkPosition;
 import gg.fel.cvut.cz.data.updatable.UpdatableWeaponType;
 import gg.fel.cvut.cz.enums.GameTypeEnum;
 import gg.fel.cvut.cz.enums.RaceTypeEnum;
@@ -79,6 +81,7 @@ import gg.fel.cvut.cz.wrappers.WTilePosition;
 import gg.fel.cvut.cz.wrappers.WUnit;
 import gg.fel.cvut.cz.wrappers.WUnitType;
 import gg.fel.cvut.cz.wrappers.WUpgradeType;
+import gg.fel.cvut.cz.wrappers.WWalkPosition;
 import gg.fel.cvut.cz.wrappers.WWeaponType;
 import gg.fel.cvut.cz.wrappers.Wrapper;
 import java.util.Optional;
@@ -172,8 +175,9 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
       .getCommandType("UPGRADE_TYPE_UPDATE");
   private static final CommandType WEAPON_TYPE_UPDATE = CommandType
       .getCommandType("WEAPON_TYPE_UPDATE");
-  private static final CommandType UPDATE_ALL = CommandType
-      .getCommandType("UPDATE_ALL");
+  private static final CommandType UPDATE_ALL = CommandType.getCommandType("UPDATE_ALL");
+  private static final CommandType WALK_POSITION_UPDATE = CommandType
+      .getCommandType("WALK_POSITION_UPDATE");
 
   @Getter
   @Setter
@@ -622,6 +626,19 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   }
 
   @Override
+  public void update(WalkPosition walkPosition, UpdateStrategy updateStrategy,
+      IResponseReceiver<Boolean> responseReceiver) {
+    queueManager.addCommand(new CommandWithResponse<>(WALK_POSITION_UPDATE, responseReceiver,
+        () -> updateManager.update((UpdatableWalkPosition) walkPosition, updateStrategy)));
+  }
+
+  @Override
+  public void update(WalkPosition walkPosition, UpdateStrategy updateStrategy) {
+    queueManager.addCommand(new CommandWithoutResponse(WALK_POSITION_UPDATE,
+        () -> updateManager.update((UpdatableWalkPosition) walkPosition, updateStrategy)));
+  }
+
+  @Override
   public Stream<? extends AContainer> getAllGameInstances() {
     return updateManager.getAllContainers();
   }
@@ -652,6 +669,11 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   }
 
   @Override
+  public Optional<WalkPosition> getDataContainer(WWalkPosition walkPosition) {
+    return updateManager.getDataContainer(walkPosition);
+  }
+
+  @Override
   public Stream<Unit> getUnits() {
     return updateManager.getUnits();
   }
@@ -669,6 +691,11 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   @Override
   public Optional<WBaseLocation> getBWInstance(BaseLocation container) {
     return getBWInstance(container, UpdatableBaseLocation.class);
+  }
+
+  @Override
+  public Optional<WWalkPosition> getBWInstance(WalkPosition container) {
+    return getBWInstance(container, UpdatableWalkPosition.class);
   }
 
   @Override

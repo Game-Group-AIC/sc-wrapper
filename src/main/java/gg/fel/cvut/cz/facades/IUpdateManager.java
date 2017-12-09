@@ -21,6 +21,7 @@ import gg.fel.cvut.cz.data.updatable.UpdatableTilePosition;
 import gg.fel.cvut.cz.data.updatable.UpdatableUnit;
 import gg.fel.cvut.cz.data.updatable.UpdatableUnitType;
 import gg.fel.cvut.cz.data.updatable.UpdatableUpgradeType;
+import gg.fel.cvut.cz.data.updatable.UpdatableWalkPosition;
 import gg.fel.cvut.cz.data.updatable.UpdatableWeaponType;
 import gg.fel.cvut.cz.facades.strategies.UpdateStrategy;
 import java.util.Optional;
@@ -131,5 +132,10 @@ public interface IUpdateManager extends IGameDataWrapper {
    * Update weaponType
    */
   boolean update(UpdatableWeaponType weaponType, UpdateStrategy updateStrategy);
+
+  /**
+   * Update walkPosition
+   */
+  boolean update(UpdatableWalkPosition walkPosition, UpdateStrategy updateStrategy);
 
 }

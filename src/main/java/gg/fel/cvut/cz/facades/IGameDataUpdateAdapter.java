@@ -13,6 +13,7 @@ import gg.fel.cvut.cz.data.readonly.TilePosition;
 import gg.fel.cvut.cz.data.readonly.Unit;
 import gg.fel.cvut.cz.data.readonly.UnitType;
 import gg.fel.cvut.cz.data.readonly.UpgradeType;
+import gg.fel.cvut.cz.data.readonly.WalkPosition;
 import gg.fel.cvut.cz.data.readonly.WeaponType;
 import gg.fel.cvut.cz.facades.managers.ReplayGameFacade;
 import gg.fel.cvut.cz.facades.queue.IResponseReceiver;
@@ -123,5 +124,10 @@ public interface IGameDataUpdateAdapter extends IGameDataAccessAdapter, BWEventL
       IResponseReceiver<Boolean> updateNotificationReceiver);
 
   void update(WeaponType weaponType, UpdateStrategy updateStrategy);
+
+  void update(WalkPosition walkPosition, UpdateStrategy updateStrategy,
+      IResponseReceiver<Boolean> updateNotificationReceiver);
+
+  void update(WalkPosition walkPosition, UpdateStrategy updateStrategy);
 
 }
