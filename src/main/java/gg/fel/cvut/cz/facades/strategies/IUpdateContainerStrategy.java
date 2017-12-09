@@ -12,7 +12,8 @@ public interface IUpdateContainerStrategy<L extends AContainer> {
    * update tree
    */
   default boolean shouldBeUpdated(L container, int deltaUpdate, int depth) {
-    return deltaUpdate != 0 && shouldBeUpdatedByUser(container, deltaUpdate, depth);
+    return deltaUpdate != 0 && shouldBeUpdatedByUser(container,
+        deltaUpdate, depth);
   }
 
   /**

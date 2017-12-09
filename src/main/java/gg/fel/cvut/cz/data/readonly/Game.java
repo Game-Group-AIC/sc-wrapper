@@ -14,9 +14,7 @@ import gg.fel.cvut.cz.data.properties.Property;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.GameTypeEnum;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 //TODO implement
@@ -56,8 +54,13 @@ public class Game extends AContainer implements IGame, Serializable {
   }
 
   @Override
-  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return new HashSet<>();
+  public boolean equals(Object o) {
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return 0;
   }
 
   @Override
@@ -68,7 +71,7 @@ public class Game extends AContainer implements IGame, Serializable {
 
   @Override
   public Optional<GameTypeEnum> getGameType() {
-    return getPropertyOnTimeLineStrategy(gameType).map(o -> o);
+    return getPropertyOnTimeLineStrategy(gameType);
   }
 
   @Override

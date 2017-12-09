@@ -6,13 +6,10 @@ import gg.fel.cvut.cz.api.IUnitType;
 import gg.fel.cvut.cz.api.IWeaponType;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainerForType;
-import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.OrderEnum;
 import gg.fel.cvut.cz.enums.TechTypeEnum;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 //TODO implement
 public class TechType extends AContainerForType<bwapi.TechType, TechTypeEnum> implements ITechType,
@@ -75,10 +72,5 @@ public class TechType extends AContainerForType<bwapi.TechType, TechTypeEnum> im
   @Override
   public Optional<IUnitType> requiredUnit() {
     return null;
-  }
-
-  @Override
-  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return new HashSet<>();
   }
 }

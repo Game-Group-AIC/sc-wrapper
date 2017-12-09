@@ -1,8 +1,8 @@
 package gg.fel.cvut.cz.data;
 
 import com.google.common.collect.ImmutableSet;
+import gg.fel.cvut.cz.api.InGameInterface;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
-import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
@@ -12,11 +12,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Common template class for containers of in-game readonly
  */
-//TODO smart way how to init hash sets for equals - from json
-public abstract class AContainer implements IContainer {
+//TODO from json
+public abstract class AContainer implements InGameInterface, Serializable {
 
   protected BWReplayCounter bwCounter;
   protected transient final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
+
+  //negative one indicates that data have not been updated yet
   protected int updatedInFrame = -1;
 
   protected AContainer(BWReplayCounter bwCounter) {
@@ -39,7 +41,9 @@ public abstract class AContainer implements IContainer {
     }
   }
 
-  @Override
+  /**
+   * Returns refresh time of data contained in container
+   */
   public int updatedInFrame() {
     try {
       lock.readLock().lock();
@@ -81,36 +85,9 @@ public abstract class AContainer implements IContainer {
     }
   }
 
-  private Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCodeWithLock() {
-    try {
-      lock.readLock().lock();
-      return staticPropertiesForEqualsAndHashCode();
-    } finally {
-      lock.readLock().unlock();
-    }
-  }
-
-  /**
-   * Properties used for equals and hash code
-   */
-  protected abstract Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode();
+  @Override
+  public abstract boolean equals(Object o);
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-
-    AContainer that = (AContainer) o;
-    return staticPropertiesForEqualsAndHashCodeWithLock()
-        .equals(that.staticPropertiesForEqualsAndHashCodeWithLock());
-  }
-
-  @Override
-  public int hashCode() {
-    return staticPropertiesForEqualsAndHashCodeWithLock().hashCode();
-  }
+  public abstract int hashCode();
 }

@@ -1,5 +1,6 @@
 package gg.fel.cvut.cz.facades.queue;
 
+import gg.fel.cvut.cz.facades.queue.implementation.CommandType;
 import lombok.Getter;
 
 /**
@@ -10,13 +11,13 @@ public abstract class Command {
   @Getter
   private final CommandType commandType;
 
-  Command(CommandType commandType) {
+  protected Command(CommandType commandType) {
     this.commandType = commandType;
   }
 
   /**
    * Method to be called by queue manager to execute command
    */
-  abstract void execute();
+  public abstract void execute();
 
 }

@@ -1,20 +1,16 @@
 package gg.fel.cvut.cz.data.readonly;
 
-import com.google.common.collect.ImmutableList;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IRegion;
 import gg.fel.cvut.cz.api.ITilePosition;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
-import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.data.AContainerForPosition;
 import gg.fel.cvut.cz.data.properties.Property;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-public class Position extends AContainer implements IPosition, Serializable {
+public class Position extends AContainerForPosition implements IPosition, Serializable {
 
   protected final StaticPropertyRegister<ITilePosition, Property<ITilePosition>> tilePosition = new StaticPropertyRegister<ITilePosition, Property<ITilePosition>>(
       Property::new);
@@ -24,11 +20,9 @@ public class Position extends AContainer implements IPosition, Serializable {
       Property::new);
   protected final StaticPropertyRegister<IRegion, Property<IRegion>> region = new StaticPropertyRegister<IRegion, Property<IRegion>>(
       Property::new);
-  private final List<StaticPropertyRegister<?, ?>> toHash = ImmutableList.of(x, y);
 
-
-  public Position(BWReplayCounter bwCounter) {
-    super(bwCounter);
+  public Position(BWReplayCounter bwCounter, int x, int y) {
+    super(bwCounter, x, y);
   }
 
   @Override
@@ -49,10 +43,5 @@ public class Position extends AContainer implements IPosition, Serializable {
   @Override
   public Optional<IRegion> getRegion() {
     return getPropertyOnTimeLineStrategy(region);
-  }
-
-  @Override
-  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return new HashSet<>(toHash);
   }
 }

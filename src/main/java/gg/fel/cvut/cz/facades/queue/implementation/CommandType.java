@@ -1,4 +1,4 @@
-package gg.fel.cvut.cz.facades.queue;
+package gg.fel.cvut.cz.facades.queue.implementation;
 
 import java.util.HashMap;
 import java.util.Map;

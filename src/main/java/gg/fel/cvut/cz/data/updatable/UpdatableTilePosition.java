@@ -6,12 +6,10 @@ import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
 import gg.fel.cvut.cz.data.readonly.Position;
 import gg.fel.cvut.cz.data.readonly.TilePosition;
-import gg.fel.cvut.cz.facades.IUpdateManager;
 import gg.fel.cvut.cz.facades.managers.UpdateManager;
 import gg.fel.cvut.cz.facades.strategies.UpdateStrategy;
 import gg.fel.cvut.cz.wrappers.WPosition;
 import gg.fel.cvut.cz.wrappers.WTilePosition;
-import gg.fel.cvut.cz.wrappers.WUnit;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,15 +19,13 @@ public class UpdatableTilePosition extends TilePosition implements
     IUpdatableContainer<WTilePosition, TilePosition> {
 
   private transient final WTilePosition wrapped;
-  private static transient final int[][] neighboursDiffs = {{0, 1}, {1, 1}, {1, 0}, {-1, 0}, {-1, -1},
+  private static transient final int[][] neighboursDiffs = {{0, 1}, {1, 1}, {1, 0}, {-1, 0},
+      {-1, -1},
       {0, -1}, {1, -1}, {-1, 1}};
 
   public UpdatableTilePosition(BWReplayCounter bwCounter, WTilePosition wrapped) {
-    super(bwCounter);
+    super(bwCounter, wrapped.getX(), wrapped.getY());
     this.wrapped = wrapped;
-    x.addProperty(wrapped.getX(), 0);
-    y.addProperty(wrapped.getY(), 0);
-    toHash = ImmutableSet.of(x, y);
   }
 
   @Override
@@ -38,28 +34,16 @@ public class UpdatableTilePosition extends TilePosition implements
   }
 
   @Override
-  public Stream<? extends AContainer> update(UpdateManager internalUpdaterFacade) {
+  public void update(UpdateManager internalUpdaterFacade, int currentFrame) {
     try {
       lock.writeLock().lock();
 
-      int currentFrame = bwCounter.getCurrentFrame();
       //updates
-      if (groundHeight.propertyHasNotBeenAdded() && internalUpdaterFacade.getWrappedGame()
+      if (groundHeight.propertyHasNotBeenAdded() && internalUpdaterFacade.getGame()
           .isPresent()) {
-        groundHeight.addProperty(internalUpdaterFacade.getWrappedGame().get().getScInstance()
-            .getGroundHeight(wrapped.getScInstance()), 0);
-      }
-      if (internalUpdaterFacade.getWrappedGame()
-          .isPresent()) {
-        unitsOnTile.addProperty(
-            ImmutableSet.copyOf(internalUpdaterFacade.getWrappedGame().get().getScInstance()
-                .getUnitsOnTile(wrapped.getScInstance())
-                .stream()
-                .map(WUnit::getOrCreateWrapper)
-                .map(internalUpdaterFacade::getDataContainer)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet())), currentFrame);
+        groundHeight.addProperty(
+            internalUpdaterFacade.getGame().get().getWrappedSCInstance().getScInstance()
+                .getGroundHeight(wrapped.getScInstance()), 0);
       }
       if (position.propertyHasNotBeenAdded()) {
         Optional<Position> position = internalUpdaterFacade
@@ -76,20 +60,20 @@ public class UpdatableTilePosition extends TilePosition implements
                 .map(internalUpdaterFacade::getDataContainer)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
+                .filter(tilePosition -> !tilePosition.equals(this))
                 .collect(Collectors.toSet())), 0);
       }
+
       //updated in frame
       updatedInFrame = currentFrame;
-
-      //collect containers
-      return Stream.of(unitsOnTile.getValueInFrame(currentFrame),
-          neighbours.getValueInFrame(currentFrame),
-          position.getValueInFrame(currentFrame).map(ImmutableSet::of)).filter(Optional::isPresent)
-          .map(Optional::get)
-          .flatMap(Collection::stream);
     } finally {
       lock.writeLock().unlock();
     }
+  }
+
+  @Override
+  public void update(UpdateManager updateManager, UpdateStrategy updateStrategy) {
+    updateManager.update(this, updateStrategy);
   }
 
   @Override
@@ -98,14 +82,15 @@ public class UpdatableTilePosition extends TilePosition implements
   }
 
   @Override
-  public boolean shouldBeUpdated(UpdateStrategy updateStrategy, IUpdateManager updaterFacade,
-      int depth) {
-    return updateStrategy.shouldBeUpdated(this, updaterFacade.getDeltaUpdate(this), depth);
+  public Stream<? extends AContainer> getReferencedContainers(int currentFrame) {
+    return Stream.of(neighbours.getValueInFrame(currentFrame),
+        position.getValueInFrame(currentFrame).map(ImmutableSet::of)).filter(Optional::isPresent)
+        .map(Optional::get)
+        .flatMap(Collection::stream);
   }
 
   @Override
-  public void update(UpdateStrategy updateStrategy, IUpdateManager updaterFacade, int depth,
-      int currentFrame) {
-    updaterFacade.update(this, updateStrategy, depth, currentFrame);
+  public boolean shouldBeUpdated(UpdateStrategy updateStrategy, int depth, int currentFrame) {
+    return updateStrategy.shouldBeUpdated(this, deltaOfUpdate(currentFrame), depth);
   }
 }

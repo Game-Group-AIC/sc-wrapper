@@ -6,7 +6,6 @@ import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
 import gg.fel.cvut.cz.data.readonly.BaseLocation;
 import gg.fel.cvut.cz.data.readonly.Position;
-import gg.fel.cvut.cz.facades.IUpdateManager;
 import gg.fel.cvut.cz.facades.managers.UpdateManager;
 import gg.fel.cvut.cz.facades.strategies.UpdateStrategy;
 import gg.fel.cvut.cz.wrappers.WBaseLocation;
@@ -23,11 +22,8 @@ public class UpdatableBaseLocation extends BaseLocation implements
   private final transient WBaseLocation wrapped;
 
   public UpdatableBaseLocation(BWReplayCounter bwReplayCounter, WBaseLocation wrapped) {
-    super(bwReplayCounter);
+    super(bwReplayCounter, wrapped.getX(), wrapped.getY());
     this.wrapped = wrapped;
-    x.addProperty(wrapped.getX(), 0);
-    y.addProperty(wrapped.getY(), 0);
-    toHash = ImmutableSet.of(x, y);
   }
 
   @Override
@@ -36,21 +32,14 @@ public class UpdatableBaseLocation extends BaseLocation implements
   }
 
   @Override
-  public Stream<? extends AContainer> update(UpdateManager internalUpdaterFacade) {
+  public void update(UpdateManager internalUpdaterFacade,
+      int currentFrame) {
     try {
       lock.writeLock().lock();
-
-      int currentFrame = bwCounter.getCurrentFrame();
 
       //updates
       minerals.addProperty(wrapped.getScInstance().minerals(), currentFrame);
       gas.addProperty(wrapped.getScInstance().gas(), currentFrame);
-      mineralsAsUnits.addProperty(ImmutableSet.copyOf(wrapped.getScInstance().getMinerals().stream()
-          .map(WUnit::getOrCreateWrapper)
-          .map(internalUpdaterFacade::getDataContainer)
-          .filter(Optional::isPresent)
-          .map(Optional::get)
-          .collect(Collectors.toSet())), currentFrame);
       if (staticMineralsAsUnits.propertyHasNotBeenAdded()) {
         staticMineralsAsUnits
             .addProperty(ImmutableSet.copyOf(wrapped.getScInstance().getStaticMinerals().stream()
@@ -82,18 +71,14 @@ public class UpdatableBaseLocation extends BaseLocation implements
 
       //updated in frame
       updatedInFrame = currentFrame;
-
-      //collect containers
-      return Stream.of(mineralsAsUnits.getValueInFrame(currentFrame),
-          staticMineralsAsUnits.getValueInFrame(currentFrame),
-          geysers.getValueInFrame(currentFrame),
-          position.getValueInFrame(currentFrame).map(ImmutableSet::of))
-          .filter(Optional::isPresent)
-          .map(Optional::get)
-          .flatMap(Collection::stream);
     } finally {
       lock.writeLock().unlock();
     }
+  }
+
+  @Override
+  public void update(UpdateManager updateManager, UpdateStrategy updateStrategy) {
+    updateManager.update(this, updateStrategy);
   }
 
   @Override
@@ -102,14 +87,18 @@ public class UpdatableBaseLocation extends BaseLocation implements
   }
 
   @Override
-  public boolean shouldBeUpdated(UpdateStrategy updateStrategy, IUpdateManager updaterFacade,
-      int depth) {
-    return updateStrategy.shouldBeUpdated(this, updaterFacade.getDeltaUpdate(this), depth);
+  public boolean shouldBeUpdated(UpdateStrategy updateStrategy, int depth, int currentFrame) {
+    return updateStrategy.shouldBeUpdated(this, deltaOfUpdate(currentFrame), depth);
   }
 
   @Override
-  public void update(UpdateStrategy updateStrategy, IUpdateManager updaterFacade, int depth,
-      int currentFrame) {
-    updaterFacade.update(this, updateStrategy, depth, currentFrame);
+  public Stream<? extends AContainer> getReferencedContainers(int currentFrame) {
+    return Stream.of(staticMineralsAsUnits.getValueInFrame(currentFrame),
+        geysers.getValueInFrame(currentFrame),
+        position.getValueInFrame(currentFrame).map(ImmutableSet::of))
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .flatMap(Collection::stream);
   }
+
 }

@@ -4,22 +4,19 @@ import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
 import gg.fel.cvut.cz.data.readonly.Unit;
-import gg.fel.cvut.cz.facades.IUpdateManager;
 import gg.fel.cvut.cz.facades.managers.UpdateManager;
 import gg.fel.cvut.cz.facades.strategies.UpdateStrategy;
 import gg.fel.cvut.cz.wrappers.WUnit;
 import java.util.stream.Stream;
 
 //TODO implement
-public class UpdatableUnit extends Unit implements
-    IUpdatableContainer<WUnit, Unit> {
+public class UpdatableUnit extends Unit implements IUpdatableContainer<WUnit, Unit> {
 
   private final transient WUnit wrapped;
 
   public UpdatableUnit(BWReplayCounter bwCounter, WUnit wrapped) {
-    super(bwCounter);
+    super(bwCounter, wrapped.getId());
     this.wrapped = wrapped;
-    this.unitID.addProperty(wrapped.getId(), 0);
   }
 
   @Override
@@ -28,8 +25,20 @@ public class UpdatableUnit extends Unit implements
   }
 
   @Override
-  public Stream<? extends AContainer> update(UpdateManager internalUpdaterFacade) {
-    return Stream.empty();
+  public void update(UpdateManager internalUpdaterFacade, int currentFrame) {
+    try {
+      lock.writeLock().lock();
+
+      //updated in frame
+      updatedInFrame = currentFrame;
+    } finally {
+      lock.writeLock().unlock();
+    }
+  }
+
+  @Override
+  public void update(UpdateManager updateManager, UpdateStrategy updateStrategy) {
+    updateManager.update(this, updateStrategy);
   }
 
   @Override
@@ -38,15 +47,13 @@ public class UpdatableUnit extends Unit implements
   }
 
   @Override
-  public boolean shouldBeUpdated(UpdateStrategy updateStrategy, IUpdateManager updaterFacade,
-      int depth) {
-    return updateStrategy.shouldBeUpdated(this, updaterFacade.getDeltaUpdate(this), depth);
+  public Stream<? extends AContainer> getReferencedContainers(int currentFrame) {
+    return Stream.empty();
   }
 
   @Override
-  public void update(UpdateStrategy updateStrategy, IUpdateManager updaterFacade, int depth,
-      int currentFrame) {
-    updaterFacade.update(this, updateStrategy, depth, currentFrame);
+  public boolean shouldBeUpdated(UpdateStrategy updateStrategy, int depth, int currentFrame) {
+    return updateStrategy.shouldBeUpdated(this, deltaOfUpdate(currentFrame), depth);
   }
 
 }

@@ -110,6 +110,7 @@ public interface IBullet extends InGameInterface, Serializable {
    */
   Optional<Integer> getRemoveTimer();
 
+  //TODO could be default
   Optional<Boolean> isVisible(IPlayer player);
 
 }

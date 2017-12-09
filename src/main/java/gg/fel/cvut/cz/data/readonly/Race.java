@@ -7,12 +7,9 @@ import gg.fel.cvut.cz.api.IUpgradeType;
 import gg.fel.cvut.cz.api.IWeaponType;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainerForType;
-import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.RaceTypeEnum;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 //TODO implement
@@ -21,12 +18,6 @@ public class Race extends AContainerForType<bwapi.Race, RaceTypeEnum> implements
 
   public Race(BWReplayCounter bwCounter, RaceTypeEnum raceType) {
     super(bwCounter, raceType);
-  }
-
-
-  @Override
-  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return new HashSet<>();
   }
 
   @Override

@@ -2,7 +2,6 @@ package gg.fel.cvut.cz.data;
 
 import bwta.BWTA;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
@@ -37,7 +36,7 @@ public class GameParsingTest {
 
   private static final GameFacade gameFacade = GameFacade.builder()
       .onFrame(Optional.of(new OnFrameNotificationSubscriber()))
-      .frameExecutionTime(10)
+      .frameExecutionTime(20)
       .onStart(Optional.of(new GameHasStartedNotificationSubscriber()))
       .gameDefaultSpeed(0)
       .isForReplay(true)
@@ -69,16 +68,6 @@ public class GameParsingTest {
     @Override
     public void notifySubscriber(boolean ourBotWinResult) {
       try {
-
-        //serialize base location
-        location.ifPresent(baseLocation -> {
-          try {
-            log.info(mapper.writeValueAsString(baseLocation));
-          } catch (JsonProcessingException e) {
-            e.printStackTrace();
-          }
-        });
-
         log.info("Our bot win: " + ourBotWinResult);
         Optional<ReplayGameFacade> replay = gameFacade.getGameAsReplay();
         if (replay.isPresent()) {
@@ -93,13 +82,16 @@ public class GameParsingTest {
     }
   }
 
-  @AllArgsConstructor
   private static class OnFrameNotificationSubscriber implements IOnFrameNotificationSubscriber {
+
+    private long time = System.currentTimeMillis();
 
     @Override
     public void notifySubscriber(int currentFrame) {
       if (currentFrame % 100 == 0) {
-        log.info(currentFrame + "");
+        long newTime = System.currentTimeMillis();
+        log.info(currentFrame + " in " + (newTime - time));
+        time = newTime;
       }
     }
   }

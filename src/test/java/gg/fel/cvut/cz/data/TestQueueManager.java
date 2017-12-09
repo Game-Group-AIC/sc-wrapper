@@ -1,9 +1,10 @@
 package gg.fel.cvut.cz.data;
 
-import gg.fel.cvut.cz.facades.queue.CommandType;
-import gg.fel.cvut.cz.facades.queue.CommandWithResponse;
+import gg.fel.cvut.cz.facades.IQueueManager;
 import gg.fel.cvut.cz.facades.queue.IResponseReceiver;
-import gg.fel.cvut.cz.facades.queue.QueueManager;
+import gg.fel.cvut.cz.facades.queue.implementation.CommandType;
+import gg.fel.cvut.cz.facades.queue.implementation.CommandWithResponse;
+import gg.fel.cvut.cz.facades.queue.implementation.QueueManager;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -15,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TestQueueManager {
 
-  private static QueueManager queueManager = new QueueManager();
+  private static IQueueManager queueManager = new QueueManager();
   private static final long duration = 30;
   private static final Receiver receiver = new Receiver();
 
@@ -32,7 +33,7 @@ public class TestQueueManager {
 
   private static void executeTurn() {
     long start = System.currentTimeMillis();
-    queueManager.executedCommands(duration);
+    queueManager.executeCommands(duration);
     if (System.currentTimeMillis() - start > duration) {
       log.info("Duration was exceeded.");
     }

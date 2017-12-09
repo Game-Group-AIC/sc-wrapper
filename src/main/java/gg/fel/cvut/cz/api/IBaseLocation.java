@@ -9,11 +9,13 @@ import java.util.stream.Stream;
 @JsonDeserialize(as = BaseLocation.class)
 public interface IBaseLocation extends IAbstractPoint, InGameInterface, Serializable {
 
+  //TODO can be removed? to update one time only?
   Optional<Integer> minerals();
 
   Optional<Integer> gas();
 
-  Optional<Stream<IUnit>> getMinerals();
+  //TODO filter from static minerals
+//  Optional<Stream<IUnit>> getMinerals();
 
   Optional<Stream<IUnit>> getStaticMinerals();
 

@@ -7,17 +7,16 @@ import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IRegion;
 import gg.fel.cvut.cz.api.IUnit;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
-import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.data.AContainerForPosition;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
 import gg.fel.cvut.cz.data.properties.Property;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
-public class Region extends AContainer implements IRegion, Serializable {
+public class Region extends AContainerForPosition implements IRegion, Serializable {
 
   protected final DynamicPropertyRegister<ImmutableSet<IUnit>, Property<ImmutableSet<IUnit>>> units = new DynamicPropertyRegister<ImmutableSet<IUnit>, Property<ImmutableSet<IUnit>>>(
       Property::new);
@@ -29,10 +28,9 @@ public class Region extends AContainer implements IRegion, Serializable {
       Property::new);
   protected final StaticPropertyRegister<IPosition, Property<IPosition>> position = new StaticPropertyRegister<IPosition, Property<IPosition>>(
       Property::new);
-  private final Set<StaticPropertyRegister<?, ?>> toHash = ImmutableSet.of(position);
 
-  public Region(BWReplayCounter bwCounter) {
-    super(bwCounter);
+  public Region(BWReplayCounter bwCounter, int x, int y) {
+    super(bwCounter, x, y);
   }
 
   @Override
@@ -58,10 +56,5 @@ public class Region extends AContainer implements IRegion, Serializable {
   @Override
   public Optional<Stream<IRegion>> getReachableRegions() {
     return getPropertyOnTimeLineStrategyOnSet(reachableRegions).map(Collection::stream);
-  }
-
-  @Override
-  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return toHash;
   }
 }

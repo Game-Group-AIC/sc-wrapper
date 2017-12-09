@@ -5,12 +5,9 @@ import gg.fel.cvut.cz.api.IUnitType;
 import gg.fel.cvut.cz.api.IUpgradeType;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainerForType;
-import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.UpgradeTypeEnum;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 //TODO implement
 public class UpgradeType extends AContainerForType<bwapi.UpgradeType, UpgradeTypeEnum> implements
@@ -88,10 +85,5 @@ public class UpgradeType extends AContainerForType<bwapi.UpgradeType, UpgradeTyp
   @Override
   public Optional<IUnitType> whatsRequired(int level) {
     return null;
-  }
-
-  @Override
-  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return new HashSet<>();
   }
 }

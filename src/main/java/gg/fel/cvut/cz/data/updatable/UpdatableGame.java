@@ -7,7 +7,6 @@ import gg.fel.cvut.cz.data.AContainer;
 import gg.fel.cvut.cz.data.IUpdatableContainer;
 import gg.fel.cvut.cz.data.readonly.Game;
 import gg.fel.cvut.cz.enums.GameTypeEnum;
-import gg.fel.cvut.cz.facades.IUpdateManager;
 import gg.fel.cvut.cz.facades.managers.UpdateManager;
 import gg.fel.cvut.cz.facades.strategies.UpdateStrategy;
 import gg.fel.cvut.cz.wrappers.WBaseLocation;
@@ -39,11 +38,10 @@ public class UpdatableGame extends Game implements
   }
 
   @Override
-  public Stream<? extends AContainer> update(UpdateManager internalUpdaterFacade) {
+  public void update(UpdateManager internalUpdaterFacade, int currentFrame) {
     try {
       lock.writeLock().lock();
 
-      int currentFrame = bwCounter.getCurrentFrame();
       //updates
       if (players.propertyHasNotBeenAdded()) {
         players.addProperty(ImmutableSet.copyOf(wrapped.getScInstance().getPlayers().stream()
@@ -116,17 +114,6 @@ public class UpdatableGame extends Game implements
       }
       //updated in frame
       updatedInFrame = currentFrame;
-
-      //collect containers
-      return Stream.of(players.getValueInFrame(currentFrame),
-          regions.getValueInFrame(currentFrame),
-          chokePoints.getValueInFrame(currentFrame),
-          baseLocations.getValueInFrame(currentFrame),
-          startLocations.getValueInFrame(currentFrame),
-          grid.getValueInFrame(currentFrame))
-          .filter(Optional::isPresent)
-          .map(Optional::get)
-          .flatMap(Collection::stream);
     } finally {
       lock.writeLock().unlock();
     }
@@ -138,15 +125,26 @@ public class UpdatableGame extends Game implements
   }
 
   @Override
-  public boolean shouldBeUpdated(UpdateStrategy updateStrategy, IUpdateManager updaterFacade,
-      int depth) {
-    return updateStrategy.shouldBeUpdated(this, updaterFacade.getDeltaUpdate(this), depth);
+  public Stream<? extends AContainer> getReferencedContainers(int currentFrame) {
+    return Stream.of(players.getValueInFrame(currentFrame),
+        regions.getValueInFrame(currentFrame),
+        chokePoints.getValueInFrame(currentFrame),
+        baseLocations.getValueInFrame(currentFrame),
+        startLocations.getValueInFrame(currentFrame),
+        grid.getValueInFrame(currentFrame))
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .flatMap(Collection::stream);
   }
 
   @Override
-  public void update(UpdateStrategy updateStrategy, IUpdateManager updaterFacade, int depth,
-      int currentFrame) {
-    updaterFacade.update(this, updateStrategy, depth, currentFrame);
+  public void update(UpdateManager updateManager, UpdateStrategy updateStrategy) {
+    updateManager.update(this, updateStrategy);
+  }
+
+  @Override
+  public boolean shouldBeUpdated(UpdateStrategy updateStrategy, int depth, int currentFrame) {
+    return updateStrategy.shouldBeUpdated(this, deltaOfUpdate(currentFrame), depth);
   }
 
 }

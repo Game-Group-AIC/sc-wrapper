@@ -1,6 +1,5 @@
 package gg.fel.cvut.cz.data.readonly;
 
-import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IPlayer;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.ITechType;
@@ -10,25 +9,22 @@ import gg.fel.cvut.cz.api.IUnitType;
 import gg.fel.cvut.cz.api.IUpgradeType;
 import gg.fel.cvut.cz.api.UnitCommand;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
-import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.data.AContainerWithID;
 import gg.fel.cvut.cz.data.properties.Property;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.OrderEnum;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 //TODO implement
-public class Unit extends AContainer implements IUnit, Serializable {
+public class Unit extends AContainerWithID implements IUnit, Serializable {
 
   protected final StaticPropertyRegister<Integer, Property<Integer>> unitID = new StaticPropertyRegister<Integer, Property<Integer>>(
       Property::new);
-  private final Set<StaticPropertyRegister<?, ?>> toHash = ImmutableSet.of(unitID);
 
-  public Unit(BWReplayCounter bwCounter) {
-    super(bwCounter);
+  public Unit(BWReplayCounter bwCounter, int id) {
+    super(bwCounter, id);
   }
 
   @Override
@@ -879,10 +875,5 @@ public class Unit extends AContainer implements IUnit, Serializable {
   @Override
   public Optional<Stream<IUnit>> getEnemyUnitsInRadiusOfSight() {
     return null;
-  }
-
-  @Override
-  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return toHash;
   }
 }

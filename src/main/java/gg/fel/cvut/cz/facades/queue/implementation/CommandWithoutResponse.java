@@ -1,4 +1,6 @@
-package gg.fel.cvut.cz.facades.queue;
+package gg.fel.cvut.cz.facades.queue.implementation;
+
+import gg.fel.cvut.cz.facades.queue.Command;
 
 /**
  * Represents command which will be just executed.
@@ -14,7 +16,7 @@ public class CommandWithoutResponse extends Command {
   }
 
   @Override
-  void execute() {
+  public void execute() {
     executableStrategy.execute();
   }
 

@@ -13,6 +13,7 @@ import gg.fel.cvut.cz.api.IRegion;
 import gg.fel.cvut.cz.api.ITilePosition;
 import gg.fel.cvut.cz.counters.IBWClock;
 import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.data.IUpdatableContainer;
 import gg.fel.cvut.cz.data.events.UpdatableEventsRegister;
 import gg.fel.cvut.cz.data.events.subscribers.IGameHasEndedNotificationSubscriber;
 import gg.fel.cvut.cz.data.events.subscribers.IGameHasStartedNotificationSubscriber;
@@ -36,19 +37,35 @@ import gg.fel.cvut.cz.data.readonly.Unit;
 import gg.fel.cvut.cz.data.readonly.UnitType;
 import gg.fel.cvut.cz.data.readonly.UpgradeType;
 import gg.fel.cvut.cz.data.readonly.WeaponType;
+import gg.fel.cvut.cz.data.updatable.UpdatableBaseLocation;
+import gg.fel.cvut.cz.data.updatable.UpdatableBullet;
+import gg.fel.cvut.cz.data.updatable.UpdatableChokePoint;
+import gg.fel.cvut.cz.data.updatable.UpdatablePlayer;
+import gg.fel.cvut.cz.data.updatable.UpdatablePosition;
+import gg.fel.cvut.cz.data.updatable.UpdatableRace;
+import gg.fel.cvut.cz.data.updatable.UpdatableRegion;
+import gg.fel.cvut.cz.data.updatable.UpdatableTechType;
+import gg.fel.cvut.cz.data.updatable.UpdatableTilePosition;
+import gg.fel.cvut.cz.data.updatable.UpdatableUnit;
+import gg.fel.cvut.cz.data.updatable.UpdatableUnitType;
+import gg.fel.cvut.cz.data.updatable.UpdatableUpgradeType;
+import gg.fel.cvut.cz.data.updatable.UpdatableWeaponType;
 import gg.fel.cvut.cz.enums.GameTypeEnum;
 import gg.fel.cvut.cz.enums.RaceTypeEnum;
 import gg.fel.cvut.cz.enums.TechTypeEnum;
 import gg.fel.cvut.cz.enums.UnitTypeEnum;
 import gg.fel.cvut.cz.enums.UpgradeTypeEnum;
 import gg.fel.cvut.cz.enums.WeaponTypeEnum;
+import gg.fel.cvut.cz.facades.IBWGameDataWrapper;
 import gg.fel.cvut.cz.facades.IGameDataAccessAdapter;
 import gg.fel.cvut.cz.facades.IGameDataUpdateAdapter;
-import gg.fel.cvut.cz.facades.queue.CommandType;
-import gg.fel.cvut.cz.facades.queue.CommandWithResponse;
-import gg.fel.cvut.cz.facades.queue.CommandWithoutResponse;
+import gg.fel.cvut.cz.facades.IQueueManager;
 import gg.fel.cvut.cz.facades.queue.IResponseReceiver;
-import gg.fel.cvut.cz.facades.queue.QueueManager;
+import gg.fel.cvut.cz.facades.queue.implementation.CommandType;
+import gg.fel.cvut.cz.facades.queue.implementation.CommandWithResponse;
+import gg.fel.cvut.cz.facades.queue.implementation.CommandWithoutResponse;
+import gg.fel.cvut.cz.facades.queue.implementation.ParsingQueueManager;
+import gg.fel.cvut.cz.facades.queue.implementation.QueueManager;
 import gg.fel.cvut.cz.facades.strategies.UpdateStrategy;
 import gg.fel.cvut.cz.wrappers.WBaseLocation;
 import gg.fel.cvut.cz.wrappers.WBullet;
@@ -63,6 +80,7 @@ import gg.fel.cvut.cz.wrappers.WUnit;
 import gg.fel.cvut.cz.wrappers.WUnitType;
 import gg.fel.cvut.cz.wrappers.WUpgradeType;
 import gg.fel.cvut.cz.wrappers.WWeaponType;
+import gg.fel.cvut.cz.wrappers.Wrapper;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -80,11 +98,12 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Builder
 public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdapter,
-    IBWClock, Runnable, IGame, IGameDataAccessAdapter {
+    IBWClock, Runnable, IGame, IGameDataAccessAdapter, IBWGameDataWrapper {
 
   private final UpdateManager updateManager = new UpdateManager();
-  private QueueManager queueManager;
+  private IQueueManager queueManager;
   private final UpdatableEventsRegister eventsRegister = new UpdatableEventsRegister();
+  private final UpdateStrategy updateStrategy = UpdateStrategy.builder().build();
 
   @Builder.Default
   private int gameDefaultSpeed = 20;
@@ -192,23 +211,29 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public void onStart() {
-    updateManager.setGame(mirror.getGame());
+    try {
 
-    //analyze map
-    log.info("Analyzing map...");
-    BWTA.analyze();
-    log.info("Finished: Analyzing map.");
+      updateManager.setGame(mirror.getGame());
 
-    if (updateManager.getGame().isPresent()) {
-      UpdateStrategy updateAllStrategy = UpdateStrategy.builder().build();
-      updateManager.update(updateManager.getGame().get(), updateAllStrategy);
-      updateManager.initializeAllTypes(updateAllStrategy);
-      mirror.getGame().setLocalSpeed(gameDefaultSpeed);
-      log.info("Game has started.");
-    } else {
-      log.error("Failed to start the game.");
+      //analyze map
+      log.info("Analyzing map...");
+      BWTA.analyze();
+      log.info("Finished: Analyzing map.");
+
+      if (updateManager.getGame().isPresent()) {
+        updateManager.initializeAllTypes(updateStrategy);
+        updateManager.update(updateManager.getGame().get(), updateStrategy);
+        mirror.getGame().setLocalSpeed(gameDefaultSpeed);
+        log.info("Game has started.");
+      } else {
+        log.error("Failed to start the game.");
+      }
+      onStart.ifPresent(IGameHasStartedNotificationSubscriber::notifySubscriber);
+    } catch (Exception e) {
+
+      //TODO remove
+      e.printStackTrace();
     }
-    onStart.ifPresent(IGameHasStartedNotificationSubscriber::notifySubscriber);
   }
 
   @Override
@@ -339,36 +364,28 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   @Override
   public void run() {
     try {
-
-      //setup queue manager
+      //if replay parser
       if (isForReplay) {
-        UpdateStrategy updateStrategy = UpdateStrategy.builder().build();
-        queueManager = new QueueManager(timeResources -> {
-          getAllGameInstances()
-              .forEach(o -> o.update(updateStrategy, updateManager, 0, getCurrentFrame()));
-        });
+        queueManager = new ParsingQueueManager(updateManager);
       } else {
         queueManager = new QueueManager();
       }
-
       mirror.getModule().setEventListener(this);
       mirror.startGame();
     } catch (Exception e) {
       //Catch any exception that occur not to "kill" the bot with one trivial error
       log.error(e.getMessage());
-
-      //TODO remove
       e.printStackTrace();
     }
   }
 
   @Override
   public void onFrame() {
-    updateManager.increaseClocks();
     try {
-      onFrame.ifPresent(ns -> ns.notifySubscriber(getCurrentFrame()));
-      queueManager.executedCommands(frameExecutionTime);
+      updateManager.increaseClocks();
+      queueManager.executeCommands(frameExecutionTime);
       eventsRegister.saveEvents(getCurrentFrame());
+      onFrame.ifPresent(ns -> ns.notifySubscriber(getCurrentFrame()));
     } catch (Exception e) {
       //Catch any exception that occur not to "kill" the bot with one trivial error
       log.error(e.getMessage());
@@ -391,8 +408,11 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(UPDATE_ALL, responseReceiver,
         () -> {
+          int currentFrame = getCurrentFrame();
           getAllGameInstances()
-              .forEach(o -> o.update(updateStrategy, updateManager, 0, getCurrentFrame()));
+              .filter(o -> o instanceof IUpdatableContainer<?, ?>)
+              .forEach(
+                  o -> ((IUpdatableContainer<?, ?>) o).update(updateManager, currentFrame));
           return true;
         }));
   }
@@ -400,8 +420,13 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   @Override
   public void updateAll(UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(UPDATE_ALL,
-        () -> getAllGameInstances()
-            .forEach(o -> o.update(updateStrategy, updateManager, 0, getCurrentFrame()))));
+        () -> {
+          int currentFrame = getCurrentFrame();
+          getAllGameInstances()
+              .filter(o -> o instanceof IUpdatableContainer<?, ?>)
+              .forEach(
+                  o -> ((IUpdatableContainer<?, ?>) o).update(updateManager, currentFrame));
+        }));
   }
 
   @Override
@@ -412,40 +437,40 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   @Override
   public void update(BaseLocation baseLocation, UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(BASE_LOCATION_UPDATE,
-        () -> updateManager.update(baseLocation, updateStrategy)));
+        () -> updateManager.update((UpdatableBaseLocation) baseLocation, updateStrategy)));
   }
 
   @Override
   public void update(BaseLocation baseLocation, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(BASE_LOCATION_UPDATE, responseReceiver,
-        () -> updateManager.update(baseLocation, updateStrategy)));
+        () -> updateManager.update((UpdatableBaseLocation) baseLocation, updateStrategy)));
   }
 
   @Override
   public void update(Bullet bullet, UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(BULLET_UPDATE,
-        () -> updateManager.update(bullet, updateStrategy)));
+        () -> updateManager.update((UpdatableBullet) bullet, updateStrategy)));
   }
 
   @Override
   public void update(Bullet bullet, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(BULLET_UPDATE, responseReceiver,
-        () -> updateManager.update(bullet, updateStrategy)));
+        () -> updateManager.update((UpdatableBullet) bullet, updateStrategy)));
   }
 
   @Override
   public void update(ChokePoint chokePoint, UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(CHOKE_POINT_UPDATE,
-        () -> updateManager.update(chokePoint, updateStrategy)));
+        () -> updateManager.update((UpdatableChokePoint) chokePoint, updateStrategy)));
   }
 
   @Override
   public void update(ChokePoint chokePoint, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(CHOKE_POINT_UPDATE, responseReceiver,
-        () -> updateManager.update(chokePoint, updateStrategy)));
+        () -> updateManager.update((UpdatableChokePoint) chokePoint, updateStrategy)));
   }
 
   @Override
@@ -469,131 +494,131 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   @Override
   public void update(Player player, UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(PLAYER_UPDATE,
-        () -> updateManager.update(player, updateStrategy)));
+        () -> updateManager.update((UpdatablePlayer) player, updateStrategy)));
   }
 
   @Override
   public void update(Player player, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(PLAYER_UPDATE, responseReceiver,
-        () -> updateManager.update(player, updateStrategy)));
+        () -> updateManager.update((UpdatablePlayer) player, updateStrategy)));
   }
 
   @Override
   public void update(Position position, UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(POSITION_UPDATE,
-        () -> updateManager.update(position, updateStrategy)));
+        () -> updateManager.update((UpdatablePosition) position, updateStrategy)));
   }
 
   @Override
   public void update(Position position, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(POSITION_UPDATE, responseReceiver,
-        () -> updateManager.update(position, updateStrategy)));
+        () -> updateManager.update((UpdatablePosition) position, updateStrategy)));
   }
 
   @Override
   public void update(Race race, UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(RACE_UPDATE,
-        () -> updateManager.update(race, updateStrategy)));
+        () -> updateManager.update((UpdatableRace) race, updateStrategy)));
   }
 
   @Override
   public void update(Race race, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(RACE_UPDATE, responseReceiver,
-        () -> updateManager.update(race, updateStrategy)));
+        () -> updateManager.update((UpdatableRace) race, updateStrategy)));
   }
 
   @Override
   public void update(Region region, UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(REGION_UPDATE,
-        () -> updateManager.update(region, updateStrategy)));
+        () -> updateManager.update((UpdatableRegion) region, updateStrategy)));
   }
 
   @Override
   public void update(Region region, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(REGION_UPDATE, responseReceiver,
-        () -> updateManager.update(region, updateStrategy)));
+        () -> updateManager.update((UpdatableRegion) region, updateStrategy)));
   }
 
   @Override
   public void update(TechType techType, UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(TECH_TYPE_UPDATE,
-        () -> updateManager.update(techType, updateStrategy)));
+        () -> updateManager.update((UpdatableTechType) techType, updateStrategy)));
   }
 
   @Override
   public void update(TechType techType, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(TECH_TYPE_UPDATE, responseReceiver,
-        () -> updateManager.update(techType, updateStrategy)));
+        () -> updateManager.update((UpdatableTechType) techType, updateStrategy)));
   }
 
   @Override
   public void update(TilePosition tilePosition, UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(TILE_POSITION_UPDATE,
-        () -> updateManager.update(tilePosition, updateStrategy)));
+        () -> updateManager.update((UpdatableTilePosition) tilePosition, updateStrategy)));
   }
 
   @Override
   public void update(TilePosition tilePosition, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(TILE_POSITION_UPDATE, responseReceiver,
-        () -> updateManager.update(tilePosition, updateStrategy)));
+        () -> updateManager.update((UpdatableTilePosition) tilePosition, updateStrategy)));
   }
 
   @Override
   public void update(Unit unit, UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(UNIT_UPDATE,
-        () -> updateManager.update(unit, updateStrategy)));
+        () -> updateManager.update((UpdatableUnit) unit, updateStrategy)));
   }
 
   @Override
   public void update(Unit unit, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(UNIT_UPDATE, responseReceiver,
-        () -> updateManager.update(unit, updateStrategy)));
+        () -> updateManager.update((UpdatableUnit) unit, updateStrategy)));
   }
 
   @Override
   public void update(UnitType unitType, UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(UNIT_TYPE_UPDATE,
-        () -> updateManager.update(unitType, updateStrategy)));
+        () -> updateManager.update((UpdatableUnitType) unitType, updateStrategy)));
   }
 
   @Override
   public void update(UnitType unitType, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(UNIT_TYPE_UPDATE, responseReceiver,
-        () -> updateManager.update(unitType, updateStrategy)));
+        () -> updateManager.update((UpdatableUnitType) unitType, updateStrategy)));
   }
 
   @Override
   public void update(UpgradeType upgradeType, UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(UPGRADE_TYPE_UPDATE,
-        () -> updateManager.update(upgradeType, updateStrategy)));
+        () -> updateManager.update((UpdatableUpgradeType) upgradeType, updateStrategy)));
   }
 
   @Override
   public void update(UpgradeType upgradeType, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(UPGRADE_TYPE_UPDATE, responseReceiver,
-        () -> updateManager.update(upgradeType, updateStrategy)));
+        () -> updateManager.update((UpdatableUpgradeType) upgradeType, updateStrategy)));
   }
 
   @Override
   public void update(WeaponType weaponType, UpdateStrategy updateStrategy) {
     queueManager.addCommand(new CommandWithoutResponse(WEAPON_TYPE_UPDATE,
-        () -> updateManager.update(weaponType, updateStrategy)));
+        () -> updateManager.update((UpdatableWeaponType) weaponType, updateStrategy)));
   }
 
   @Override
   public void update(WeaponType weaponType, UpdateStrategy updateStrategy,
       IResponseReceiver<Boolean> responseReceiver) {
     queueManager.addCommand(new CommandWithResponse<>(WEAPON_TYPE_UPDATE, responseReceiver,
-        () -> updateManager.update(weaponType, updateStrategy)));
+        () -> updateManager.update((UpdatableWeaponType) weaponType, updateStrategy)));
   }
 
   @Override
@@ -643,7 +668,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<WBaseLocation> getBWInstance(BaseLocation container) {
-    return updateManager.getBWInstance(container);
+    return getBWInstance(container, UpdatableBaseLocation.class);
   }
 
   @Override
@@ -653,7 +678,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<WBullet> getBWInstance(Bullet container) {
-    return updateManager.getBWInstance(container);
+    return getBWInstance(container, UpdatableBullet.class);
   }
 
   @Override
@@ -663,7 +688,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<WChokePoint> getBWInstance(ChokePoint container) {
-    return updateManager.getBWInstance(container);
+    return getBWInstance(container, UpdatableChokePoint.class);
   }
 
   @Override
@@ -673,7 +698,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<WPlayer> getBWInstance(Player container) {
-    return updateManager.getBWInstance(container);
+    return getBWInstance(container, UpdatablePlayer.class);
   }
 
   @Override
@@ -683,7 +708,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<WPosition> getBWInstance(Position container) {
-    return updateManager.getBWInstance(container);
+    return getBWInstance(container, UpdatablePosition.class);
   }
 
   @Override
@@ -693,7 +718,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<WRace> getBWInstance(Race container) {
-    return updateManager.getBWInstance(container);
+    return getBWInstance(container, UpdatableRace.class);
   }
 
   @Override
@@ -703,7 +728,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<WRegion> getBWInstance(Region container) {
-    return updateManager.getBWInstance(container);
+    return getBWInstance(container, UpdatableRegion.class);
   }
 
   @Override
@@ -713,7 +738,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<WTechType> getBWInstance(TechType container) {
-    return updateManager.getBWInstance(container);
+    return getBWInstance(container, UpdatableTechType.class);
   }
 
   @Override
@@ -723,7 +748,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<WTilePosition> getBWInstance(TilePosition container) {
-    return updateManager.getBWInstance(container);
+    return getBWInstance(container, UpdatableTilePosition.class);
   }
 
   @Override
@@ -733,7 +758,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<WUnit> getBWInstance(Unit container) {
-    return updateManager.getBWInstance(container);
+    return getBWInstance(container, UpdatableUnit.class);
   }
 
   @Override
@@ -743,7 +768,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<WUnitType> getBWInstance(UnitType container) {
-    return updateManager.getBWInstance(container);
+    return getBWInstance(container, UpdatableUnitType.class);
   }
 
   @Override
@@ -753,7 +778,7 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
 
   @Override
   public Optional<WUpgradeType> getBWInstance(UpgradeType container) {
-    return updateManager.getBWInstance(container);
+    return getBWInstance(container, UpdatableUpgradeType.class);
   }
 
   @Override
@@ -762,8 +787,17 @@ public class GameFacade extends DefaultBWListener implements IGameDataUpdateAdap
   }
 
   @Override
-  public Optional<WWeaponType> getBWInstance(WeaponType container) {
-    return updateManager.getBWInstance(container);
+  public Optional<WWeaponType> getBWInstance(WeaponType weaponType) {
+    return getBWInstance(weaponType, UpdatableWeaponType.class);
+  }
+
+  private <T extends Wrapper<?>, L extends AContainer, U extends IUpdatableContainer<T, L>> Optional<T> getBWInstance(
+      L container, Class<U> aClass) {
+    if (container.getClass().equals(aClass)) {
+      return Optional.ofNullable(((U) container).getWrappedSCInstance());
+    } else {
+      return Optional.empty();
+    }
   }
 
   public Optional<IPlayer> getSelf() {

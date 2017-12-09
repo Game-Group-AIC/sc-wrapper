@@ -8,14 +8,11 @@ import gg.fel.cvut.cz.api.IWeaponType;
 import gg.fel.cvut.cz.api.Tuple;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainerForType;
-import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.UnitSizeTypeEnum;
 import gg.fel.cvut.cz.enums.UnitTypeEnum;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 //TODO implement
@@ -399,10 +396,5 @@ public class UnitType extends AContainerForType<bwapi.UnitType, UnitTypeEnum> im
   @Override
   public Optional<Stream<IUpgradeType>> upgradesWhat() {
     return null;
-  }
-
-  @Override
-  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return new HashSet<>();
   }
 }

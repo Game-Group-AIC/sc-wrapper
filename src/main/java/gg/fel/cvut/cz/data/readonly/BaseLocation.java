@@ -5,23 +5,19 @@ import gg.fel.cvut.cz.api.IBaseLocation;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IUnit;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
-import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.data.AContainerForPosition;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
 import gg.fel.cvut.cz.data.properties.Property;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
-public class BaseLocation extends AContainer implements IBaseLocation, Serializable {
+public class BaseLocation extends AContainerForPosition implements IBaseLocation, Serializable {
 
   protected final DynamicPropertyRegister<Integer, Property<Integer>> minerals = new DynamicPropertyRegister<Integer, Property<Integer>>(
       Property::new);
   protected final DynamicPropertyRegister<Integer, Property<Integer>> gas = new DynamicPropertyRegister<Integer, Property<Integer>>(
-      Property::new);
-  protected final DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> mineralsAsUnits = new DynamicPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
       Property::new);
   protected final StaticPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>> staticMineralsAsUnits = new StaticPropertyRegister<ImmutableSet<Unit>, Property<ImmutableSet<Unit>>>(
       Property::new);
@@ -33,16 +29,9 @@ public class BaseLocation extends AContainer implements IBaseLocation, Serializa
       Property::new);
   protected final StaticPropertyRegister<Position, Property<Position>> position = new StaticPropertyRegister<Position, Property<Position>>(
       Property::new);
-  protected final StaticPropertyRegister<Integer, Property<Integer>> x = new StaticPropertyRegister<Integer, Property<Integer>>(
-      Property::new);
-  protected final StaticPropertyRegister<Integer, Property<Integer>> y = new StaticPropertyRegister<Integer, Property<Integer>>(
-      Property::new);
 
-  //TODO from json + creator
-  protected Set<StaticPropertyRegister<?, ?>> toHash = new HashSet<>();
-
-  public BaseLocation(BWReplayCounter bwCounter) {
-    super(bwCounter);
+  public BaseLocation(BWReplayCounter bwCounter, int x, int y) {
+    super(bwCounter, x, y);
   }
 
   @Override
@@ -53,12 +42,6 @@ public class BaseLocation extends AContainer implements IBaseLocation, Serializa
   @Override
   public Optional<Integer> gas() {
     return getPropertyOnTimeLineStrategy(gas);
-  }
-
-  @Override
-  public Optional<Stream<IUnit>> getMinerals() {
-    return getPropertyOnTimeLineStrategyOnSet(mineralsAsUnits)
-        .map(units -> units.stream().map(unit -> unit));
   }
 
   @Override
@@ -91,10 +74,5 @@ public class BaseLocation extends AContainer implements IBaseLocation, Serializa
   //TODO compute - move to implementation to cache values?
   public Optional<Double> getGroundDistance(IBaseLocation other) {
     return Optional.of(Double.MAX_VALUE);
-  }
-
-  @Override
-  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return toHash;
   }
 }

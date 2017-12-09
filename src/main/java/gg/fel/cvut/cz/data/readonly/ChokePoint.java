@@ -1,19 +1,17 @@
 package gg.fel.cvut.cz.data.readonly;
 
-import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IChokePoint;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IRegion;
 import gg.fel.cvut.cz.api.Tuple;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
-import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.data.AContainerForPosition;
 import gg.fel.cvut.cz.data.properties.Property;
 import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.Set;
 
-public class ChokePoint extends AContainer implements IChokePoint, Serializable {
+public class ChokePoint extends AContainerForPosition implements IChokePoint, Serializable {
 
   protected final StaticPropertyRegister<Tuple<IRegion, IRegion>, Property<Tuple<IRegion, IRegion>>> regions = new StaticPropertyRegister<Tuple<IRegion, IRegion>, Property<Tuple<IRegion, IRegion>>>(
       Property::new);
@@ -23,10 +21,9 @@ public class ChokePoint extends AContainer implements IChokePoint, Serializable 
       Property::new);
   protected final StaticPropertyRegister<IPosition, Property<IPosition>> position = new StaticPropertyRegister<IPosition, Property<IPosition>>(
       Property::new);
-  private final Set<StaticPropertyRegister<?, ?>> toHash = ImmutableSet.of(position);
 
-  public ChokePoint(BWReplayCounter bwCounter) {
-    super(bwCounter);
+  public ChokePoint(BWReplayCounter bwCounter, int x, int y) {
+    super(bwCounter, x, y);
   }
 
   @Override
@@ -47,11 +44,5 @@ public class ChokePoint extends AContainer implements IChokePoint, Serializable 
   @Override
   public Optional<IPosition> getPosition() {
     return getPropertyOnTimeLineStrategy(position);
-  }
-
-
-  @Override
-  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return toHash;
   }
 }

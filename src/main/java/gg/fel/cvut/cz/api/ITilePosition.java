@@ -39,7 +39,8 @@ public interface ITilePosition extends IAbstractPoint, InGameInterface, Serializ
 
   Optional<Integer> getGroundHeight();
 
-  Optional<Stream<IUnit>> getUnitsOnTile();
+  //TODO do it on all visible units
+//  Optional<Stream<IUnit>> getUnitsOnTile();
 
   Optional<IPosition> getPosition();
 

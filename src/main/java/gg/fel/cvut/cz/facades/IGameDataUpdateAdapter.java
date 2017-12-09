@@ -15,9 +15,9 @@ import gg.fel.cvut.cz.data.readonly.UnitType;
 import gg.fel.cvut.cz.data.readonly.UpgradeType;
 import gg.fel.cvut.cz.data.readonly.WeaponType;
 import gg.fel.cvut.cz.facades.managers.ReplayGameFacade;
-import gg.fel.cvut.cz.facades.queue.CommandWithResponse;
-import gg.fel.cvut.cz.facades.queue.CommandWithoutResponse;
 import gg.fel.cvut.cz.facades.queue.IResponseReceiver;
+import gg.fel.cvut.cz.facades.queue.implementation.CommandWithResponse;
+import gg.fel.cvut.cz.facades.queue.implementation.CommandWithoutResponse;
 import gg.fel.cvut.cz.facades.strategies.UpdateStrategy;
 import java.util.Optional;
 

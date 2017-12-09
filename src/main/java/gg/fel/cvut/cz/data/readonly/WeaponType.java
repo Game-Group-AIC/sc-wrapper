@@ -6,14 +6,11 @@ import gg.fel.cvut.cz.api.IUpgradeType;
 import gg.fel.cvut.cz.api.IWeaponType;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
 import gg.fel.cvut.cz.data.AContainerForType;
-import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.DamageTypeEnum;
 import gg.fel.cvut.cz.enums.ExplosionTypeEnum;
 import gg.fel.cvut.cz.enums.WeaponTypeEnum;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 //TODO implement
 public class WeaponType extends AContainerForType<bwapi.WeaponType, WeaponTypeEnum> implements
@@ -141,10 +138,5 @@ public class WeaponType extends AContainerForType<bwapi.WeaponType, WeaponTypeEn
   @Override
   public Optional<Boolean> targetsOwn() {
     return null;
-  }
-
-  @Override
-  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return new HashSet<>();
   }
 }

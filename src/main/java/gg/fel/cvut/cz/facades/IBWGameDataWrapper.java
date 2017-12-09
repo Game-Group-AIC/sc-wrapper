@@ -29,34 +29,34 @@ import gg.fel.cvut.cz.wrappers.WWeaponType;
 import java.util.Optional;
 
 /**
- * Contract to return containers
+ * Contract to get game objects
  */
-public interface IGameDataWrapper {
+public interface IBWGameDataWrapper {
 
-  Optional<Bullet> getDataContainer(WBullet bullet);
+  Optional<WWeaponType> getBWInstance(WeaponType container);
 
-  Optional<BaseLocation> getDataContainer(WBaseLocation baseLocation);
+  Optional<WBullet> getBWInstance(Bullet container);
 
-  Optional<ChokePoint> getDataContainer(WChokePoint chokePoint);
+  Optional<WBaseLocation> getBWInstance(BaseLocation container);
 
-  Optional<Player> getDataContainer(WPlayer player);
+  Optional<WChokePoint> getBWInstance(ChokePoint container);
 
-  Optional<Position> getDataContainer(WPosition position);
+  Optional<WPlayer> getBWInstance(Player container);
 
-  Optional<Race> getDataContainer(WRace race);
+  Optional<WPosition> getBWInstance(Position container);
 
-  Optional<Region> getDataContainer(WRegion region);
+  Optional<WRace> getBWInstance(Race container);
 
-  Optional<TechType> getDataContainer(WTechType techType);
+  Optional<WRegion> getBWInstance(Region container);
 
-  Optional<TilePosition> getDataContainer(WTilePosition tilePosition);
+  Optional<WTechType> getBWInstance(TechType container);
 
-  Optional<Unit> getDataContainer(WUnit unit);
+  Optional<WTilePosition> getBWInstance(TilePosition container);
 
-  Optional<UnitType> getDataContainer(WUnitType unitType);
+  Optional<WUnit> getBWInstance(Unit container);
 
-  Optional<UpgradeType> getDataContainer(WUpgradeType upgradeType);
+  Optional<WUnitType> getBWInstance(UnitType container);
 
-  Optional<WeaponType> getDataContainer(WWeaponType weaponType);
+  Optional<WUpgradeType> getBWInstance(UpgradeType container);
 
 }

@@ -1,4 +1,7 @@
-package gg.fel.cvut.cz.facades.queue;
+package gg.fel.cvut.cz.facades.queue.implementation;
+
+import gg.fel.cvut.cz.facades.queue.Command;
+import gg.fel.cvut.cz.facades.queue.IResponseReceiver;
 
 /**
  * Command which sends response to reciever on its execution
@@ -24,7 +27,7 @@ public class CommandWithResponse<V> extends Command {
     return executableStrategy.execute();
   }
 
-  void execute() {
+  public void execute() {
     responseReceiver.receiveResponse(executeStrategy());
   }
 

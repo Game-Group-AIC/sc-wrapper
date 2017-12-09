@@ -1,13 +1,12 @@
 package gg.fel.cvut.cz.data.readonly;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import gg.fel.cvut.cz.api.IBullet;
 import gg.fel.cvut.cz.api.IPlayer;
 import gg.fel.cvut.cz.api.IPosition;
 import gg.fel.cvut.cz.api.IUnit;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
-import gg.fel.cvut.cz.data.AContainer;
+import gg.fel.cvut.cz.data.AContainerWithID;
 import gg.fel.cvut.cz.data.properties.DynamicPropertyRegister;
 import gg.fel.cvut.cz.data.properties.Property;
 import gg.fel.cvut.cz.data.properties.PropertyMap;
@@ -15,9 +14,8 @@ import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
 import gg.fel.cvut.cz.enums.BulletTypeEnum;
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.Set;
 
-public class Bullet extends AContainer implements IBullet, Serializable {
+public class Bullet extends AContainerWithID implements IBullet, Serializable {
 
   protected final DynamicPropertyRegister<Boolean, Property<Boolean>> exists = new DynamicPropertyRegister<Boolean, Property<Boolean>>(
       Property::new);
@@ -45,10 +43,9 @@ public class Bullet extends AContainer implements IBullet, Serializable {
       Property::new);
   protected final DynamicPropertyRegister<ImmutableMap<IPlayer, Boolean>, PropertyMap<IPlayer, Boolean>> isVisible = new DynamicPropertyRegister<ImmutableMap<IPlayer, Boolean>, PropertyMap<IPlayer, Boolean>>(
       PropertyMap::new);
-  private final Set<StaticPropertyRegister<?, ?>> toHash = ImmutableSet.of(id);
 
-  public Bullet(BWReplayCounter bwCounter) {
-    super(bwCounter);
+  public Bullet(BWReplayCounter bwCounter, int id) {
+    super(bwCounter, id);
   }
 
   @Override
@@ -114,10 +111,5 @@ public class Bullet extends AContainer implements IBullet, Serializable {
   @Override
   public Optional<Boolean> isVisible(IPlayer player) {
     return getPropertyOnTimeLineStrategy(isVisible, player);
-  }
-
-  @Override
-  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return toHash;
   }
 }

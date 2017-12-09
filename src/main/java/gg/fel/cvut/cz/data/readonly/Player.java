@@ -9,20 +9,17 @@ import gg.fel.cvut.cz.api.IUnitType;
 import gg.fel.cvut.cz.api.IUpgradeType;
 import gg.fel.cvut.cz.api.IWeaponType;
 import gg.fel.cvut.cz.counters.BWReplayCounter;
-import gg.fel.cvut.cz.data.AContainer;
-import gg.fel.cvut.cz.data.properties.StaticPropertyRegister;
+import gg.fel.cvut.cz.data.AContainerWithID;
 import gg.fel.cvut.cz.enums.PlayerTypeEnum;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 //TODO implement
-public class Player extends AContainer implements IPlayer, Serializable {
+public class Player extends AContainerWithID implements IPlayer, Serializable {
 
-  public Player(BWReplayCounter bwCounter) {
-    super(bwCounter);
+  public Player(BWReplayCounter bwCounter, int id) {
+    super(bwCounter, id);
   }
 
   @Override
@@ -238,10 +235,5 @@ public class Player extends AContainer implements IPlayer, Serializable {
   @Override
   public Optional<Boolean> isObserver() {
     return null;
-  }
-
-  @Override
-  protected Set<StaticPropertyRegister<?, ?>> staticPropertiesForEqualsAndHashCode() {
-    return new HashSet<>();
   }
 }
